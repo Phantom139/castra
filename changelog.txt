@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.4
+Date: 2025-01-28
+  Bugfixes:
+    - Fix error when neither Maraxsis nor Landing Pad Research is installed
+    - Fix error when Maraxsis is installed but not Landing Pad Research (Issue #1)
+    - Fix error on tick before Castra surface is generated
+---------------------------------------------------------------------------------------------------
 Version: 0.1.3
 Date: 2025-01-27
   Changes:

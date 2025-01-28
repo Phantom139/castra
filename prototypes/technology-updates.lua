@@ -137,12 +137,25 @@ if data.raw["technology"]["cargo-landing-pad-capacity"] then
                 end
             end
         end
+
+        local removedCargoPrereq = true
+        while removedCargoPrereq do
+            removedCargoPrereq = false
+            for i, prereq in ipairs(data.raw["technology"]["cargo-landing-pad-capacity"].prerequisites) do
+                if prereq == "agricultural-science-pack" or prereq == "electromagnetic-science-pack" or prereq == "metallurgic-science-pack" then
+                    table.remove(data.raw["technology"]["cargo-landing-pad-capacity"].prerequisites, i)
+                    removedCargoPrereq = true
+                    break
+                end
+            end
+        end
+        data.raw["technology"]["cargo-landing-pad-capacity"].unit.count_formula = "10000*2.5^(L-1)"
     end
     table.insert(data.raw["technology"]["cargo-landing-pad-capacity"].prerequisites, "battlefield-science-pack")
 
     -- Add maraxsis support for cargo-landing-pad-capacity
-    -- Already overrides the research, just needs prereq and science pack
-    if mods["maraxsis"] then
+    -- Landing Pad Rsearch overrides the research, just need to add back prereq and science pack
+    if mods["maraxsis"] and mods["landing-pad-research"] then
         table.insert(data.raw["technology"]["cargo-landing-pad-capacity"].prerequisites, "maraxsis-project-seadragon")
         if data.raw["technology"]["cargo-landing-pad-capacity"].unit and data.raw["technology"]["cargo-landing-pad-capacity"].unit.ingredients then
             table.insert(data.raw["technology"]["cargo-landing-pad-capacity"].unit.ingredients,
@@ -150,19 +163,6 @@ if data.raw["technology"]["cargo-landing-pad-capacity"] then
         end
     end
 end
-
-local removedCargoPrereq = true
-while removedCargoPrereq do
-    removedCargoPrereq = false
-    for i, prereq in ipairs(data.raw["technology"]["cargo-landing-pad-capacity"].prerequisites) do
-        if prereq == "agricultural-science-pack" or prereq == "electromagnetic-science-pack" or prereq == "metallurgic-science-pack" then
-            table.remove(data.raw["technology"]["cargo-landing-pad-capacity"].prerequisites, i)
-            removedCargoPrereq = true
-            break
-        end
-    end
-end
-data.raw["technology"]["cargo-landing-pad-capacity"].unit.count_formula = "10000*2.5^(L-1)"
 
 -- Modify battery-mk3-equipment to require lithium battery
 if data.raw["technology"]["battery-mk3-equipment"] then

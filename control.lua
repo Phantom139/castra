@@ -422,7 +422,7 @@ local function get_available_upgrades()
         table.insert(upgrades, base_upgrades.add_roboport)
     end
     if storage.castra.enemy.land_mine then
-        table.insert(upgrades, base_upgrades.add_land_mines)
+        table.insert(upgrades, base_upgs.add_land_mines)
     end
     if storage.castra.enemy.solar_panel then
         table.insert(upgrades, base_upgrades.add_solar)
@@ -436,11 +436,15 @@ end
 local function randomly_upgrade_base(event)
     -- Every 5 minutes, randomly upgrade either 5% of the bases or 20 bases, whichever is lower. and at least 5
     if event.tick % 18000 == 0 then
+        if not item_cache.castra_exists() then
+            return
+        end
         local possible = get_available_upgrades()
         if #possible == 0 then
             return
         end
-        local surface = game.surfaces["castra"]
+
+        local surface = game.surfaces["castra"]        
         local dataCollectors = surface.find_entities_filtered { name = "data-collector", force = "enemy" }
         if #dataCollectors > 0 then
             local count = math.max(math.min(#dataCollectors, 5), math.min(20, math.floor(#dataCollectors * 0.05)))
