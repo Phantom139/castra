@@ -320,7 +320,7 @@ data:extend(
     {
       type = "recipe",
       name = "forge",
-      category = "castra-forge",
+      category = "castra-crafting",
       enabled = false,
       energy_required = 20,
       ingredients = {
