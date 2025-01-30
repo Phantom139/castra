@@ -1,9 +1,9 @@
 {
   "name": "castra",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "title": "Castra",
   "author": "Bartz24, LogicDolphin",
   "factorio_version": "2.0",
-  "dependencies": ["base >= 2.0.30", "space-age", "? alien-biomes", "? landing-pad-research", "? maraxsis", "? planet-muluna", "? Cerys-Moon-of-Fulgora"],
+  "dependencies": ["base >= 2.0.30", "space-age", "? alien-biomes", "? landing-pad-research", "? maraxsis", "? planet-muluna", "? Cerys-Moon-of-Fulgora", "? modules-t4"],
   "description": "Adds a new militaristic planet to the game. Claim the defended post-apocalyptic planet and use its resources to build a new base."
 }

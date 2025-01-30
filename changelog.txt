@@ -1,4 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.7
+Date: 2025-01-29
+  Changes:
+    - Change Tungsten carbide to Millerite in the Speed module 4 if Tier 4 Modules is installed
+    - Change Castra discovery to require Asteroid collector tech if Asteroid collector is its own tech (Muluna compatibility)
+    - Update tips and tricks and item descriptions to be clearer about Battlefield data packets are obtained
+    - Removed tips and tricks page for data emissions and moved to entity descriptions
+  Bugfixes:
+    - Fix tips and tricks startup error
+    - Fix error when infinite techs are split into multiple techs by another mod
+---------------------------------------------------------------------------------------------------
 Version: 0.1.6
 Date: 2025-01-28
   Bugfixes:

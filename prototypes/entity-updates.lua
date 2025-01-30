@@ -1,3 +1,16 @@
+local function update_description(entity, amount)
+    local description = {""}
+    table.insert(description, "\n")
+    table.insert(description, {"entity-description.data-emission"})
+    table.insert(description, amount)
+    table.insert(description, "/m")
+    if not entity.localised_description then
+        entity.localised_description = {"", {"?", {"", {"entity-description." .. entity.name}, "\n"}, "" }, description }
+    else
+        entity.localised_description = {"", entity.localised_description, description }
+    end
+end
+
 local function set_data_emission_per_min(entity, amount)
     entity.energy_source = entity.energy_source or {}
     if entity.energy_source.emissions_per_minute then
@@ -5,6 +18,8 @@ local function set_data_emission_per_min(entity, amount)
     else
         entity.energy_source.emissions_per_minute = { data = amount }
     end
+    
+    update_description(entity, tostring(amount))
 end
 
 local function set_data_emission_per_sec(entity, amount)
@@ -14,6 +29,8 @@ local function set_data_emission_per_sec(entity, amount)
     else
         entity.emissions_per_second = { data = amount }
     end
+
+    update_description(entity, tostring(amount * 60))
 end
 
 set_data_emission_per_min(data.raw["roboport"]["roboport"], 10)

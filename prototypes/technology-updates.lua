@@ -173,18 +173,25 @@ if data.raw["technology"]["battery-mk3-equipment"] then
     table.insert(data.raw["technology"]["battery-mk3-equipment"].prerequisites, "lithium-battery")
 end
 
-table.insert(data.raw["technology"]["plastic-bar-productivity"].effects,
-    { type = "change-recipe-productivity", recipe = "plastic-hydrogen-sulfide", change = 0.1 })
+for _, tech in pairs(data.raw["technology"]) do
+    if string.find(tech.name, "plastic%-bar%-productivity") then
+        table.insert(tech.effects, { type = "change-recipe-productivity", recipe = "plastic-hydrogen-sulfide", change = 0.1 })
+    end
+end
 
 if mods["planet-muluna"] then
     -- Add electric-engine-unit-from-carbon to producitivty tech
     local recipe = data.raw["recipe"]["electric-engine-unit-from-carbon"]
     if recipe then
-        table.insert(data.raw["technology"]["engine-productivity"].effects, {
-            type = "change-recipe-productivity",
-            recipe = "electric-engine-unit-from-carbon",
-            change = 0.1
-        })
+        for _, tech in pairs(data.raw["technology"]) do
+            if string.find(tech.name, "engine%-productivity") then
+                table.insert(tech.effects, {
+                    type = "change-recipe-productivity",
+                    recipe = "electric-engine-unit-from-carbon",
+                    change = 0.1
+                })
+            end
+        end
     end
 end
 
@@ -199,4 +206,9 @@ if mods["Cerys-Moon-of-Fulgora"] then
             })
         end
     end
+end
+
+-- If the asteroid-collector tech exists (from Muluna), add that as a prereq to the castra discovery tech
+if data.raw["technology"]["asteroid-collector"] then
+    table.insert(data.raw["technology"]["planet-discovery-castra"].prerequisites, "asteroid-collector")
 end

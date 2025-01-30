@@ -122,3 +122,15 @@ if mods["planet-muluna"] then
         recipe.energy_required = recipe.energy_required * 3
     end
 end
+
+if mods["modules-t4"] then
+    -- Replace tungsten-carbide with millerite in the tier 4 speed module recipe if it exists
+    local recipe = data.raw["recipe"]["speed-module-4"]
+    if recipe then
+        for _, ingredient in pairs(recipe.ingredients) do
+            if ingredient.name == "tungsten-carbide" then
+                ingredient.name = "millerite"
+            end
+        end
+    end
+end
