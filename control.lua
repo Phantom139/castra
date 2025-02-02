@@ -45,11 +45,11 @@ function on_data_collector_item_spawned(event)
     local quality = event.spawner.quality
 
     -- Check for any nearby item-on-ground entities so that we don't spawn too many items
-    local items = event.entity.surface.find_entities_filtered { name = "item-on-ground", area = { { event.entity.position.x - 5, event.entity.position.y - 5 }, { event.entity.position.x + 5, event.entity.position.y + 5 } } }
-    if #items < 20 then
+    local items = event.entity.surface.find_entities_filtered { name = "item-on-ground", area = { { event.spawner.position.x - 5, event.spawner.position.y - 5 }, { event.spawner.position.x + 5, event.spawner.position.y + 5 } } }
+    if #items < 200 then
         -- Spawn item on the ground with the suffix
         local item_name = string.gsub(event.entity.name, "data%-collector%-", "")
-        event.entity.surface.spill_item_stack { position = event.entity.position, stack = { name = item_name, count = 1, quality = quality }, enable_looted = true, allow_belts = true, force = force, max_radius = 2 }
+        event.entity.surface.spill_item_stack { position = event.spawner.position, stack = { name = item_name, count = 1, quality = quality }, enable_looted = true, allow_belts = true, force = force, max_radius = 5 }
     end
 
     event.entity.destroy()

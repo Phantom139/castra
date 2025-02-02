@@ -85,6 +85,7 @@ for _, entity in pairs(data.raw["assembling-machine"]) do
 end
 
 table.insert(data.raw.lab["lab"].inputs, "battlefield-science-pack")
+table.insert(data.raw.lab["biolab"].inputs, "battlefield-science-pack")
 
 -- Add lithium battery to railgun and railgun turret
 table.insert(data.raw["recipe"]["railgun"].ingredients, { type="item", name="lithium-battery", amount=5 })
