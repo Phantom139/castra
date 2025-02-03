@@ -375,6 +375,7 @@ data:extend(
       ingredients = {
         {type="fluid", name="light-oil", amount=10},
         {type="item", name="millerite", amount=1},
+        {type="item", name="sulfur", amount=1},
         {type="fluid", name="water", amount=5}
       },
       results = {
@@ -535,7 +536,6 @@ data:extend(
       results = {{type="item", name="energy-shield-mk3-equipment", amount=1}},
     },
     {
-      -- combat-roboport
       type = "recipe",
       name = "combat-roboport",
       category = "castra-forge",
@@ -547,7 +547,180 @@ data:extend(
         {type="item", name="castra-data", amount=5}
       },
       results = {{type="item", name="combat-roboport", amount=1}}      
+    },
+    {
+      -- early game gunpowder to carbon recipe
+      type = "recipe",
+      name = "gunpowder-carbon",
+      enabled = false,
+      energy_required = 10,
+      ingredients = {
+        {type="item", name="gunpowder", amount=30}
+      },
+      results = {{type="item", name="carbon", amount=1}},
+      icons =
+      {
+        {
+          icon = "__space-age__/graphics/icons/carbon.png",
+          scale = 0.7,
+          shift = {0, -10}
+        },
+        {
+          icon = "__castra__/graphics/icons/gunpowder.png",
+          scale = 0.5,
+          shift = {-10, 10}
+        }
+      },
+      allow_productivity = true,
+      auto_recycle = false,
+      category = "basic-crafting"
+    },
+    {
+      -- poison capsule from sulfur
+      type = "recipe",
+      name = "poison-capsule-sulfur",
+      enabled = false,
+      energy_required = 8,
+      ingredients = {
+        {type="item", name="sulfur", amount=10},
+        {type="item", name="nickel-plate", amount=3},
+        {type="item", name="electronic-circuit", amount=3}
+      },
+      results = {{type="item", name="poison-capsule", amount=1}},
+      icons =
+      {
+        {
+          icon = "__base__/graphics/icons/poison-capsule.png",
+          scale = 0.7,
+          shift = {0, -10}
+        },
+        {
+          icon = "__castra__/graphics/icons/nickel-plate.png",
+          scale = 0.5,
+          shift = {-10, 10}
+        },
+        {
+          icon = "__base__/graphics/icons/sulfur.png",
+          scale = 0.5,
+          shift = {10, 10}
+        }
+      },
+      auto_recycle = false,
+      category = "basic-crafting"
+    },
+    {
+      type = "recipe",
+      name = "slowdown-capsule-sulfur",
+      enabled = false,
+      energy_required = 8,
+      ingredients = {
+        {type="item", name="sulfur", amount=5},
+        {type="item", name="nickel-plate", amount=2},
+        {type="item", name="electronic-circuit", amount=2}
+      },
+      results = {{type="item", name="slowdown-capsule", amount=1}},
+      icons =
+      {
+        {
+          icon = "__base__/graphics/icons/slowdown-capsule.png",
+          scale = 0.7,
+          shift = {0, -10}
+        },
+        {
+          icon = "__castra__/graphics/icons/nickel-plate.png",
+          scale = 0.5,
+          shift = {-10, 10}
+        },
+        {
+          icon = "__base__/graphics/icons/sulfur.png",
+          scale = 0.5,
+          shift = {10, 10}
+        }
+      },
+      auto_recycle = false,
+      category = "basic-crafting"
+    },
+    {
+      type = "recipe",
+      name = "defender-capsule-castra-data",
+      enabled = false,
+      energy_required = 8,
+      ingredients = {
+        {type="item", name="castra-data", amount=1},
+        {type="item", name="piercing-rounds-magazine", amount=3},
+        {type="item", name="iron-gear-wheel", amount=3}
+      },
+      results = {{type="item", name="defender-capsule", amount=1}},
+      icons =
+      {
+        {
+          icon = "__base__/graphics/icons/defender.png",
+          scale = 0.7,
+          shift = {0, -10}
+        },
+        {
+          icon = "__castra__/graphics/icons/castra-data.png",
+          scale = 0.5,
+          shift = {-10, 10}
+        }
+      },
+      auto_recycle = false,
+      category = "basic-crafting",
+      allow_productivity = false
+    },
+    {
+      type = "recipe",
+      name = "distractor-capsule-castra-data",
+      enabled = false,
+      energy_required = 15,
+      ingredients = {
+        {type="item", name="castra-data", amount=1},
+        {type="item", name="defender-capsule", amount=4}
+      },
+      results = {{type="item", name="distractor-capsule", amount=1}},
+      icons =
+      {
+        {
+          icon = "__base__/graphics/icons/distractor.png",
+          scale = 0.7,
+          shift = {0, -10}
+        },
+        {
+          icon = "__castra__/graphics/icons/castra-data.png",
+          scale = 0.5,
+          shift = {-10, 10}
+        }
+      },
+      auto_recycle = false,
+      category = "basic-crafting",
+      allow_productivity = false
+    },
+    {
+      type = "recipe",
+      name = "destroyer-capsule-castra-data",
+      enabled = false,
+      energy_required = 15,
+      ingredients = {
+        {type="item", name="castra-data", amount=2},
+        {type="item", name="destroyer-capsule", amount=4}
+      },
+      results = {{type="item", name="destroyer-capsule", amount=1}},
+      icons =
+      {
+        {
+          icon = "__base__/graphics/icons/destroyer.png",
+          scale = 0.7,
+          shift = {0, -10}
+        },
+        {
+          icon = "__castra__/graphics/icons/castra-data.png",
+          scale = 0.5,
+          shift = {-10, 10}
+        }
+      },
+      auto_recycle = false,
+      category = "basic-crafting",
+      allow_productivity = false
     }
   }
 )
-

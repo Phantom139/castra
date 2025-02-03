@@ -5,7 +5,7 @@ local function update_description(entity, amount)
     table.insert(description, amount)
     table.insert(description, "/m")
     if not entity.localised_description then
-        entity.localised_description = {"", {"?", {"", {"entity-description." .. entity.name}, "\n"}, "" }, description }
+        entity.localised_description = {"", {"?", {"", {"entity-description." .. entity.name}}, "" }, description }
     else
         entity.localised_description = {"", entity.localised_description, description }
     end

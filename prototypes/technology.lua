@@ -116,6 +116,10 @@ data:extend(
         {
           type = "unlock-recipe",
           recipe = "engine-unit-gunpowder"
+        },
+        {
+          type = "unlock-recipe",
+          recipe = "gunpowder-carbon"
         }
       }
     },
@@ -371,6 +375,18 @@ data:extend(
         {
           type = "unlock-recipe",
           recipe = "combat-roboport"
+        },
+        {
+          type = "unlock-recipe",
+          recipe = "defender-capsule-castra-data"
+        },
+        {
+          type = "unlock-recipe",
+          recipe = "distractor-capsule-castra-data"
+        },
+        {
+          type = "unlock-recipe",
+          recipe = "destroyer-capsule-castra-data"
         }
       },
       unit =
@@ -611,7 +627,17 @@ data:extend(
         },
         {
           type = "change-recipe-productivity",
+          recipe = "poison-capsule-sulfur",
+          change = 0.1
+        },
+        {
+          type = "change-recipe-productivity",
           recipe = "slowdown-capsule",
+          change = 0.1
+        },
+        {
+          type = "change-recipe-productivity",
+          recipe = "slowdown-capsule-sulfur",
           change = 0.1
         },
         {
@@ -647,6 +673,6 @@ data:extend(
       },
       max_level = "infinite",
       upgrade = true
-    },
+    }
   }
 )

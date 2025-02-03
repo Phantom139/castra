@@ -1,4 +1,16 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.8
+  Changes:
+    - Add new Carbon from gunpowder recipe for an early game source of fuel if you need to start from scratch
+    - Add new Combot robot recipes using Battlefield data packets
+    - Add Poison/Slowdown capsules from sulfur recipes
+    - Removed empty line in descriptions which had existing text (Still working on fixing empty lines for new ones)
+    - Adjust Data collector collision and selection boxes and logic for spawning items to avoid lost items
+    - Add sulfur input to reverse cracking recipe
+  Bugfixes:
+    - Fix Combat roboport not being minable
+    - Fix Biolab not accepting Battlefield science packs    
+---------------------------------------------------------------------------------------------------
 Version: 0.1.7
 Date: 2025-01-29
   Changes:

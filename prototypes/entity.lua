@@ -234,9 +234,9 @@ data:extend({
             }
         },
         healing_per_tick = 20/60.0,
-        collision_box = { { -2.2, -2.2 }, { 2.2, 2.2 } },
+        collision_box = { { -2.7, -2.7 }, { 2.7, 2.7 } },
         map_generator_bounding_box = { { -3.7, -3.2 }, { 3.7, 3.2 } },
-        selection_box = { { -2.5, -2.5 }, { 2.5, 2.5 } },
+        selection_box = { { -3, -3 }, { 3, 3 } },
         impact_category = "metal",
         -- in ticks per 1 pu
         absorptions_per_second = { data = { absolute = 20, proportional = 0.01 } },
@@ -351,6 +351,7 @@ data:extend({
         name = "combat-roboport",
         icon = "__castra__/graphics/icons/combat-roboport.png",
         flags = { "placeable-player", "player-creation" },
+        minable = { hardness = 0.2, mining_time = 1, result = "combat-roboport" },
         max_health = 2000,
         order = "f-g-b",
         corpse = "roboport-remnants",
