@@ -365,7 +365,7 @@ local function update_combat_roboports(event)
                     -- Check inventory if it's a valid combat robot
                     local combat_robot = nil
                     local inventory = roboport.get_inventory(defines.inventory.chest)
-                    if inventory[1] and inventory[1].valid and
+                    if inventory and inventory[1] and inventory[1].valid and inventory[1].name and
                         (inventory[1].name == "destroyer-capsule" or
                             inventory[1].name == "distractor-capsule" or
                             inventory[1].name == "defender-capsule") then
