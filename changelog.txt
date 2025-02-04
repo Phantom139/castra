@@ -1,4 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.9
+Date: 2025-02-04
+  Bugfixes:
+    - Fix combot roboport error
+    - Fix destroyer with battlefield data recipe
+  Changes:
+    - Add combot robot with battlefield data recipes to infinite productivity tech
+    - Adjust infinite productivity tech counts to scale faster and some start with higher counts
+  Localization:
+    - Merge French translation from Fr-Dae (github #7)
+---------------------------------------------------------------------------------------------------
 Version: 0.1.8
   Changes:
     - Add new Carbon from gunpowder recipe for an early game source of fuel if you need to start from scratch

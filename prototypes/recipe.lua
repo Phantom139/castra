@@ -702,7 +702,7 @@ data:extend(
       energy_required = 15,
       ingredients = {
         {type="item", name="castra-data", amount=2},
-        {type="item", name="destroyer-capsule", amount=4}
+        {type="item", name="distractor-capsule", amount=4}
       },
       results = {{type="item", name="destroyer-capsule", amount=1}},
       icons =

@@ -429,7 +429,7 @@ data:extend(
       prerequisites = { "battlefield-science-pack" },
       unit =
       {
-        count_formula = "1.5^L*750",
+        count_formula = "1.5^(L-1)*1375",
         ingredients =
         {
           { "automation-science-pack",  1 },
@@ -509,7 +509,7 @@ data:extend(
       prerequisites = { "battlefield-science-pack", "promethium-science-pack" },
       unit =
       {
-        count_formula = "1.5^L*1250",
+        count_formula = "2.0^(L-1)*2000",
         ingredients =
         {
           { "automation-science-pack",  1 },
@@ -587,7 +587,7 @@ data:extend(
       prerequisites = { "battlefield-science-pack" },
       unit =
       {
-        count_formula = "1.5^L*1250",
+        count_formula = "1.75^(L-1)*5000",
         ingredients =
         {
           { "automation-science-pack",  1 },
@@ -654,12 +654,27 @@ data:extend(
           type = "change-recipe-productivity",
           recipe = "destroyer-capsule",
           change = 0.1
+        },
+        {
+          type = "change-recipe-productivity",
+          recipe = "defender-capsule-castra-data",
+          change = 0.1
+        },
+        {
+          type = "change-recipe-productivity",
+          recipe = "distractor-capsule-castra-data",
+          change = 0.1
+        },
+        {
+          type = "change-recipe-productivity",
+          recipe = "destroyer-capsule-castra-data",
+          change = 0.1
         }
       },
       prerequisites = { "battlefield-science-pack" },
       unit =
       {
-        count_formula = "1.5^L*750",
+        count_formula = "1.5^(L-1)*2000",
         ingredients =
         {
           { "automation-science-pack",  1 },
