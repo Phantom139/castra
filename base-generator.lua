@@ -636,7 +636,7 @@ local function create_enemy_base(chunk_area)
     local powered_entities = {}
 
     -- Place turrets
-    if math.random() < 0.8 then
+    if math.random() < 0.95 then
         local powered_turrets = place_turrets(dataPos, nil)
         if powered_turrets then
             for _, turret in pairs(powered_turrets) do

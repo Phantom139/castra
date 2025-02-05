@@ -148,9 +148,7 @@ end
 
 -- on_entity_spawned for deleting data-collector-<item> when it spawns and dropping its loot
 script.on_event(defines.events.on_entity_spawned, function(event)
-    if not storage.castra or not storage.castra.enemy then
-        item_cache.update_castra_enemy_data()
-    end
+    item_cache.build_cache_if_needed()
 
     -- check if name starts with data-collector-
     if string.find(event.entity.name, "data%-collector%-") then
@@ -169,9 +167,7 @@ script.on_event(defines.events.on_entity_spawned, function(event)
 end)
 
 local function get_castra_research_speed()
-    if not storage.castra or not storage.castra.enemy then
-        item_cache.update_castra_enemy_data()
-    end
+    item_cache.build_cache_if_needed()
 
     if not item_cache.castra_exists() then
         return 0
@@ -182,7 +178,7 @@ local function get_castra_research_speed()
     local research_speed = evolution * 90
 
     -- Include lab research speed tech bonus and lab productivity
-    research_speed = research_speed * (1 + game.forces["enemy"].laboratory_speed_modifier / 4)
+    research_speed = research_speed * (1 + game.forces["enemy"].laboratory_speed_modifier)
     research_speed = research_speed * (1 + game.forces["enemy"].laboratory_productivity_bonus)
 
     -- Include a bonus based on speed module tier: 1 = 5%, 2 = 10%, 3 = 20%
@@ -212,9 +208,9 @@ local function get_castra_research_speed()
         research_speed = research_speed * (1 + storage.castra.enemy.quality_tier.level * 0.08)
     end
 
-    -- Minimum of 1
-    if research_speed < 1 then
-        research_speed = 1
+    -- Minimum of 5
+    if research_speed < 5 then
+        research_speed = 5
     end
 
     return research_speed
@@ -270,9 +266,11 @@ local function update_castra_research_progress(event)
             -- Unlock gun-turret and stone-wall if they exist and have not been unlocked
             if prototypes.technology["gun-turret"] and not enemy_force.technologies["gun-turret"].researched then
                 unlock_research_up_to("gun-turret")
+                item_cache.update_castra_enemy_data()
             end
             if prototypes.technology["stone-wall"] and not enemy_force.technologies["stone-wall"].researched then
                 unlock_research_up_to("stone-wall")
+                item_cache.update_castra_enemy_data()
             end
 
             -- Find any researches that have not been fully researched and have all prerequisites

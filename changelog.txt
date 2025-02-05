@@ -1,4 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.10
+Date: 2025-02-05
+  Bugfixes:
+    - Fix enemy force not placing walls and turrets until after their first research
+  Changes:
+    - Increase minimum research speed of enemy by 5x
+    - Increase chance for a base to spawn with turrets
+    - Increase enemy research speed bonus from lab speed techs
+---------------------------------------------------------------------------------------------------
 Version: 0.1.9
 Date: 2025-02-04
   Bugfixes:

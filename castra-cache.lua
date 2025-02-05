@@ -149,7 +149,7 @@ local function update_castra_enemy_data()
 end
 
 local function build_cache_if_needed()
-    if not storage.castra or not storage.castra.enemy then
+    if not storage.castra or not storage.castra.enemy or (not storage.castra.enemy.gun_turret and has_castra_researched_item("gun-turret")) then
         update_castra_enemy_data()
     end
 end
