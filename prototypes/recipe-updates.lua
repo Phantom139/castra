@@ -11,7 +11,18 @@ function containsValue(array, value)
     return false
 end
 
-function changeToCategory(item)
+function create_category_if_not_exists(name)
+    if not data.raw["recipe-category"][name] then
+        data:extend({
+            {
+                type = "recipe-category",
+                name = name
+            }
+        })
+    end
+end
+
+function change_to_category(item)
     for _, recipe in pairs(data.raw["recipe"]) do
         if recipe.results then
             for _, result in pairs(recipe.results) do
@@ -19,11 +30,9 @@ function changeToCategory(item)
                     if not recipe.category or recipe.category == "crafting" then
                         recipe.category = "castra-crafting"
                         break
-                    elseif recipe.category == "chemistry" then
-                        recipe.category = "castra-chemistry"
-                        break
-                    elseif recipe.category == "electromagnetics" then
-                        recipe.category = "castra-electromagnetics"
+                    else
+                        create_category_if_not_exists("castra-" .. recipe.category)
+                        recipe.category = "castra-" .. recipe.category
                         break
                     end
                 end
@@ -33,36 +42,43 @@ function changeToCategory(item)
 end
 
 for _, item in pairs(data.raw["capsule"]) do
-    if not item.subgroup or not containsValue(data.raw["item-subgroup"], item.subgroup) or data.raw["item-subgroup"][item.subgroup].group ~= "combat" then
-        goto continueCapsule
+    -- Only include capsule actions with type "throw"
+    if item.capsule_action and item.capsule_action.type == "throw" then
+        change_to_category(item)
     end
-    changeToCategory(item)
-    ::continueCapsule::
 end
 
 for _, item in pairs(data.raw["ammo"]) do
-    changeToCategory(item)
+    change_to_category(item)
 end
 
 for _, item in pairs(data.raw["gun"]) do
-    changeToCategory(item)
+    change_to_category(item)
 end
 
 for _, item in pairs(data.raw["armor"]) do
-    changeToCategory(item)
+    change_to_category(item)
 end
 
 for _, item in pairs(data.raw["item"]) do
-    if not item.subgroup or not data.raw["item-subgroup"][item.subgroup] or data.raw["item-subgroup"][item.subgroup].group ~= "combat" then
-        goto continueItem
+    -- Check item's place_result if it's a turret or a wall type
+    if item.place_result then
+        local entity = data.raw["item"][item.place_result]
+        if entity and (entity.type == "wall" or entity.type == "turret" or entity.type == "gate") then
+            change_to_category(item)
+            goto continueItem
+        end
     end
-    if item.subgroup == "turret" or item.subgroup == "military-equipment" or item.subgroup == "defensive-structure" then
-        changeToCategory(item)
+
+    -- Add any equipment to forge
+    if item.place_as_equipment_result then
+        change_to_category(item)
     end
+
     ::continueItem::
 end
 
-changeToCategory(data.raw["tool"]["military-science-pack"])
+change_to_category(data.raw["tool"]["military-science-pack"])
 
 -- Add the miliaary crafting category to anything that had the crafting category
 table.insert(data.raw.character.character.crafting_categories, "castra-crafting")
@@ -71,15 +87,22 @@ table.insert(data.raw["god-controller"].default.crafting_categories, "castra-cra
 -- Loop through assembling-machine entities and add the military crafting categories
 for _, entity in pairs(data.raw["assembling-machine"]) do
     if entity.crafting_categories then
-        -- Check if it has the "crafting" category or "chemistry" category
-        if containsValue(entity.crafting_categories, "crafting") then
-            table.insert(entity.crafting_categories, "castra-crafting")
+        local original = table.deepcopy(entity.crafting_categories)
+        for _, category in pairs(original) do
+            -- If "castra-<name>" exists, add it to the categories
+            if data.raw["recipe-category"]["castra-" .. category] then
+                table.insert(entity.crafting_categories, "castra-" .. category)
+            end
         end
-        if containsValue(entity.crafting_categories, "chemistry") then
-            table.insert(entity.crafting_categories, "castra-chemistry")
-        end
-        if containsValue(entity.crafting_categories, "electromagnetics") then
-            table.insert(entity.crafting_categories, "castra-electromagnetics")
+    end
+end
+
+-- Add any missing "castra-<name>" categories to the forge's crafting categories
+local forge_entity = data.raw["assembling-machine"]["forge"]
+if forge_entity.crafting_categories then
+    for _, category in pairs(data.raw["recipe-category"]) do
+        if string.find(category.name, "castra-") and not containsValue(forge_entity.crafting_categories, category.name) then
+            table.insert(forge_entity.crafting_categories, category.name)
         end
     end
 end

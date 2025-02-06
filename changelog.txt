@@ -1,4 +1,18 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.2.0
+Date: 2025-02-05
+  Breaking changes:
+    - Fixed forge hitboxes and pipe connections to be centered. This will break existing builds with the forge!
+  Bugfixes:
+    - Fix error when upgrading base without power    
+  Changes:
+    - Reduce chance for spawning item by data collector to 10% when there is very little pollution
+    - Data collectors increase evolution slightly when they spawn items
+    - Reduced data collector item/tank spawn rate
+  Compatibility:
+    - Fix compatibility with mods adding new military recipes including Tiberium
+    - Fix compatibility with Assembler Pipe Passthrough
+---------------------------------------------------------------------------------------------------
 Version: 0.1.10
 Date: 2025-02-05
   Bugfixes:

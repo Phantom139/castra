@@ -30,7 +30,25 @@ script.on_event(defines.events.on_chunk_generated, function(event)
     end
 end)
 
+function get_surrounding_pollution(center)
+    -- Get the pollution in a 3x3 chunk area
+    local pollution = 0
+    for x = -1, 1 do
+        for y = -1, 1 do
+            pollution = pollution + game.surfaces["castra"].get_pollution({ center.x + x * 32, center.y + y * 32 })
+        end
+    end
+    return pollution
+end
+
 function on_data_collector_item_spawned(event)
+    local pollution = get_surrounding_pollution(event.spawner.position)
+    -- 90% chance to skip and destroy the item if pollution is less than 50
+    if pollution < 50 and math.random() < 0.9 then
+        event.entity.destroy()
+        return
+    end
+
     -- Look for any non-enemy roboports nearby
     local roboports = event.entity.surface.find_entities_filtered { name = "roboport", area = { { event.entity.position.x - 55, event.entity.position.y - 55 }, { event.entity.position.x + 55, event.entity.position.y + 55 } } }
     -- If there are, get the force of the first one and spawn the item on the ground with the force
@@ -51,6 +69,9 @@ function on_data_collector_item_spawned(event)
         local item_name = string.gsub(event.entity.name, "data%-collector%-", "")
         event.entity.surface.spill_item_stack { position = event.spawner.position, stack = { name = item_name, count = 1, quality = quality }, enable_looted = true, allow_belts = true, force = force, max_radius = 5 }
     end
+
+    -- Increase evolution by 0.000015
+    event.entity.force.set_evolution_factor(event.entity.force.get_evolution_factor(event.entity.surface) + 0.000015, event.entity.surface)
 
     event.entity.destroy()
 end
@@ -99,20 +120,31 @@ local function on_tick_update_data_collectors(event)
 end
 
 function give_tank_random_command(tank)
-    -- 85% to wander
+    -- 80% to wander
+    -- 5% to make a new base
     -- 10% to move to another data collector
     -- 4% to attack a player military entity nearby
-    -- 1% to attack a player non-military entity nearby
+    -- 1% to attack nearest player entity nearby
 
     if not tank.valid then
         return
     end
 
     local randSelection = math.random()
-    if randSelection < 0.85 then
+    if randSelection < 0.80 then
         -- Wander
         tank.commandable.set_command { type = defines.command.wander, distraction = defines.distraction.by_anything, ticks_to_wait = math.random(600, 5000) }
         return
+    elseif randSelection < 0.85 then
+        -- Expansion
+        -- Check if there are any nearby data collectors
+        local dataCollectors = tank.surface.find_entities_filtered { name = "data-collector", area = { { tank.position.x - 30, tank.position.y - 30 }, { tank.position.x + 30, tank.position.y + 30 } } }
+        if #dataCollectors == 0 then
+            local area = { left_top = { x = tank.position.x - 15, y = tank.position.y - 15 }, right_bottom = { x = tank.position.x + 15, y = tank.position.y + 15 } }
+            base_gen.create_enemy_base(area)
+        end
+        -- Wander again
+        tank.commandable.set_command { type = defines.command.wander, distraction = defines.distraction.by_anything, ticks_to_wait = math.random(600, 5000) }
     elseif randSelection < 0.95 then
         -- Pick a random data collector to go to from storage
         if storage.castra and storage.castra.dataCollectors then
@@ -128,16 +160,15 @@ function give_tank_random_command(tank)
         local entities = tank.surface.find_entities_filtered { force = playerForce, area = { { tank.position.x - 100, tank.position.y - 100 }, { tank.position.x + 100, tank.position.y + 100 } } }
         for _, entity in pairs(entities) do
             if entity.is_military_target then
-                tank.commandable.set_command { type = defines.command.attack_area, destination = entity.position, radius = 10, distraction = defines.distraction.by_anything }
+                tank.commandable.set_command { type = defines.command.attack_area, destination = entity.position, radius = 8, distraction = defines.distraction.by_anything }
                 return
             end
         end
     else
-        -- Find a player entity nearby
-        local playerForce = game.forces["player"]
-        local entities = tank.surface.find_entities_filtered { force = playerForce, area = { { tank.position.x - 100, tank.position.y - 100 }, { tank.position.x + 100, tank.position.y + 100 } } }
-        for _, entity in pairs(entities) do
-            tank.commandable.set_command { type = defines.command.attack_area, destination = entity.position, radius = 10, distraction = defines.distraction.by_anything }
+        -- Find the nearest player entity
+        local closest = tank.surface.find_nearest_enemy {position = tank.position, force = tank.force, max_distance = 500}
+        if closest then
+            tank.commandable.set_command { type = defines.command.attack_area, destination = closest.position, radius = 8, distraction = defines.distraction.by_anything }
             return
         end
     end

@@ -452,7 +452,7 @@ end
 
 local function place_power_poles(chunk_area, powered_entities)
     item_cache.build_cache_if_needed()
-    if #powered_entities == 0 or not storage.castra.enemy.solar_panel then
+    if not powered_entities or #powered_entities == 0 or not storage.castra.enemy.solar_panel then
         return
     end
 

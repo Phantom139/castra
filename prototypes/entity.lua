@@ -107,8 +107,8 @@ data:extend({
         name = "forge",
         icon = "__castra__/graphics/atom-forge/atom-forge-icon.png",
         icon_size = 64,
-        collision_box = { { -2.7, -1.7 }, { 2.7, 3.7 } },
-        selection_box = { { -3, -2 }, { 3, 4 } },
+        collision_box = { { -2.7, -2.7 }, { 2.7, 2.7 } },
+        selection_box = { { -3, -3 }, { 3, 3 } },
         flags = { "placeable-neutral", "player-creation" },
         minable = { hardness = 0.2, mining_time = 1, result = "forge" },
         max_health = 2000,
@@ -122,7 +122,7 @@ data:extend({
                 volume = 1000,
                 pipe_picture = pipe_pic,
                 pipe_covers = pipecoverpic,
-                pipe_connections = { { direction = defines.direction.north, flow_direction = "input", position = { 0, -1.0 } } },
+                pipe_connections = { { direction = defines.direction.north, flow_direction = "input", position = { -0.5, -2.5 } } },
                 secondary_draw_orders = { north = -1 }
             },
             {
@@ -130,7 +130,7 @@ data:extend({
                 volume = 1000,
                 pipe_picture = pipe_pic,
                 pipe_covers = pipecoverpic,
-                pipe_connections = { { direction = defines.direction.south, flow_direction = "output", position = { 0, 3.0 } } },
+                pipe_connections = { { direction = defines.direction.south, flow_direction = "output", position = { -0.5, 2.5 } } },
                 secondary_draw_orders = { north = -1 }
             }
         },
@@ -149,6 +149,7 @@ data:extend({
                         draw_as_shadow = true,
                         animation_speed = 0.3,
                         scale = 0.5,
+                        shift = { 0, -1 }
                     },
                     {
                         priority = "high",
@@ -158,7 +159,8 @@ data:extend({
                         scale = 0.5,
                         filename = "__castra__/graphics/atom-forge/atom-forge-hr-animation-1.png",
                         frame_count = 64,
-                        line_length = 8
+                        line_length = 8,
+                        shift = { 0, -1 }
                     }
                 }
             },
@@ -287,7 +289,7 @@ data:extend({
             },
             reset_animation_when_frozen = true
         },
-        spawning_cooldown = { 240, 240 },
+        spawning_cooldown = { 480, 960 },
         spawning_radius = 6,
         spawning_spacing = 2,
         max_spawn_shift = 0,
