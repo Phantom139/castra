@@ -25,6 +25,10 @@ end
 function change_to_category(item)
     for _, recipe in pairs(data.raw["recipe"]) do
         if recipe.results then
+            -- Ignore hidden or recycling recipes
+            if recipe.hidden or (recipe.category and string.find(recipe.category, "recycling")) then
+                goto continueRecipe
+            end
             for _, result in pairs(recipe.results) do
                 if result.name == item.name then
                     if not recipe.category or recipe.category == "crafting" then
@@ -37,6 +41,7 @@ function change_to_category(item)
                     end
                 end
             end
+            ::continueRecipe::
         end
     end    
 end
@@ -80,9 +85,25 @@ end
 
 change_to_category(data.raw["tool"]["military-science-pack"])
 
--- Add the miliaary crafting category to anything that had the crafting category
-table.insert(data.raw.character.character.crafting_categories, "castra-crafting")
-table.insert(data.raw["god-controller"].default.crafting_categories, "castra-crafting")
+-- Update the character's crafting categories
+if data.raw.character.character.crafting_categories then
+    local original = table.deepcopy(data.raw.character.character.crafting_categories)
+    for _, category in pairs(original) do
+        -- If "castra-<name>" exists, add it to the categories
+        if data.raw["recipe-category"]["castra-" .. category] then
+            table.insert(data.raw.character.character.crafting_categories, "castra-" .. category)
+        end
+    end
+end
+if data.raw["god-controller"].default.crafting_categories then
+    local original = table.deepcopy(data.raw["god-controller"].default.crafting_categories)
+    for _, category in pairs(original) do
+        -- If "castra-<name>" exists, add it to the categories
+        if data.raw["recipe-category"]["castra-" .. category] then
+            table.insert(data.raw["god-controller"].default.crafting_categories, "castra-" .. category)
+        end
+    end
+end
 
 -- Loop through assembling-machine entities and add the military crafting categories
 for _, entity in pairs(data.raw["assembling-machine"]) do

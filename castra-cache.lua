@@ -7,7 +7,7 @@ local has_item_cache = nil
 local function update_item_cache()
     has_item_cache = {}
     for _, recipe in pairs(game.forces["enemy"].recipes) do
-        if recipe.category == "recycling" then
+        if recipe.category and string.find(recipe.category, "recycling") or recipe.hidden then
             goto skip_item_check
         end
 

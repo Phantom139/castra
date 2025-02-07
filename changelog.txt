@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.2.1
+Date: 2025-02-06
+  Bugfixes:
+    - Fix recycling and hidden recipes counting as unlocking enemy recipes (enemy bases had atomic bombs too early)
+    - Fix hand crafting being removed on recipes added to the forge
+  Changes:
+    - Increase enemy density the further away from the center of the map
+---------------------------------------------------------------------------------------------------
 Version: 0.2.0
 Date: 2025-02-05
   Breaking changes:

@@ -9,7 +9,7 @@ script.on_event(defines.events.on_chunk_generated, function(event)
         -- Create an enemy base if there are any ores in the chunk
         local resources = surface.find_entities_filtered { type = "resource", area = event.area }
         local distance_from_center = math.sqrt(event.area.left_top.x ^ 2 + event.area.left_top.y ^ 2)
-        if (#resources > 0 or math.random() < 0.04) and distance_from_center > 200 then
+        if (#resources > 0 or math.random() < 0.04 * math.log(distance_from_center / 40, 5)) and distance_from_center > 200 then
             base_gen.create_enemy_base(event.area)
         end
 
