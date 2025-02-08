@@ -3,11 +3,13 @@ Version: 0.2.2
 Date: 2025-02-07
   Bugfixes:
     - Fix flamethrowers generating as they currently don't work without oil hooked up
-    - Fix alternative recipes not having recipe signals and overriding default option for "Set recipe"
+    - Fix alternative recipes not having recipe signals and overriding default option for "Set recipe" (github #10)
   Changes:
     - Increase resistances on Data collector and Castra enemy tanks
     - Remove minimum range from enemy tanks
     - Move alternative recipes to a new subgroup
+  Localization:
+    - Add zh-CN translation from rlcyyg1108 (github #11)
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.1
 Date: 2025-02-06
