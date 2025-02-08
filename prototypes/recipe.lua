@@ -29,7 +29,7 @@ data:extend(
         {type="item", name="nickel-plate", amount=4},
         {type="item", name="iron-ore", amount=1, probability=0.1},
         {type="item", name="sulfur", amount=1, probability=0.1}
-      },        
+      },
       icons =
       {
         {
@@ -52,7 +52,9 @@ data:extend(
       order = "c[millerite]-b[nickel-extraction]",
       enabled = false,
       allow_productivity = true,
-      auto_recycle = false
+      auto_recycle = false,
+      hide_from_signal_gui = false,
+      main_product = "nickel-plate"
     },
     {
       type = "recipe",
@@ -86,7 +88,9 @@ data:extend(
       order = "c[hydrogen-sulfide]-a[hydrogen-sulfide-extraction]",
       enabled = false,
       allow_productivity = true,
-      auto_recycle = false
+      auto_recycle = false,
+      hide_from_signal_gui = false,
+      main_product = ""
     },
     {
       type = "recipe",
@@ -108,7 +112,11 @@ data:extend(
           shift = {-10, 10}
         }
       },
-      auto_recycle = false
+      auto_recycle = false,
+      hide_from_signal_gui = false,
+      main_product = "",
+      subgroup = "castra-military",
+      order = "a[firearm-magazine]"
     },
     {
       type = "recipe",
@@ -134,7 +142,11 @@ data:extend(
           shift = {-10, 10}
         }
       },
-      auto_recycle = false
+      auto_recycle = false,
+      hide_from_signal_gui = false,
+      main_product = "",
+      subgroup = "castra-military",
+      order = "b[piercing-rounds-magazine]"
     },
     {
       type = "recipe",
@@ -172,7 +184,9 @@ data:extend(
       subgroup = "castra-processes",
       order = "c[hydrogen-sulfide]-b[hydrogen-sulfide-carbon-extraction]",
       allow_productivity = true,
-      auto_recycle = false
+      auto_recycle = false,
+      hide_from_signal_gui = false,
+      main_product = ""
     },
     {
       -- explosives from gunpowder instead of coal
@@ -200,7 +214,11 @@ data:extend(
         }
       },
       allow_productivity = true,
-      auto_recycle = false
+      auto_recycle = false,
+      hide_from_signal_gui = false,
+      main_product = "",
+      subgroup = "castra-military",
+      order = "c[explosives]"
     },
     {
       type = "recipe",
@@ -225,7 +243,11 @@ data:extend(
           shift = {-10, 10}
         }
       },
-      auto_recycle = false
+      auto_recycle = false,
+      hide_from_signal_gui = false,
+      main_product = "",
+      subgroup = "castra-military",
+      order = "d[grenade]"
     },
     {
       -- engine with gunpowder
@@ -253,7 +275,11 @@ data:extend(
         }
       },
       allow_productivity = true,
-      auto_recycle = false
+      auto_recycle = false,
+      hide_from_signal_gui = false,
+      main_product = "",
+      subgroup = "castra-processes",
+      order = "e[engine-unit]"
     },
     {
       type = "recipe",
@@ -286,7 +312,11 @@ data:extend(
         }
       },
       allow_productivity = true,
-      auto_recycle = false
+      auto_recycle = false,
+      hide_from_signal_gui = false,
+      main_product = "",
+      subgroup = "castra-processes",
+      order = "f[plastic-bar]"
     },
     {
       -- Battery using nickel instead of iron
@@ -315,7 +345,11 @@ data:extend(
         }
       },
       allow_productivity = true,
-      auto_recycle = false
+      auto_recycle = false,
+      hide_from_signal_gui = false,
+      main_product = "",
+      subgroup = "castra-processes",
+      order = "g[battery]"
     },
     {
       type = "recipe",
@@ -338,7 +372,8 @@ data:extend(
           min = 1254,
           max = 1254
         }
-      }
+      },
+      main_product = "forge"
     },
     {
       -- battlefield science pack
@@ -362,7 +397,8 @@ data:extend(
           min = 1254,
           max = 1254
         }
-      }
+      },
+      main_product = "battlefield-science-pack"
     },
     {
       type = "recipe",
@@ -411,7 +447,9 @@ data:extend(
         }
       },
       allow_productivity = true,
-      auto_recycle = false
+      auto_recycle = false,
+      hide_from_signal_gui = false,
+      main_product = ""
     },
     {
       -- tank with nickel instead of steel
@@ -440,7 +478,11 @@ data:extend(
           shift = {-10, 10}
         }
       },
-      auto_recycle = false
+      auto_recycle = false,
+      hide_from_signal_gui = false,
+      main_product = "",
+      subgroup = "castra-military",
+      order = "b[tank]"
     },
     {
       -- advanced nickel processing in the foundry
@@ -479,7 +521,9 @@ data:extend(
         }
       },
       allow_productivity = true,
-      auto_recycle = false
+      auto_recycle = false,
+      hide_from_signal_gui = false,
+      main_product = ""
     },
     {
       type = "recipe",
@@ -493,7 +537,10 @@ data:extend(
         {type="item", name="supercapacitor", amount=2}
       },
       results = {{type="item", name="lithium-battery", amount=1}},
-      allow_productivity = true
+      allow_productivity = true,
+      main_product = "lithium-battery",
+      subgroup = "castra-processes",
+      order = "h[lithium-battery]"
     },
     {
       -- holmium solution + millerite = more holmium plate
@@ -521,7 +568,11 @@ data:extend(
         }
       },
       allow_productivity = true,
-      auto_recycle = false
+      auto_recycle = false,
+      hide_from_signal_gui = false,
+      main_product = "",
+      subgroup = "castra-processes",
+      order = "i[holmium-catalyzing]"
     },
     {      
       type = "recipe",
@@ -533,7 +584,7 @@ data:extend(
         {type="item", name="lithium-battery", amount=8},
         {type="item", name="quantum-processor", amount=2}
       },
-      results = {{type="item", name="energy-shield-mk3-equipment", amount=1}},
+      results = {{type="item", name="energy-shield-mk3-equipment", amount=1}}
     },
     {
       type = "recipe",
@@ -546,7 +597,8 @@ data:extend(
         {type="item", name="processing-unit", amount=20},
         {type="item", name="castra-data", amount=5}
       },
-      results = {{type="item", name="combat-roboport", amount=1}}      
+      results = {{type="item", name="combat-roboport", amount=1}},
+      main_product = "combat-roboport"
     },
     {
       -- early game gunpowder to carbon recipe
@@ -573,7 +625,11 @@ data:extend(
       },
       allow_productivity = true,
       auto_recycle = false,
-      category = "basic-crafting"
+      category = "basic-crafting",
+      hide_from_signal_gui = false,
+      main_product = "",
+      subgroup = "castra-processes",
+      order = "b[gunpowder-carbon]"
     },
     {
       -- poison capsule from sulfur
@@ -606,7 +662,11 @@ data:extend(
         }
       },
       auto_recycle = false,
-      category = "basic-crafting"
+      category = "basic-crafting",
+      hide_from_signal_gui = false,
+      main_product = "",
+      subgroup = "castra-military",
+      order = "e[poison-capsule]"
     },
     {
       type = "recipe",
@@ -638,7 +698,11 @@ data:extend(
         }
       },
       auto_recycle = false,
-      category = "basic-crafting"
+      category = "basic-crafting",
+      hide_from_signal_gui = false,
+      main_product = "",
+      subgroup = "castra-military",
+      order = "d[slowdown-capsule]"
     },
     {
       type = "recipe",
@@ -666,7 +730,11 @@ data:extend(
       },
       auto_recycle = false,
       category = "basic-crafting",
-      allow_productivity = false
+      allow_productivity = false,
+      hide_from_signal_gui = false,
+      main_product = "",
+      subgroup = "castra-military",
+      order = "m[defender-capsule]"
     },
     {
       type = "recipe",
@@ -693,7 +761,11 @@ data:extend(
       },
       auto_recycle = false,
       category = "basic-crafting",
-      allow_productivity = false
+      allow_productivity = false,
+      hide_from_signal_gui = false,
+      main_product = "",
+      subgroup = "castra-military",
+      order = "n[distractor-capsule]"
     },
     {
       type = "recipe",
@@ -720,7 +792,11 @@ data:extend(
       },
       auto_recycle = false,
       category = "basic-crafting",
-      allow_productivity = false
+      allow_productivity = false,
+      hide_from_signal_gui = false,
+      main_product = "",
+      subgroup = "castra-military",
+      order = "o[destroyer-capsule]"
     }
   }
 )

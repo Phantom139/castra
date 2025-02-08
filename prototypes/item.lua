@@ -8,6 +8,12 @@ data:extend({
         order = "n"
     },
     {
+        type = "item-subgroup",
+        name = "castra-military",
+        group = "combat",
+        order = "f[castra]"
+    },
+    {
         type = "item",
         name = "forge",
         icon = "__castra__/graphics/atom-forge/atom-forge-icon.png",

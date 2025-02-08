@@ -208,22 +208,32 @@ data:extend({
         {
             {
                 type = "physical",
-                decrease = 5,
-                percent = 30
+                decrease = 50,
+                percent = 10
             },
             {
                 type = "explosion",
-                decrease = 10
+                decrease = 10,
+                percent = 95
             },
             {
                 type = "fire",
-                decrease = 3,
-                percent = 40
+                decrease = 10,
+                percent = 30
             },
             {
                 type = "electric",
                 decrease = 10,
                 percent = 20
+            },
+            {
+                type = "laser",
+                decrease = 50,
+                percent = 95
+            },
+            {
+                type = "poison",
+                percent = 100
             }
         },
         working_sound = {
@@ -451,7 +461,36 @@ tank.name = "castra-enemy-tank"
 tank.icon = "__base__/graphics/icons/tank.png"
 -- Use the normal tank's health and resistances
 tank.max_health = data.raw["car"]["tank"].max_health
-tank.resistances = data.raw["car"]["tank"].resistances
+tank.resistances = {
+    {
+        type = "physical",
+        decrease = 50,
+        percent = 50
+    },
+    {
+        type = "explosion",
+        decrease = 60,
+        percent = 50
+    },
+    {
+        type = "fire",
+        percent = 100
+    },
+    {
+        type = "poison",
+        percent = 100
+    },
+    {
+        type = "laser",
+        decrease = 100,
+        percent = 99
+    },
+    {
+        type = "electric",
+        decrease = 20,
+        percent = 90
+    }
+}
 tank.absorptions_to_join_attack = { data = 1000 }
 tank.run_animation = data.raw["car"]["tank"].animation
 tank.working_sound = data.raw["car"]["tank"].working_sound
@@ -468,7 +507,6 @@ tank.selection_box = data.raw["car"]["tank"].selection_box
 tank.attack_parameters = {
     type = "projectile",
     range = 10,
-    min_range = 5,
     cooldown = 30,
     cooldown_deviation = 0.15,
     ammo_category = "bullet",

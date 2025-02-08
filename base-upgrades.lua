@@ -38,7 +38,7 @@ end
 local function add_turrets(data_collector)
     item_cache.build_cache_if_needed()
     -- Select a random turret type
-    local turret_types = { "gun-turret", "laser-turret", "flamethrower-turret", "rocket-turret", "railgun-turret",
+    local turret_types = { "gun-turret", "laser-turret", "rocket-turret", "railgun-turret",
         "tesla-turret", "combat-roboport" }
 
     -- Remove any unresearched turrets
@@ -65,7 +65,7 @@ end
 local function fill_turrets(data_collector)
     -- Fill all turrets in the area with ammo
     local area = get_search_area_size(data_collector, 30)
-    local turret_types = { "gun-turret", "laser-turret", "flamethrower-turret", "rocket-turret", "railgun-turret",
+    local turret_types = { "gun-turret", "laser-turret", "rocket-turret", "railgun-turret",
         "tesla-turret", "combat-roboport" }
     for _, turret_type in pairs(turret_types) do
         for _, turret in pairs(data_collector.surface.find_entities_filtered { area = area, type = turret_type }) do

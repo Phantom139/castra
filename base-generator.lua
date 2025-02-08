@@ -540,7 +540,7 @@ local function place_turrets(data_collector_pos, type)
     local turret_types = nil
     if not type then
         -- Select a random turret type from the available turrets
-        turret_types = { "gun-turret", "laser-turret", "flamethrower-turret", "rocket-turret", "railgun-turret",
+        turret_types = { "gun-turret", "laser-turret", "rocket-turret", "railgun-turret",
             "tesla-turret", "combat-roboport" }
     else
         turret_types = { type }
