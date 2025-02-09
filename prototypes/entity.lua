@@ -208,7 +208,7 @@ data:extend({
         {
             {
                 type = "physical",
-                decrease = 50,
+                decrease = 20,
                 percent = 10
             },
             {
@@ -228,7 +228,7 @@ data:extend({
             },
             {
                 type = "laser",
-                decrease = 50,
+                decrease = 20,
                 percent = 95
             },
             {
@@ -464,12 +464,12 @@ tank.max_health = data.raw["car"]["tank"].max_health
 tank.resistances = {
     {
         type = "physical",
-        decrease = 50,
+        decrease = 10,
         percent = 50
     },
     {
         type = "explosion",
-        decrease = 60,
+        decrease = 10,
         percent = 50
     },
     {
@@ -482,12 +482,12 @@ tank.resistances = {
     },
     {
         type = "laser",
-        decrease = 100,
+        decrease = 20,
         percent = 99
     },
     {
         type = "electric",
-        decrease = 20,
+        decrease = 10,
         percent = 90
     }
 }

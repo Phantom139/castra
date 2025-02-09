@@ -1,4 +1,18 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.3.0
+Date: 2025-02-09
+  Bugfixes:
+    - Fix enemy research speed not scaling up with enemy evolution
+  Changes:
+    - New recipes for circuits from battlefield data
+    - Add new recipe for iron plates
+    - Add new rocket fuel from sulfur recipe
+    - Increase iron ore chance from the basic nickel recipe
+    - Reduced Castra evolution speed at higher evolutions
+    - Add new technology and shortcut to allow monitoring the enemy's current research speed and research
+    - Reduced flat damage resistances on enemies
+    - Modified hydrogen sulfide electrolysis recipe to be faster and reduce sulfur byproduct
+---------------------------------------------------------------------------------------------------
 Version: 0.2.2
 Date: 2025-02-07
   Bugfixes:

@@ -70,8 +70,9 @@ function on_data_collector_item_spawned(event)
         event.entity.surface.spill_item_stack { position = event.spawner.position, stack = { name = item_name, count = 1, quality = quality }, enable_looted = true, allow_belts = true, force = force, max_radius = 5 }
     end
 
-    -- Increase evolution by 0.000015
-    event.entity.force.set_evolution_factor(event.entity.force.get_evolution_factor(event.entity.surface) + 0.000015, event.entity.surface)
+    -- Increase evolution by 0.000015 / (evolution_factor + 1)
+    local factor = 0.000015 / (game.forces["enemy"].get_evolution_factor(event.entity.surface) + 1)
+    event.entity.force.set_evolution_factor(game.forces["enemy"].get_evolution_factor(event.entity.surface) + factor, event.entity.surface)
 
     event.entity.destroy()
 end
@@ -204,7 +205,7 @@ local function get_castra_research_speed()
         return 0
     end
 
-    local evolution = game.forces["player"].get_evolution_factor("castra")
+    local evolution = game.forces["enemy"].get_evolution_factor("castra")
     -- 90/minute at 100% evolution
     local research_speed = evolution * 90
 
@@ -532,6 +533,42 @@ script.on_event(defines.events.on_tick, function(event)
                     table.insert(storage.castra.combat_roboports, roboport)
                 end
             end
+        end
+    end
+end)
+
+script.on_event(defines.events.on_lua_shortcut, function(event)
+    -- Send the player a message an update on the enemy research progress
+    if event.prototype_name == "castra-enemy-research" then
+        local player = game.players[event.player_index]
+        if not item_cache.castra_exists() then
+            player.print("Castra is not available.")
+            return
+        end
+
+        -- Check for player radars with power
+        local radars = player.surface.find_entities_filtered { name = "radar", force = player.force }
+        local hasRadar = false
+        for _, radar in pairs(radars) do
+            if radar.energy > 0 then
+                hasRadar = true
+                break
+            end
+        end
+        if not hasRadar then
+            player.print("You need a powered radar on Castra to get an update on enemy research progress.")
+            return
+        end
+
+        local enemy_force = game.forces["enemy"]
+        local research_speed = math.floor(get_castra_research_speed() * 100) / 100
+        local current_research_progress = 0
+        player.print("Castra enemy research speed: " .. research_speed .. "/m")
+        if enemy_force.current_research then
+            current_research_progress = math.floor(enemy_force.research_progress * 10000) / 100
+            player.print("Currently researching: [technology=" .. enemy_force.current_research.name .. "] " .. current_research_progress .. "%")
+        else
+            player.print("Currently researching nothing, or a trigger technology.")
         end
     end
 end)

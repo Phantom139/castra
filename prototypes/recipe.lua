@@ -27,7 +27,7 @@ data:extend(
       ingredients = {{type="item", name="millerite", amount=5}},
       results = {
         {type="item", name="nickel-plate", amount=4},
-        {type="item", name="iron-ore", amount=1, probability=0.1},
+        {type="item", name="iron-ore", amount=1, probability=0.5},
         {type="item", name="sulfur", amount=1, probability=0.1}
       },
       icons =
@@ -59,11 +59,11 @@ data:extend(
     {
       type = "recipe",
       name = "hydrogen-sulfide-electrolysis",
-      category = "chemistry",
-      energy_required = 5,
-      ingredients = {{type="fluid", name="hydrogen-sulfide", amount=50}},
+      category = "chemistry-or-cryogenics",
+      energy_required = 2,
+      ingredients = {{type="fluid", name="hydrogen-sulfide", amount=100}},
       results = {
-        {type="fluid", name="water", amount=40},
+        {type="fluid", name="water", amount=80},
         {type="item", name="sulfur", amount=5}
       },
       icons =
@@ -797,6 +797,182 @@ data:extend(
       main_product = "",
       subgroup = "castra-military",
       order = "o[destroyer-capsule]"
+    },
+    {
+      type = "recipe",
+      name = "electronic-circuit-battlefield-data",
+      enabled = false,
+      energy_required = 4,
+      ingredients = {
+        {type="item", name="castra-data", amount=1},
+        {type="item", name="copper-cable", amount=3}
+      },
+      results = {{type="item", name="electronic-circuit", amount=1}},
+      icons =
+      {
+        {
+          icon = "__base__/graphics/icons/electronic-circuit.png",
+          scale = 0.7,
+          shift = {0, -10}
+        },
+        {
+          icon = "__castra__/graphics/icons/castra-data.png",
+          scale = 0.5,
+          shift = {-10, 10}
+        }
+      },
+      auto_recycle = false,
+      category = "electronics-or-assembling",
+      allow_productivity = true,
+      hide_from_signal_gui = false,
+      main_product = "",
+      subgroup = "castra-processes",
+      order = "e[electronic-circuit]"
+    },
+    {
+      type = "recipe",
+      name = "advanced-circuit-battlefield-data",
+      enabled = false,
+      energy_required = 8,
+      ingredients = {
+        {type="item", name="castra-data", amount=1},
+        {type="item", name="electronic-circuit", amount=2},
+        {type="item", name="plastic-bar", amount=2}
+      },
+      results = {{type="item", name="advanced-circuit", amount=1}},
+      icons =
+      {
+        {
+          icon = "__base__/graphics/icons/advanced-circuit.png",
+          scale = 0.7,
+          shift = {0, -10}
+        },
+        {
+          icon = "__castra__/graphics/icons/castra-data.png",
+          scale = 0.5,
+          shift = {-10, 10}
+        }
+      },
+      auto_recycle = false,
+      category = "electronics-or-assembling",
+      allow_productivity = true,
+      hide_from_signal_gui = false,
+      main_product = "",
+      subgroup = "castra-processes",
+      order = "f[advanced-circuit]"
+    },
+    {
+      type = "recipe",
+      name = "processing-unit-battlefield-data",
+      enabled = false,
+      energy_required = 12,
+      ingredients = {
+        {type="item", name="castra-data", amount=4},
+        {type="item", name="advanced-circuit", amount=2},
+        {type="fluid", name="sulfuric-acid", amount=10}
+      },
+      results = {{type="item", name="processing-unit", amount=1}},
+      icons =
+      {
+        {
+          icon = "__base__/graphics/icons/processing-unit.png",
+          scale = 0.7,
+          shift = {0, -10}
+        },
+        {
+          icon = "__castra__/graphics/icons/castra-data.png",
+          scale = 0.5,
+          shift = {-10, 10}
+        }
+      },
+      auto_recycle = false,
+      category = "electronics-or-assembling",
+      allow_productivity = true,
+      hide_from_signal_gui = false,
+      main_product = "",
+      subgroup = "castra-processes",
+      order = "g[processing-unit]"
+    },
+    {
+      type = "recipe",
+      name = "nickel-sulfide-reduction",
+      enabled = false,
+      energy_required = 6,
+      category = "chemistry-or-cryogenics",
+      ingredients = {
+        {type="item", name="copper-plate", amount=4},
+        {type="item", name="millerite", amount=1},
+        {type="item", name="sulfur", amount=2}
+      },
+      results = {
+        {type="item", name="iron-plate", amount=2},
+        {type="item", name="nickel-plate", amount=1}
+      },
+      icons =
+      {
+        {
+          icon = "__base__/graphics/icons/iron-plate.png",
+          scale = 0.7,
+          shift = {0, -10}
+        },
+        {
+          icon = "__castra__/graphics/icons/millerite.png",
+          scale = 0.5,
+          shift = {-10, 10}
+        },
+        {
+          icon = "__base__/graphics/icons/sulfur.png",
+          scale = 0.5,
+          shift = {10, 10}
+        },
+        {
+          icon = "__base__/graphics/icons/copper-plate.png",
+          scale = 0.5,
+          shift = {0, 10}
+        }
+      },
+      allow_productivity = true,
+      auto_recycle = false,
+      hide_from_signal_gui = false,
+      main_product = "",
+      subgroup = "castra-processes",
+      order = "d[nickel-sulfide-reduction]"
+    },
+    {
+      type = "recipe",
+      name = "rocket-fuel-sulfur",
+      enabled = false,
+      energy_required = 15,
+      category = "chemistry-or-cryogenics",
+      ingredients = {
+        {type="fluid", name="light-oil", amount=100},
+        {type="item", name="sulfur", amount=12}
+      },
+      results = {{type="item", name="rocket-fuel", amount=1}},
+      icons =
+      {
+        {
+          icon = "__base__/graphics/icons/rocket-fuel.png",
+          scale = 0.7,
+          shift = {0, -10}
+        },
+        {
+          icon = "__base__/graphics/icons/fluid/light-oil.png",
+          scale = 0.5,
+          shift = {-10, 10}
+        },
+        {
+          icon = "__base__/graphics/icons/sulfur.png",
+          scale = 0.5,
+          shift = {10, 10}
+        }
+      },
+      allow_productivity = true,
+      auto_recycle = false,
+      hide_from_signal_gui = false,
+      main_product = "",
+      subgroup = "castra-processes",
+      order = "g[rocket-fuel]"
     }
   }
 )

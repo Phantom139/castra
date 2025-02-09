@@ -179,6 +179,12 @@ for _, tech in pairs(data.raw["technology"]) do
     end
 end
 
+for _, tech in pairs(data.raw["technology"]) do
+    if string.find(tech.name, "rocket%-fuel%-productivity") then
+        table.insert(tech.effects, { type = "change-recipe-productivity", recipe = "rocket-fuel-sulfur", change = 0.1 })
+    end
+end
+
 if mods["planet-muluna"] then
     -- Add electric-engine-unit-from-carbon to producitivty tech
     local recipe = data.raw["recipe"]["electric-engine-unit-from-carbon"]

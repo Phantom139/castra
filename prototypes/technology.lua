@@ -12,6 +12,18 @@ data:extend(
           type = "unlock-space-location",
           space_location = "castra",
           use_icon_overlay_constant = true
+        },
+        {
+          type = "unlock-recipe",
+          recipe = "electronic-circuit-battlefield-data"
+        },
+        {
+          type = "unlock-recipe",
+          recipe = "advanced-circuit-battlefield-data"
+        },
+        {
+          type = "unlock-recipe",
+          recipe = "processing-unit-battlefield-data"
         }
       },
       prerequisites = { "space-platform-thruster", "military-science-pack" },
@@ -61,6 +73,10 @@ data:extend(
         {
           type = "unlock-recipe",
           recipe = "tank-nickel"
+        },
+        {
+          type = "unlock-recipe",
+          recipe = "nickel-sulfide-reduction"
         }
       }
     },
@@ -88,6 +104,10 @@ data:extend(
         {
           type = "unlock-recipe",
           recipe = "plastic-hydrogen-sulfide"
+        },
+        {
+          type = "unlock-recipe",
+          recipe = "rocket-fuel-sulfur"
         }
       }
     },
@@ -129,7 +149,7 @@ data:extend(
       name = "forge",
       icon = "__castra__/graphics/atom-forge/atom-forge-icon.png",
       icon_size = 64,
-      prerequisites = { "millerite-processing", "hydrogen-sulfide-processing", "gunpowder-processing" },
+      prerequisites = { "millerite-processing", "hydrogen-sulfide-processing", "gunpowder-processing", "quality-module-2" },
       effects =
       {
         {
@@ -688,6 +708,34 @@ data:extend(
       },
       max_level = "infinite",
       upgrade = true
+    },
+    {
+      type = "technology",
+      name = "castra-enemy-research",
+      icon = "__castra__/graphics/icons/technology-castra-enemy-research.png",
+      icon_size = 256,
+      prerequisites = { "battlefield-science-pack", "radar" },
+      effects =
+      {
+        {
+          type = "nothing",
+          effect_description = { "technology-effect-description.castra-enemy-research" }
+        }
+      },
+      unit =
+      {
+        count = 200,
+        ingredients =
+        {
+          { "automation-science-pack",  1 },
+          { "logistic-science-pack",    1 },
+          { "chemical-science-pack",    1 },
+          { "military-science-pack",    1 },
+          { "space-science-pack",       1 },
+          { "battlefield-science-pack", 1 }
+        },
+        time = 60
+      }
     }
   }
 )
