@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.3.1
+Date: 2025-02-10
+  Compatibility:
+    - Remove duplicate asteroid collector tech prerequisite on Castra discovery
+  Changes:
+    - Adjusted research speed based on the number of science packs for the current enemy tech
+    - Display the next technology the enemy is researching if monitoring is unlocked
+---------------------------------------------------------------------------------------------------
 Version: 0.3.0
 Date: 2025-02-09
   Bugfixes:

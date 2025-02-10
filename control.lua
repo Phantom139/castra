@@ -240,6 +240,15 @@ local function get_castra_research_speed()
         research_speed = research_speed * (1 + storage.castra.enemy.quality_tier.level * 0.08)
     end
 
+    -- Factor in current research unit count
+    -- #enemy_force.current_research.research_unit_ingredients
+    if game.forces["enemy"].current_research then
+        local current_research = game.forces["enemy"].current_research
+        if current_research.research_unit_ingredients then
+            research_speed = research_speed / (math.log(#current_research.research_unit_ingredients, 2) + 1)
+        end
+    end
+
     -- Minimum of 5
     if research_speed < 5 then
         research_speed = 5
@@ -271,17 +280,17 @@ local function update_castra_research_progress(event)
         local enemy_force = game.forces["enemy"]
         enemy_force.enable_research()
         local research_speed = get_castra_research_speed()
-        -- Update Research progress based on the current research units count and number of science packs
+        -- Update Research progress based on the current research units count
         local current_research_units = 0
         if enemy_force.current_research then
             if enemy_force.current_research.prototype.research_trigger then
                 current_research_units = 10
             else
                 current_research_units = enemy_force.current_research.research_unit_count
-                current_research_units = current_research_units *
-                    #enemy_force.current_research.research_unit_ingredients
             end
         end
+
+        local completed_tech = false
         if current_research_units > 0 then
             local progress = enemy_force.research_progress * current_research_units + research_speed
             if progress / current_research_units >= 1 then
@@ -289,6 +298,7 @@ local function update_castra_research_progress(event)
                     enemy_force.current_research.name .. "]")
                 enemy_force.current_research.researched = true
                 item_cache.update_castra_enemy_data()
+                completed_tech = true
             else
                 enemy_force.research_progress = progress / current_research_units
             end
@@ -361,7 +371,8 @@ local function update_castra_research_progress(event)
             end
 
             -- If it's a trigger research, it can't be queued, so update it's status now
-            if nextResearch.prototype.research_trigger then
+            -- Skip if already completed a tech this tick
+            if nextResearch.prototype.research_trigger and not completed_tech then
                 local progress = nextResearch.saved_progress * 10 + research_speed
                 if progress >= 10 then
                     game.forces["player"].print("Castra enemies have completed [technology=" ..
@@ -372,7 +383,14 @@ local function update_castra_research_progress(event)
                     nextResearch.saved_progress = progress / 10
                 end
             else
-                enemy_force.add_research(nextResearch)
+                enemy_force.add_research(nextResearch)                
+                -- If the player has monitoring research has been completed, show the next one
+                if game.forces["player"] and 
+                game.forces["player"].technologies and 
+                game.forces["player"].technologies["castra-enemy-research"] and 
+                game.forces["player"].technologies["castra-enemy-research"].researched then
+                    game.forces["player"].print("Next: [technology=" .. nextResearch.name .. "]")
+                end          
             end
         end
     end
