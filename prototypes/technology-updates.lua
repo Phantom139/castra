@@ -214,7 +214,3 @@ if mods["Cerys-Moon-of-Fulgora"] then
     end
 end
 
--- If the asteroid-collector tech exists (from Muluna), add that as a prereq to the castra discovery tech
-if data.raw["technology"]["asteroid-collector"] then
-    table.insert(data.raw["technology"]["planet-discovery-castra"].prerequisites, "asteroid-collector")
-end
