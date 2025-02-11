@@ -69,7 +69,7 @@ for _, item in pairs(data.raw["item"]) do
     -- Check item's place_result if it's a turret or a wall type
     if item.place_result then
         local entity = data.raw["item"][item.place_result]
-        if entity and (entity.type == "wall" or entity.type == "turret" or entity.type == "gate") then
+        if entity and (entity.type == "wall" or entity.type == "turret" or entity.type == "fluid-turret" or entity.type == "gate") then
             change_to_category(item)
             goto continueItem
         end

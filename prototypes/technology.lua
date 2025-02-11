@@ -736,6 +736,71 @@ data:extend(
         },
         time = 60
       }
+    },
+    {
+      type = "technology",
+      name = "military-transport-belt",
+      icon = "__castra__/graphics/technology/military-transport-belt.png",
+      icon_size = 256,
+      effects =
+      {
+        {
+          type = "unlock-recipe",
+          recipe = "military-transport-belt"
+        },
+        {
+          type = "unlock-recipe",
+          recipe = "military-underground-belt"
+        },
+        {
+          type = "unlock-recipe",
+          recipe = "military-splitter"
+        },
+      },
+      prerequisites = {"battlefield-science-pack", "reverse-cracking"},
+      unit =
+      {
+        count = 1000,
+        ingredients =
+        {
+          {"automation-science-pack", 1},
+          {"logistic-science-pack", 1},
+          {"chemical-science-pack", 1},
+          {"production-science-pack", 1},
+          {"space-science-pack", 1},
+          {"battlefield-science-pack", 1}
+        },
+        time = 60
+      }
+    },
+    {
+      type = "technology",
+      name = "carbon-fiber-wall",
+      icon = "__castra__/graphics/technology/carbon-fiber-wall.png",
+      icon_size = 256,
+      effects =
+      {
+        {
+          type = "unlock-recipe",
+          recipe = "carbon-fiber-wall"
+        }
+      },
+      prerequisites = {"battlefield-science-pack", "carbon-fiber"},
+      unit =
+      {
+        count = 1000,
+        ingredients =
+        {
+          {"automation-science-pack", 1},
+          {"logistic-science-pack", 1},
+          {"chemical-science-pack", 1},
+          {"military-science-pack", 1},
+          {"space-science-pack", 1},
+          {"battlefield-science-pack", 1},
+          {"agricultural-science-pack", 1}
+        },
+        time = 30
+      }
     }
   }
 )

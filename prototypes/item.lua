@@ -126,7 +126,79 @@ data:extend({
         stack_size = 10,
         default_import_location = "castra",
         weight = 40 * kg
-    }
+    },
+    {
+      type = "item",
+      name = "military-transport-belt",
+      icon = "__castra__/graphics/icons/military-transport-belt.png",
+      subgroup = "belt",
+      color_hint = { text = "5" },
+      order = "a[transport-belt]-e[military-transport-belt]",
+      inventory_move_sound = item_sounds.transport_belt_inventory_move,
+      pick_sound = item_sounds.transport_belt_inventory_pickup,
+      drop_sound = item_sounds.transport_belt_inventory_move,
+      place_result = "military-transport-belt",
+      stack_size = 100,
+      default_import_location = "castra",
+      weight = 20*kg
+    },
+    {
+      type = "item",
+      name = "military-underground-belt",
+      icon = "__castra__/graphics/icons/military-underground-belt.png",
+      subgroup = "belt",
+      color_hint = { text = "5" },
+      order = "b[underground-belt]-e[military-underground-belt]",
+      inventory_move_sound = item_sounds.mechanical_inventory_move,
+      pick_sound = item_sounds.mechanical_inventory_pickup,
+      drop_sound = item_sounds.mechanical_inventory_move,
+      place_result = "military-underground-belt",
+      stack_size = 50,
+      default_import_location = "castra",
+      weight = 40*kg
+    },
+    {
+      type = "item",
+      name = "military-splitter",
+      icon = "__castra__/graphics/icons/military-splitter.png",
+      subgroup = "belt",
+      color_hint = { text = "5" },
+      order = "c[splitter]-e[military-splitter]",
+      inventory_move_sound = item_sounds.mechanical_inventory_move,
+      pick_sound = item_sounds.mechanical_inventory_pickup,
+      drop_sound = item_sounds.mechanical_inventory_move,
+      place_result = "military-splitter",
+      stack_size = 50,
+      default_import_location = "castra",
+      weight = 40*kg
+    },
+    {
+      type = "item",
+      name = "military-loader",
+      icon = "__castra__/graphics/icons/military-loader.png",
+      hidden = true,
+      subgroup = "belt",
+      color_hint = { text = "4" },
+      order = "d[loader]-e[military-loader]",
+      inventory_move_sound = item_sounds.mechanical_inventory_move,
+      pick_sound = item_sounds.mechanical_inventory_pickup,
+      drop_sound = item_sounds.mechanical_inventory_move,
+      place_result = "military-loader",
+      stack_size = 50
+    },
+    {
+      type = "item",
+      name = "carbon-fiber-wall",
+      icon = "__castra__/graphics/icons/carbon-fiber-wall.png",
+      subgroup = "defensive-structure",
+      order = "a[stone-wall]-c[carbon-fiber-wall]",
+      inventory_move_sound = item_sounds.concrete_inventory_move,
+      pick_sound = item_sounds.concrete_inventory_pickup,
+      drop_sound = item_sounds.concrete_inventory_move,
+      place_result = "carbon-fiber-wall",
+      stack_size = 100,
+      weight = 20*kg
+    },
 })
 
 local shield_mk3 = table.deepcopy(data.raw["item"]["energy-shield-mk2-equipment"])

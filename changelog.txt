@@ -1,4 +1,20 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.3.2
+Date: 2025-02-11
+  Bugfixes:
+    - Fix castra monitoring checking for radars on the player's current surface
+    - Fix enemy trigger researches not being finished before switching
+    - Fix enemy getting stuck on infinite techs
+    - Fix enemy research notifications always showing lowest level tech    
+  Changes:
+    - Add military-grade transport belts
+    - Add carbon fiber walls
+    - Reduced chance for enemy to research high cost techs
+    - Removed belts, roboports, and walls as military targets ("fixes" enemies focusing on them too much)
+    - Add flamethrower recipe to forge
+    - Battery with nickel category changed to chemical plant or cryogenic plant
+    - Holmium catalyzing changed to foundry or assembly machine
+---------------------------------------------------------------------------------------------------
 Version: 0.3.1
 Date: 2025-02-10
   Compatibility:

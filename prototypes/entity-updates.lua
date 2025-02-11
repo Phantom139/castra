@@ -51,30 +51,3 @@ for _, furnace in pairs(data.raw["furnace"]) do
         furnace.result_inventory_size = 3
     end
 end
-
--- Set belts as military targets
-for _, belt in pairs(data.raw["transport-belt"]) do
-    belt.is_military_target = true
-end
-
-for _, belt in pairs(data.raw["underground-belt"]) do
-    belt.is_military_target = true
-end
-
-for _, belt in pairs(data.raw["splitter"]) do
-    belt.is_military_target = true
-end
-
-for _, loader in pairs(data.raw["loader"]) do
-    loader.is_military_target = true
-end
-
--- Set roboports as military targets
-for _, roboport in pairs(data.raw["roboport"]) do
-    roboport.is_military_target = true
-end
-
--- Set walls as military targets
-for _, wall in pairs(data.raw["wall"]) do
-    wall.is_military_target = true
-end

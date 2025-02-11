@@ -72,7 +72,8 @@ function on_data_collector_item_spawned(event)
 
     -- Increase evolution by 0.000015 / (evolution_factor + 1)
     local factor = 0.000015 / (game.forces["enemy"].get_evolution_factor(event.entity.surface) + 1)
-    event.entity.force.set_evolution_factor(game.forces["enemy"].get_evolution_factor(event.entity.surface) + factor, event.entity.surface)
+    event.entity.force.set_evolution_factor(game.forces["enemy"].get_evolution_factor(event.entity.surface) + factor,
+        event.entity.surface)
 
     event.entity.destroy()
 end
@@ -167,7 +168,7 @@ function give_tank_random_command(tank)
         end
     else
         -- Find the nearest player entity
-        local closest = tank.surface.find_nearest_enemy {position = tank.position, force = tank.force, max_distance = 500}
+        local closest = tank.surface.find_nearest_enemy { position = tank.position, force = tank.force, max_distance = 500 }
         if closest then
             tank.commandable.set_command { type = defines.command.attack_area, destination = closest.position, radius = 8, distraction = defines.distraction.by_anything }
             return
@@ -270,6 +271,8 @@ local function unlock_research_up_to(technology_name)
     end
 end
 
+local trigger_research = nil
+
 --on_tick update enemy research progress based on the evolution on castra
 local function update_castra_research_progress(event)
     if event.tick % 3600 == 0 then
@@ -295,8 +298,12 @@ local function update_castra_research_progress(event)
             local progress = enemy_force.research_progress * current_research_units + research_speed
             if progress / current_research_units >= 1 then
                 game.forces["player"].print("Castra enemies have completed [technology=" ..
-                    enemy_force.current_research.name .. "]")
+                    enemy_force.current_research.name .. ", level=" .. enemy_force.current_research.level .. "]")
                 enemy_force.current_research.researched = true
+                -- Infinite techs will not be cleared so we need to manually clear the progress
+                if enemy_force.current_research then
+                    enemy_force.current_research.saved_progress = 0
+                end
                 item_cache.update_castra_enemy_data()
                 completed_tech = true
             else
@@ -304,7 +311,7 @@ local function update_castra_research_progress(event)
             end
         end
 
-        if enemy_force.current_research == nil then
+        if enemy_force.current_research == nil or completed_tech then
             -- Unlock gun-turret and stone-wall if they exist and have not been unlocked
             if prototypes.technology["gun-turret"] and not enemy_force.technologies["gun-turret"].researched then
                 unlock_research_up_to("gun-turret")
@@ -346,51 +353,60 @@ local function update_castra_research_progress(event)
                 return
             end
 
-            -- Pick a random strategy
-            -- 0 = lowest cost
-            -- 1 = random
-            -- 2 = highest cost
             local nextResearch = nil
-            local strategy = math.random(0, 2)
-            if strategy == 0 then
-                table.sort(valid, function(a, b)
-                    return a.research_unit_count < b.research_unit_count
-                end)
-                nextResearch = valid[1]
-            elseif strategy == 1 then
-                nextResearch = valid[math.random(1, #valid)]
-            elseif strategy == 2 then
-                table.sort(valid, function(a, b)
-                    return a.research_unit_count > b.research_unit_count
-                end)
-                nextResearch = valid[1]
+            if trigger_research then
+                nextResearch = trigger_research
+            else
+                -- Pick a random strategy
+                -- 0-5 = lowest cost
+                -- 6-20 = random
+                -- 21 = highest cost
+                local strategy = math.random(0, 21)
+                if strategy >= 0 and strategy <= 5 then
+                    table.sort(valid, function(a, b)
+                        return a.research_unit_count < b.research_unit_count
+                    end)
+                    nextResearch = valid[1]
+                elseif strategy >= 6 and strategy <= 20 then
+                    nextResearch = valid[math.random(1, #valid)]
+                elseif strategy == 21 then
+                    table.sort(valid, function(a, b)
+                        return a.research_unit_count > b.research_unit_count
+                    end)
+                    nextResearch = valid[1]
+                end
             end
 
             if nextResearch == nil then
                 return
             end
 
+            if nextResearch.prototype.research_trigger then
+                trigger_research = nextResearch
+            end
+
             -- If it's a trigger research, it can't be queued, so update it's status now
             -- Skip if already completed a tech this tick
-            if nextResearch.prototype.research_trigger and not completed_tech then
+            if trigger_research and not completed_tech then
                 local progress = nextResearch.saved_progress * 10 + research_speed
                 if progress >= 10 then
                     game.forces["player"].print("Castra enemies have completed [technology=" ..
-                        nextResearch.name .. "]")
+                        nextResearch.name .. ", level=" .. nextResearch.level .. "]")
                     nextResearch.researched = true
                     item_cache.update_castra_enemy_data()
+                    trigger_research = nil
                 else
                     nextResearch.saved_progress = progress / 10
                 end
             else
-                enemy_force.add_research(nextResearch)                
+                enemy_force.add_research(nextResearch)
                 -- If the player has monitoring research has been completed, show the next one
-                if game.forces["player"] and 
-                game.forces["player"].technologies and 
-                game.forces["player"].technologies["castra-enemy-research"] and 
-                game.forces["player"].technologies["castra-enemy-research"].researched then
-                    game.forces["player"].print("Next: [technology=" .. nextResearch.name .. "]")
-                end          
+                if game.forces["player"] and
+                    game.forces["player"].technologies and
+                    game.forces["player"].technologies["castra-enemy-research"] and
+                    game.forces["player"].technologies["castra-enemy-research"].researched then
+                    game.forces["player"].print("Castra enemies have started [technology=" .. nextResearch.name .. ", level=" .. nextResearch.level .. "]")
+                end
             end
         end
     end
@@ -492,7 +508,7 @@ local function randomly_upgrade_base(event)
             return
         end
 
-        local surface = game.surfaces["castra"]        
+        local surface = game.surfaces["castra"]
         local dataCollectors = surface.find_entities_filtered { name = "data-collector", force = "enemy" }
         if #dataCollectors > 0 then
             local count = math.max(math.min(#dataCollectors, 5), math.min(20, math.floor(#dataCollectors * 0.05)))
@@ -559,13 +575,14 @@ script.on_event(defines.events.on_lua_shortcut, function(event)
     -- Send the player a message an update on the enemy research progress
     if event.prototype_name == "castra-enemy-research" then
         local player = game.players[event.player_index]
+        local surface = game.surfaces["castra"]
         if not item_cache.castra_exists() then
             player.print("Castra is not available.")
             return
         end
 
         -- Check for player radars with power
-        local radars = player.surface.find_entities_filtered { name = "radar", force = player.force }
+        local radars = surface.find_entities_filtered { name = "radar", force = player.force }
         local hasRadar = false
         for _, radar in pairs(radars) do
             if radar.energy > 0 then
@@ -581,10 +598,13 @@ script.on_event(defines.events.on_lua_shortcut, function(event)
         local enemy_force = game.forces["enemy"]
         local research_speed = math.floor(get_castra_research_speed() * 100) / 100
         local current_research_progress = 0
-        player.print("Castra enemy research speed: " .. research_speed .. "/m")
         if enemy_force.current_research then
             current_research_progress = math.floor(enemy_force.research_progress * 10000) / 100
-            player.print("Currently researching: [technology=" .. enemy_force.current_research.name .. "] " .. current_research_progress .. "%")
+            player.print("Currently researching: [technology=" ..
+                enemy_force.current_research.name .. ", level=" .. enemy_force.current_research.level .. "] " .. current_research_progress .. "% at " .. research_speed .. "/m")
+        elseif trigger_research then
+            player.print("Currently researching: [technology=" ..
+                trigger_research.name .. ", level=" .. trigger_research.level .. "]")
         else
             player.print("Currently researching nothing, or a trigger technology.")
         end

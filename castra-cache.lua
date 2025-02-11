@@ -73,6 +73,9 @@ local function update_castra_enemy_data()
     if has_castra_researched_item("stone-wall") then
         wall_tier = "stone-wall"
     end
+    if has_castra_researched_item("carbon-fiber-wall") then
+        wall_tier = "carbon-fiber-wall"
+    end
     enemy_storage.wall_tier = wall_tier
 
     -- Check highest tier of ammo

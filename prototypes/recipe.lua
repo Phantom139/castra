@@ -322,7 +322,7 @@ data:extend(
       -- Battery using nickel instead of iron
       type = "recipe",
       name = "battery-nickel",
-      category = "chemistry",
+      category = "chemistry-or-cryogenics",
       enabled = false,
       energy_required = 4,
       ingredients = {
@@ -548,7 +548,7 @@ data:extend(
       name = "holmium-catalyzing",
       enabled = false,
       energy_required = 4,
-      category = "metallurgy",
+      category = "metallurgy-or-assembling",
       ingredients = {
         {type="fluid", name="holmium-solution", amount=20},
         {type="item", name="millerite", amount=1}
@@ -973,6 +973,85 @@ data:extend(
       main_product = "",
       subgroup = "castra-processes",
       order = "g[rocket-fuel]"
-    }
+    },
+    {
+      type = "recipe",
+      name = "military-transport-belt",
+      category = "metallurgy-or-assembling",
+      surface_conditions =
+      {
+        {
+          property = "pressure",
+          min = 1254,
+          max = 1254
+        }
+      },
+      enabled = false,
+      ingredients =
+      {
+        {type = "item", name = "nickel-plate", amount = 10},
+        {type = "item", name = "engine-unit", amount = 1},
+        {type= "fluid", name = "lubricant", amount = 5}
+      },
+      results = {{type="item", name="military-transport-belt", amount=4}}
+    },
+    {
+      type = "recipe",
+      name = "military-underground-belt",
+      energy_required = 2,
+      category = "metallurgy-or-assembling",
+      surface_conditions =
+      {
+        {
+          property = "pressure",
+          min = 1254,
+          max = 1254
+        }
+      },
+      enabled = false,
+      ingredients =
+      {
+        {type = "item", name = "nickel-plate", amount = 20},
+        {type = "item", name = "military-transport-belt", amount = 20},
+        {type = "fluid", name = "lubricant", amount = 5}
+      },
+      results = {{type="item", name="military-underground-belt", amount=2}}
+    },
+    {
+      type = "recipe",
+      name = "military-splitter",
+      category = "metallurgy-or-assembling",
+      surface_conditions =
+      {
+        {
+          property = "pressure",
+          min = 1254,
+          max = 1254
+        }
+      },
+      enabled = false,
+      energy_required = 2,
+      ingredients =
+      {
+        {type = "item", name = "military-transport-belt", amount = 4},
+        {type = "item", name = "nickel-plate", amount = 8},
+        {type = "item", name = "electronic-circuit", amount = 10},
+        {type = "fluid", name = "lubricant", amount = 10}
+      },
+      results = {{type="item", name="military-splitter", amount=1}}
+    },
+    {
+      type = "recipe",
+      name = "carbon-fiber-wall",
+      enabled = false,
+      ingredients = {
+        {type="item", name="carbon-fiber", amount=5},
+        {type="item", name="stone-brick", amount=5},
+        {type="item", name="nickel-plate", amount=2}
+      },
+      results = {{type="item", name="carbon-fiber-wall", amount=2}},
+      category = "castra-forge",
+      energy_required = 2
+    },
   }
 )
