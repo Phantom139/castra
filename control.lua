@@ -70,8 +70,8 @@ function on_data_collector_item_spawned(event)
         event.entity.surface.spill_item_stack { position = event.spawner.position, stack = { name = item_name, count = 1, quality = quality }, enable_looted = true, allow_belts = true, force = force, max_radius = 5 }
     end
 
-    -- Increase evolution by 0.000015 / (evolution_factor + 1)
-    local factor = 0.000015 / (game.forces["enemy"].get_evolution_factor(event.entity.surface) + 1)
+    -- Increase evolution by 0.0000015 / (evolution_factor * 2 + 1)
+    local factor = 0.0000015 / (game.forces["enemy"].get_evolution_factor(event.entity.surface) * 2 + 1)
     event.entity.force.set_evolution_factor(game.forces["enemy"].get_evolution_factor(event.entity.surface) + factor,
         event.entity.surface)
 
@@ -298,11 +298,14 @@ local function update_castra_research_progress(event)
             local progress = enemy_force.research_progress * current_research_units + research_speed
             if progress / current_research_units >= 1 then
                 game.forces["player"].print("Castra enemies have completed [technology=" ..
-                    enemy_force.current_research.name .. ", level=" .. enemy_force.current_research.level .. "]")
+                    enemy_force.current_research.name .. ",level=" .. enemy_force.current_research.level .. "]")
                 enemy_force.current_research.researched = true
                 -- Infinite techs will not be cleared so we need to manually clear the progress
                 if enemy_force.current_research then
                     enemy_force.current_research.saved_progress = 0
+                    while enemy_force.current_research do
+                        enemy_force.cancel_current_research()
+                    end
                 end
                 item_cache.update_castra_enemy_data()
                 completed_tech = true
@@ -391,7 +394,7 @@ local function update_castra_research_progress(event)
                 local progress = nextResearch.saved_progress * 10 + research_speed
                 if progress >= 10 then
                     game.forces["player"].print("Castra enemies have completed [technology=" ..
-                        nextResearch.name .. ", level=" .. nextResearch.level .. "]")
+                        nextResearch.name .. ",level=" .. nextResearch.level .. "]")
                     nextResearch.researched = true
                     item_cache.update_castra_enemy_data()
                     trigger_research = nil
@@ -405,7 +408,7 @@ local function update_castra_research_progress(event)
                     game.forces["player"].technologies and
                     game.forces["player"].technologies["castra-enemy-research"] and
                     game.forces["player"].technologies["castra-enemy-research"].researched then
-                    game.forces["player"].print("Castra enemies have started [technology=" .. nextResearch.name .. ", level=" .. nextResearch.level .. "]")
+                    game.forces["player"].print("Castra enemies have started [technology=" .. nextResearch.name .. ",level=" .. nextResearch.level .. "]")
                 end
             end
         end
@@ -601,10 +604,10 @@ script.on_event(defines.events.on_lua_shortcut, function(event)
         if enemy_force.current_research then
             current_research_progress = math.floor(enemy_force.research_progress * 10000) / 100
             player.print("Currently researching: [technology=" ..
-                enemy_force.current_research.name .. ", level=" .. enemy_force.current_research.level .. "] " .. current_research_progress .. "% at " .. research_speed .. "/m")
+                enemy_force.current_research.name .. ",level=" .. enemy_force.current_research.level .. "] " .. current_research_progress .. "% at " .. research_speed .. "/m")
         elseif trigger_research then
             player.print("Currently researching: [technology=" ..
-                trigger_research.name .. ", level=" .. trigger_research.level .. "]")
+                trigger_research.name .. ",level=" .. trigger_research.level .. "]")
         else
             player.print("Currently researching nothing, or a trigger technology.")
         end

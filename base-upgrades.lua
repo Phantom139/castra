@@ -155,6 +155,10 @@ local function upgrade_quality(data_collector)
     local area = get_search_area_size(data_collector, 30)
     local entities = data_collector.surface.find_entities_filtered { area = area, force = "enemy" }
     for _, entity in pairs(entities) do
+        -- Skip if a ghost
+        if entity.name == "entity-ghost" then
+            goto continue
+        end
         if entity.quality and entity.quality.level < random_quality.level then
             local entity_name = entity.name
             local surface = entity.surface
@@ -163,6 +167,7 @@ local function upgrade_quality(data_collector)
             entity.destroy()
             surface.create_entity { name = entity_name, position = position, force = "enemy", quality = random_quality }
         end
+        ::continue::
     end
 end
 

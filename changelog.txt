@@ -1,4 +1,22 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.3.5
+Date: 2025-02-12
+  Bugfixes:
+    - Fix enemy infinite techs not getting removed from queue once a level is completed
+    - Fix enemy techs showing as level 1 in messages
+---------------------------------------------------------------------------------------------------
+Version: 0.3.4
+Date: 2025-02-11
+  Bugfixes:
+    - Actually fix enemy trying to upgrade a ghost entity
+  Changes:
+    - Slow down enemy evolution by 10x+
+---------------------------------------------------------------------------------------------------
+Version: 0.3.3
+Date: 2025-02-11
+  Bugfixes:
+    - Fix error when enemy tries to upgrade a ghost entity
+---------------------------------------------------------------------------------------------------
 Version: 0.3.2
 Date: 2025-02-11
   Bugfixes:
