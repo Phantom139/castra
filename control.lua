@@ -81,7 +81,7 @@ end
 -- on_tick command to track all data-collector entities and keep in storage
 local function on_tick_update_data_collectors(event)
     -- Check every 30000 ticks
-    if event.tick % 30000 == 0 then
+    if event.tick % 30000 == 28503 then
         if not item_cache.castra_exists() then
             return
         end
@@ -106,15 +106,19 @@ local function on_tick_update_data_collectors(event)
     end
 
     -- Check for any wandering tanks and give them a random command
-    if event.tick % 3000 == 1500 then
+    if event.tick % 3000 == 1277 then
         if not item_cache.castra_exists() then
             return
         end
 
         local surface = game.surfaces["castra"]
-        local tanks = surface.find_entities_filtered { name = "castra-enemy-tank" }
+        -- Get a random chunk to limit search for performance reasons
+        local chunk = surface.get_random_chunk()
+        -- Get all tanks around the chunk in a 100 tile radius
+
+        local tanks = surface.find_entities_filtered { name = "castra-enemy-tank", area = { { chunk.x * 32 - 100, chunk.y * 32 - 100 }, { chunk.x * 32 + 100, chunk.y * 32 + 100 } } }
         for _, tank in pairs(tanks) do
-            if tank.commandable and tank.commandable.command and tank.commandable.command.type == defines.command.wander then
+            if tank.commandable and tank.commandable.command and tank.commandable.command.type == defines.command.wander and math.random() < 0.5 then
                 give_tank_random_command(tank)
             end
         end
@@ -275,7 +279,7 @@ local trigger_research = nil
 
 --on_tick update enemy research progress based on the evolution on castra
 local function update_castra_research_progress(event)
-    if event.tick % 3600 == 0 then
+    if event.tick % 3600 == 2759 then
         if not item_cache.castra_exists() then
             return
         end
@@ -302,6 +306,7 @@ local function update_castra_research_progress(event)
                 enemy_force.current_research.researched = true
                 -- Infinite techs will not be cleared so we need to manually clear the progress
                 if enemy_force.current_research then
+                    enemy_force.research_progress = 0
                     enemy_force.current_research.saved_progress = 0
                     while enemy_force.current_research do
                         enemy_force.cancel_current_research()
@@ -356,6 +361,21 @@ local function update_castra_research_progress(event)
                 return
             end
 
+            -- Remove any that are 10x more expensive than the cheapest
+            local cheapest = nil
+            for _, research in pairs(valid) do
+                if not cheapest or (research.research_unit_count and research.research_unit_count < cheapest.research_unit_count) then
+                    cheapest = research
+                end
+            end
+            if cheapest then
+                for i = #valid, 1, -1 do
+                    if valid[i].research_unit_count and valid[i].research_unit_count > cheapest.research_unit_count * 10 then
+                        table.remove(valid, i)
+                    end
+                end
+            end
+
             local nextResearch = nil
             if trigger_research then
                 nextResearch = trigger_research
@@ -408,7 +428,8 @@ local function update_castra_research_progress(event)
                     game.forces["player"].technologies and
                     game.forces["player"].technologies["castra-enemy-research"] and
                     game.forces["player"].technologies["castra-enemy-research"].researched then
-                    game.forces["player"].print("Castra enemies have started [technology=" .. nextResearch.name .. ",level=" .. nextResearch.level .. "]")
+                    game.forces["player"].print("Castra enemies have started [technology=" ..
+                    nextResearch.name .. ",level=" .. nextResearch.level .. "]")
                 end
             end
         end
@@ -417,7 +438,7 @@ end
 
 -- Every 10 seconds, for every combat roboport, check if there are any enemies nearby and spawn 5 combat robots
 local function update_combat_roboports(event)
-    if event.tick % 600 == 0 then
+    if event.tick % 600 == 474 then
         storage.castra = storage.castra or {}
         storage.castra.combat_roboports = storage.castra.combat_roboports or {}
         -- Loop through all combat roboports
@@ -502,7 +523,7 @@ end
 
 local function randomly_upgrade_base(event)
     -- Every 5 minutes, randomly upgrade either 5% of the bases or 20 bases, whichever is lower. and at least 5
-    if event.tick % 18000 == 0 then
+    if event.tick % 18000 == 13743 then
         if not item_cache.castra_exists() then
             return
         end
@@ -545,7 +566,7 @@ script.on_event(defines.events.on_tick, function(event)
     randomly_upgrade_base(event)
 
     -- Every 13 minutes
-    if event.tick % 46800 == 0 then
+    if event.tick % 46800 == 34273 then
         storage.castra.combat_roboports = storage.castra.combat_roboports or {}
         for i = #storage.castra.combat_roboports, 1, -1 do
             if not storage.castra.combat_roboports[i].valid then
@@ -604,7 +625,10 @@ script.on_event(defines.events.on_lua_shortcut, function(event)
         if enemy_force.current_research then
             current_research_progress = math.floor(enemy_force.research_progress * 10000) / 100
             player.print("Currently researching: [technology=" ..
-                enemy_force.current_research.name .. ",level=" .. enemy_force.current_research.level .. "] " .. current_research_progress .. "% at " .. research_speed .. "/m")
+                enemy_force.current_research.name ..
+                ",level=" ..
+                enemy_force.current_research.level ..
+                "] " .. current_research_progress .. "% at " .. research_speed .. "/m")
         elseif trigger_research then
             player.print("Currently researching: [technology=" ..
                 trigger_research.name .. ",level=" .. trigger_research.level .. "]")

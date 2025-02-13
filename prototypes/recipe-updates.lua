@@ -65,11 +65,20 @@ for _, item in pairs(data.raw["armor"]) do
     change_to_category(item)
 end
 
+local function get_prototype(base_type, name)
+  for type_name in pairs(defines.prototypes[base_type]) do
+    local prototypes = data.raw[type_name]
+    if prototypes and prototypes[name] then
+      return prototypes[name]
+    end
+  end
+end
+
 for _, item in pairs(data.raw["item"]) do
     -- Check item's place_result if it's a turret or a wall type
     if item.place_result then
-        local entity = data.raw["item"][item.place_result]
-        if entity and (entity.type == "wall" or entity.type == "turret" or entity.type == "fluid-turret" or entity.type == "gate") then
+        local entity = get_prototype("entity", item.place_result)
+        if entity and entity.type and (entity.type == "wall" or string.find(entity.type, "turret") or entity.type == "gate") then
             change_to_category(item)
             goto continueItem
         end

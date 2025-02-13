@@ -1,4 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.3.6
+Date: 2025-02-12
+  Bugfixes:
+    - Reduce lag spikes due to several events coinciding and also make tank commands more performant
+    - Fix enemy infinite techs keeping progress when completing a level
+    - Fix forge not crafting turrets or walls
+  Changes:
+    - Enemy no longer researches very expensive techs without first researching some cheaper techs
+---------------------------------------------------------------------------------------------------
 Version: 0.3.5
 Date: 2025-02-12
   Bugfixes:
