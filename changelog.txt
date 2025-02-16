@@ -1,4 +1,24 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.4.0
+Date: 2025-02-16
+  Note:
+    - A migration script will run at the start to move data to storage due to the performance changes. This may take 5+ seconds.
+  Changes:
+    - Added flamethrower and artillery turrets back as possible enemy turrets
+    - Replaced enemy energy based turrets with less power demanding ones
+    - Performance improvements overall
+    - Enemy tanks are slighly more aggressive to nearby player bases
+---------------------------------------------------------------------------------------------------
+Version: 0.3.8
+Date: 2025-02-13
+  Bugfixes:
+    - Reduce more lag spikes when searching for entities
+---------------------------------------------------------------------------------------------------
+Version: 0.3.7
+Date: 2025-02-13
+  Bugfixes:
+    - Reduce lag spikes when searching for Data collectors
+---------------------------------------------------------------------------------------------------
 Version: 0.3.6
 Date: 2025-02-12
   Bugfixes:

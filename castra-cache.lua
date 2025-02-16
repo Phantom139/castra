@@ -141,8 +141,8 @@ local function update_castra_enemy_data()
     enemy_storage.roboport = has_castra_researched_item("roboport")
     enemy_storage.construction_robot = has_castra_researched_item("construction-robot")
     enemy_storage.tank = has_castra_researched_item("tank")
-    --enemy_storage.artillery_turret = has_castra_researched_item("artillery-turret")
-    --enemy_storage.artillery_shell = has_castra_researched_item("artillery-shell")
+    enemy_storage.artillery_turret = has_castra_researched_item("artillery-turret")
+    enemy_storage.artillery_shell = has_castra_researched_item("artillery-shell")
     enemy_storage.spidertron = has_castra_researched_item("spidertron")
     enemy_storage.land_mine = has_castra_researched_item("land-mine")
     enemy_storage.tesla_turret = has_castra_researched_item("tesla-turret")
@@ -157,9 +157,34 @@ local function build_cache_if_needed()
     end
 end
 
+local function build_pollution_cache()    
+    if not castra_exists() then
+        return
+    end
+
+    storage.castra = storage.castra or {}
+    storage.castra.dataCollectors = storage.castra.dataCollectors or {}
+    storage.castra.dataCollectorsPollution = storage.castra.dataCollectorsPollution or {}
+
+    for _, dataCollector in pairs(storage.castra.dataCollectors) do
+        if dataCollector.valid then
+            local pollution = 0
+            -- Get 3x3 chunk pollution sum
+            for x = -1, 1 do
+                for y = -1, 1 do
+                    pollution = pollution + dataCollector.surface.get_pollution { x = dataCollector.position.x + x * 32, y = dataCollector.position.y + y * 32 }
+                end
+            end
+            -- Update pollution in storage
+            storage.castra.dataCollectorsPollution[dataCollector.unit_number] = pollution
+        end
+    end
+end
+
 return {
     update_castra_enemy_data = update_castra_enemy_data,
     has_castra_researched_item = has_castra_researched_item,
     build_cache_if_needed = build_cache_if_needed,
-    castra_exists = castra_exists
+    castra_exists = castra_exists,
+    build_pollution_cache = build_pollution_cache,
 }

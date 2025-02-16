@@ -35,15 +35,19 @@ local function add_walls(data_collector)
     base_gen.create_enemy_base(area)
 end
 
+local function hyphen_to_underscore(str)
+    return string.gsub(str, "-", "_")
+end
+
 local function add_turrets(data_collector)
     item_cache.build_cache_if_needed()
     -- Select a random turret type
     local turret_types = { "gun-turret", "laser-turret", "rocket-turret", "railgun-turret",
-        "tesla-turret", "combat-roboport" }
+    "tesla-turret", "combat-roboport", "flamethrower-turret", "artillery-turret" }
 
     -- Remove any unresearched turrets
     for i = #turret_types, 1, -1 do
-        if not item_cache.has_castra_researched_item(turret_types[i]) then
+        if not item_cache[hyphen_to_underscore(turret_types[i])] then
             table.remove(turret_types, i)
         end
     end
@@ -66,13 +70,17 @@ local function fill_turrets(data_collector)
     -- Fill all turrets in the area with ammo
     local area = get_search_area_size(data_collector, 30)
     local turret_types = { "gun-turret", "laser-turret", "rocket-turret", "railgun-turret",
-        "tesla-turret", "combat-roboport" }
+        "tesla-turret", "combat-roboport", "flamethrower-turret", "artillery-turret" }
     for _, turret_type in pairs(turret_types) do
-        for _, turret in pairs(data_collector.surface.find_entities_filtered { area = area, type = turret_type }) do
+        for _, turret in pairs(data_collector.surface.find_entities_filtered { area = area, type = base_gen.get_enemy_variant(turret_type) }) do
             turrets_found = true
             local ammo = base_gen.get_corresponding_ammo(turret_type)
             if ammo and ammo ~= "N_A" then
-                turret.insert({ name = ammo, count = prototypes.item[ammo].stack_size })
+                turret.insert({ name = ammo, count = prototypes.item[ammo].stack_size, quality = base_gen.select_random_quality() })
+            end
+
+            if turret_type == "flamethrower-turret" then
+                turret.insert_fluid({ name = "light-oil", amount = 1000 })
             end
         end
     end

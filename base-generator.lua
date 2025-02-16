@@ -342,7 +342,7 @@ local function place_roboport(chunk_area, data_collector_pos)
 
     -- Create a roboport if there is another roboport nearby or a 50% chance
     if #otherRoboports > 0 or math.random() < 0.8 then
-        local pos = surface.find_non_colliding_position("roboport", data_collector_pos, 16, 1, true)
+        local pos = surface.find_non_colliding_position("roboport", data_collector_pos, 16, 0.5, true)
         if pos then
             local roboport = surface.create_entity { name = "roboport", position = pos, force = enemy_force, quality = select_random_quality() }
 
@@ -381,7 +381,7 @@ local function place_solar(chunk_area)
 
     local pole_pos = surface.find_non_colliding_position(power_type,
         { math.random(chunk_area.left_top.x, chunk_area.right_bottom.x), math.random(chunk_area.left_top.y,
-            chunk_area.right_bottom.y) }, 8, 1, true)
+            chunk_area.right_bottom.y) }, 8, 0.5, true)
 
     if pole_pos then
         local power_pole = surface.create_entity { name = power_type, position = pole_pos, force = enemy_force, quality = select_random_quality() }
@@ -398,7 +398,7 @@ local function place_solar(chunk_area)
         for i = 1, math.random(2, 5) do
             local solar_panel_pos = surface.find_non_colliding_position("solar-panel",
                 { pole_pos.x + math.random(-pole_range - 2, pole_range + 2), pole_pos.y +
-                math.random(-pole_range - 2, pole_range + 2) }, 8, 1, true)
+                math.random(-pole_range - 2, pole_range + 2) }, 8, 0.5, true)
             if solar_panel_pos then
                 local solar = surface.create_entity { name = "solar-panel", position = solar_panel_pos, force = enemy_force, quality = quality }
                 if solar then
@@ -406,7 +406,7 @@ local function place_solar(chunk_area)
 
                     -- If the solar panel isn't connected to a power network, try to add a power pole
                     if not solar.is_connected_to_electric_network() then
-                        local power_pole_pos = surface.find_non_colliding_position(power_type, solar.position, pole_range + 2, 1, true)
+                        local power_pole_pos = surface.find_non_colliding_position(power_type, solar.position, pole_range + 2, 0.5, true)
                         if power_pole_pos then
                             surface.create_entity { name = power_type, position = power_pole_pos, force = enemy_force, quality = quality }
                         end
@@ -475,7 +475,7 @@ local function place_power_poles(chunk_area, powered_entities)
             goto continue_pole
         end
 
-        local power_pole_pos = surface.find_non_colliding_position(power_type, entity.position, pole_supply_area + 2, 1, true)
+        local power_pole_pos = surface.find_non_colliding_position(power_type, entity.position, pole_supply_area + 2, 0.5, true)
         if not power_pole_pos then
             goto continue_pole
         end
@@ -500,7 +500,7 @@ local function place_power_poles(chunk_area, powered_entities)
 
             for i = 1, pole_count do
                 local pole_pos_test = { x = power_pole_pos.x + pole_step.x * i, y = power_pole_pos.y + pole_step.y * i }
-                local pole_pos = surface.find_non_colliding_position(power_type, pole_pos_test, 3, 1, true)
+                local pole_pos = surface.find_non_colliding_position(power_type, pole_pos_test, 3, 0.5, true)
                 if pole_pos then
                     surface.create_entity { name = power_type, position = pole_pos, force = enemy_force, quality = quality }
                 end
@@ -536,12 +536,26 @@ local function hyphen_to_underscore(str)
     return string.gsub(str, "-", "_")
 end
 
+local function get_enemy_variant(name)
+    if name == "flamethrower-turret" then
+        return "castra-enemy-flamethrower-turret"
+    elseif name == "railgun-turret" then
+        return "castra-enemy-railgurret"
+    elseif name == "tesla-turret" then
+        return "castra-enemy-tesla-turret"
+    elseif name == "laser-turret" then
+        return "castra-enemy-laser-turret"
+    else
+        return name
+    end
+end
+
 local function place_turrets(data_collector_pos, type)
     local turret_types = nil
     if not type then
         -- Select a random turret type from the available turrets
         turret_types = { "gun-turret", "laser-turret", "rocket-turret", "railgun-turret",
-            "tesla-turret", "combat-roboport" }
+            "tesla-turret", "combat-roboport", "flamethrower-turret", "artillery-turret" }
     else
         turret_types = { type }
     end
@@ -570,15 +584,22 @@ local function place_turrets(data_collector_pos, type)
     local railgun_orients = { defines.direction.east, defines.direction.northeast, defines.direction.north, defines.direction.northwest,
         defines.direction.west, defines.direction.southwest, defines.direction.south, defines.direction.southeast }
 
+    -- Flamethrower has 4 orientations
+    local flamethrower_orients = { defines.direction.east, defines.direction.north, defines.direction.west, defines.direction.south }
+
     -- Place a random number of turrets around the data-collector
     for i = 1, math.random(1, 6) do
-        local turret_pos = game.surfaces["castra"].find_non_colliding_position(turret_type,
-            { data_collector_pos.x + math.random(-8, 8), data_collector_pos.y + math.random(-8, 8) }, 8, 1, true)
+        local turret_pos = game.surfaces["castra"].find_non_colliding_position(get_enemy_variant(turret_type),
+            { data_collector_pos.x + math.random(-8, 8), data_collector_pos.y + math.random(-8, 8) }, 8, 0.5, true)
         if turret_pos then
-            local orientation = turret_type == "railgun-turret" and railgun_orients[math.random(1, #railgun_orients)] or
-                nil
+            local orientation = nil
+            if turret_type == "railgun-turret" then
+                orientation = railgun_orients[math.random(1, #railgun_orients)]
+            elseif turret_type == "flamethrower-turret" then
+                orientation = flamethrower_orients[math.random(1, #flamethrower_orients)]
+            end
 
-            local turret = game.surfaces["castra"].create_entity { name = turret_type, position = turret_pos, force = game.forces["enemy"], direction = orientation, quality = select_random_quality() }
+            local turret = game.surfaces["castra"].create_entity { name = get_enemy_variant(turret_type), position = turret_pos, force = game.forces["enemy"], direction = orientation, quality = select_random_quality() }
             if turret then
                 if turret_type == "railgun-turret" or turret_type == "tesla-turret" or turret_type == "laser-turret" then
                     table.insert(powered_turrets, turret)
@@ -587,7 +608,16 @@ local function place_turrets(data_collector_pos, type)
                 -- Add ammo to the turret
                 local ammo = get_corresponding_ammo(turret_type)
                 if ammo and ammo ~= "N_A" then
-                    turret.insert { name = ammo, count = prototypes.item[ammo].stack_size, quality = select_random_quality() }
+                    local count = prototypes.item[ammo].stack_size
+                    if turret_type == "artillery-turret" then
+                        count = 20
+                    end
+                    turret.insert { name = ammo, count = count, quality = select_random_quality() }
+                end
+
+                -- Add light oil if it's a flamethrower turret
+                if turret_type == "flamethrower-turret" then
+                    turret.insert_fluid { name = "light-oil", amount = 1000 }
                 end
             end
         end
@@ -608,7 +638,7 @@ local function place_land_mines(data_collector_pos)
     -- Place a ~20 land mines around the data collector within a range of 20
     for i = 1, math.random(10, 30) do
         local land_mine_pos = surface.find_non_colliding_position("land-mine",
-            { data_collector_pos.x + math.random(-20, 20), data_collector_pos.y + math.random(-20, 20) }, 8, 1, true)
+            { data_collector_pos.x + math.random(-20, 20), data_collector_pos.y + math.random(-20, 20) }, 8, 0.5, true)
         if land_mine_pos then
             surface.create_entity { name = "land-mine", position = land_mine_pos, force = enemy_force, quality = select_random_quality() }
         end
@@ -626,7 +656,7 @@ local function create_enemy_base(chunk_area)
     -- Find a random valid position in the chunk
     local dataPos = surface.find_non_colliding_position("data-collector",
         { math.random(chunk_area.left_top.x, chunk_area.right_bottom.x), math.random(chunk_area.left_top.y,
-            chunk_area.right_bottom.y) }, 16, 1, true)
+            chunk_area.right_bottom.y) }, 16, 0.5, true)
     if not dataPos then
         return
     end
@@ -676,5 +706,6 @@ return {
     place_roboport = place_roboport,
     place_power_poles = place_power_poles,
     get_corresponding_ammo = get_corresponding_ammo,
-    select_random_quality = select_random_quality
+    select_random_quality = select_random_quality,
+    get_enemy_variant = get_enemy_variant,
 }

@@ -547,3 +547,65 @@ tank.attack_parameters = {
     range_mode = "bounding-box-to-bounding-box"
 }
 data:extend({ tank })
+
+local function multiply_energy_amount(energy_string, multiplier)
+    -- Extract the number and unit from the energy string
+    local number, unit = energy_string:match("^(%d+%.?%d*)(%a*)$")
+    if not number or not unit then return energy_string end
+    
+    -- Convert the number to a number type and multiply it
+    number = tonumber(number) * multiplier
+
+    -- Return the new energy string
+    return number .. unit
+end
+
+-- Create enemy copy of an entity and reduce energy consumption to 5%
+local function create_enemy_version(entity)
+    if not entity then return nil end
+
+    local mult = 0.05
+
+    local enemy_entity = table.deepcopy(entity)
+    enemy_entity.name = "castra-enemy-" .. entity.name
+    enemy_entity.minable.result = nil
+    local source = enemy_entity.energy_source
+    if source and source.type == "electric" then
+        if source.buffer_capacity then
+            source.buffer_capacity = multiply_energy_amount(source.buffer_capacity, mult)
+        end
+        if source.input_flow_limit then
+            source.input_flow_limit = multiply_energy_amount(source.input_flow_limit, mult)
+        end
+        if source.output_flow_limit then
+            source.output_flow_limit = multiply_energy_amount(source.output_flow_limit, mult)
+        end
+        if source.drain then
+            source.drain = multiply_energy_amount(source.drain, mult)
+        end
+    end
+    if enemy_entity.energy_per_shot then
+        enemy_entity.energy_per_shot = multiply_energy_amount(enemy_entity.energy_per_shot, mult)
+    end
+    local attack_param = enemy_entity.attack_parameters
+    if attack_param then
+        if attack_param.fluid_consumption then
+            -- Reduce fluid consumption to 1% as they have a relatively small buffer
+            attack_param.fluid_consumption = attack_param.fluid_consumption * 0.01
+        end
+        if attack_param.ammo_type then
+            if attack_param.ammo_type.energy_consumption then
+                attack_param.ammo_type.energy_consumption = multiply_energy_amount(attack_param.ammo_type.energy_consumption, mult)
+            end
+        end
+    end
+    return enemy_entity    
+end
+
+-- Create enemy versions of laser-turret, railgun, flamethrower
+data:extend({
+    create_enemy_version(data.raw["electric-turret"]["laser-turret"]),
+    create_enemy_version(data.raw["ammo-turret"]["railgun-turret"]),
+    create_enemy_version(data.raw["fluid-turret"]["flamethrower-turret"]),
+    create_enemy_version(data.raw["electric-turret"]["tesla-turret"]),
+})

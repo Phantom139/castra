@@ -30,44 +30,44 @@ script.on_event(defines.events.on_chunk_generated, function(event)
     end
 end)
 
-function get_surrounding_pollution(center)
-    -- Get the pollution in a 3x3 chunk area
-    local pollution = 0
-    for x = -1, 1 do
-        for y = -1, 1 do
-            pollution = pollution + game.surfaces["castra"].get_pollution({ center.x + x * 32, center.y + y * 32 })
-        end
+function get_surrounding_pollution(data_collector)
+    if not data_collector.valid then
+        return 0
     end
+
+    if not storage.castra or not storage.castra.dataCollectorsPollution then
+        return 0
+    end
+
+    -- Get the pollution from storage
+    local pollution = storage.castra.dataCollectorsPollution[data_collector.unit_number] or 0
     return pollution
 end
 
 function on_data_collector_item_spawned(event)
-    local pollution = get_surrounding_pollution(event.spawner.position)
+    local pollution = get_surrounding_pollution(event.spawner)
     -- 90% chance to skip and destroy the item if pollution is less than 50
     if pollution < 50 and math.random() < 0.9 then
         event.entity.destroy()
         return
     end
 
-    -- Look for any non-enemy roboports nearby
-    local roboports = event.entity.surface.find_entities_filtered { name = "roboport", area = { { event.entity.position.x - 55, event.entity.position.y - 55 }, { event.entity.position.x + 55, event.entity.position.y + 55 } } }
-    -- If there are, get the force of the first one and spawn the item on the ground with the force
+    -- Check if the spawner is in range of a player roboport
+    local roboportInRange = storage.castra.dataCollectorsRoboportStatus[event.spawner.unit_number] or false
+    local quality = event.spawner.quality
     local force = nil
-    for _, roboport in pairs(roboports) do
-        if roboport.force.name ~= "enemy" then
-            force = roboport.force
-            break
-        end
+    if roboportInRange then
+        force = "player"
     end
 
-    local quality = event.spawner.quality
-
-    -- Check for any nearby item-on-ground entities so that we don't spawn too many items
-    local items = event.entity.surface.find_entities_filtered { name = "item-on-ground", area = { { event.spawner.position.x - 5, event.spawner.position.y - 5 }, { event.spawner.position.x + 5, event.spawner.position.y + 5 } } }
-    if #items < 200 then
-        -- Spawn item on the ground with the suffix
-        local item_name = string.gsub(event.entity.name, "data%-collector%-", "")
-        event.entity.surface.spill_item_stack { position = event.spawner.position, stack = { name = item_name, count = 1, quality = quality }, enable_looted = true, allow_belts = true, force = force, max_radius = 5 }
+    -- Spawn item on the ground with the suffix
+    local item_name = string.gsub(event.entity.name, "data%-collector%-", "")
+    local created = event.entity.surface.spill_item_stack { position = event.spawner.position, 
+        stack = { name = item_name, count = 1, quality = quality }, 
+        enable_looted = true, allow_belts = true, force = force, max_radius = 5, use_start_position_on_failure = false }
+    if not created or #created == 0 then
+        event.entity.destroy()
+        return
     end
 
     -- Increase evolution by 0.0000015 / (evolution_factor * 2 + 1)
@@ -80,29 +80,10 @@ end
 
 -- on_tick command to track all data-collector entities and keep in storage
 local function on_tick_update_data_collectors(event)
-    -- Check every 30000 ticks
-    if event.tick % 30000 == 28503 then
-        if not item_cache.castra_exists() then
-            return
-        end
-
-        -- Check if any no longer exist
-        storage.castra = storage.castra or {}
-        if storage.castra.dataCollectors then
-            for i = #storage.castra.dataCollectors, 1, -1 do
-                local dataCollector = storage.castra.dataCollectors[i]
-                if not dataCollector.valid then
-                    table.remove(storage.castra.dataCollectors, i)
-                end
-            end
-        end
-
-        local surface = game.surfaces["castra"]
-        local dataCollectors = surface.find_entities_filtered { name = "data-collector" }
-        for _, dataCollector in pairs(dataCollectors) do
-            storage.castra.dataCollectors = storage.castra.dataCollectors or {}
-            table.insert(storage.castra.dataCollectors, dataCollector)
-        end
+    
+    -- Update pollution storage every 10 min
+    if event.tick % 36000 == 22542 then
+        item_cache.build_pollution_cache()
     end
 
     -- Check for any wandering tanks and give them a random command
@@ -119,13 +100,24 @@ local function on_tick_update_data_collectors(event)
         local tanks = surface.find_entities_filtered { name = "castra-enemy-tank", area = { { chunk.x * 32 - 100, chunk.y * 32 - 100 }, { chunk.x * 32 + 100, chunk.y * 32 + 100 } } }
         for _, tank in pairs(tanks) do
             if tank.commandable and tank.commandable.command and tank.commandable.command.type == defines.command.wander and math.random() < 0.5 then
-                give_tank_random_command(tank)
+                -- Give attack command
+                give_tank_random_command(tank, 0.97)
             end
         end
     end
 end
 
-function give_tank_random_command(tank)
+local function find_nearby_data_collector(position, range)
+    local dataCollectors = storage.castra.dataCollectors or {}
+    for _, dataCollector in pairs(dataCollectors) do
+        if dataCollector.valid and math.sqrt((dataCollector.position.x - position.x) ^ 2 + (dataCollector.position.y - position.y) ^ 2) < range then
+            return dataCollector
+        end
+    end
+    return nil
+end
+
+function give_tank_random_command(tank, selection)
     -- 80% to wander
     -- 5% to make a new base
     -- 10% to move to another data collector
@@ -136,7 +128,7 @@ function give_tank_random_command(tank)
         return
     end
 
-    local randSelection = math.random()
+    local randSelection = selection or math.random()
     if randSelection < 0.80 then
         -- Wander
         tank.commandable.set_command { type = defines.command.wander, distraction = defines.distraction.by_anything, ticks_to_wait = math.random(600, 5000) }
@@ -144,8 +136,8 @@ function give_tank_random_command(tank)
     elseif randSelection < 0.85 then
         -- Expansion
         -- Check if there are any nearby data collectors
-        local dataCollectors = tank.surface.find_entities_filtered { name = "data-collector", area = { { tank.position.x - 30, tank.position.y - 30 }, { tank.position.x + 30, tank.position.y + 30 } } }
-        if #dataCollectors == 0 then
+        local dataCollector = find_nearby_data_collector(tank.position, 32)
+        if not dataCollector then
             local area = { left_top = { x = tank.position.x - 15, y = tank.position.y - 15 }, right_bottom = { x = tank.position.x + 15, y = tank.position.y + 15 } }
             base_gen.create_enemy_base(area)
         end
@@ -185,21 +177,22 @@ end
 
 -- on_entity_spawned for deleting data-collector-<item> when it spawns and dropping its loot
 script.on_event(defines.events.on_entity_spawned, function(event)
-    item_cache.build_cache_if_needed()
 
     -- check if name starts with data-collector-
     if string.find(event.entity.name, "data%-collector%-") then
+        item_cache.build_cache_if_needed()
         on_data_collector_item_spawned(event)
         return
     end
 
     if event.entity.name == "castra-enemy-tank" and event.spawner.name == "data-collector" then
         -- If the tank is not yet unlocked, destroy it
+        item_cache.build_cache_if_needed()
         if not storage.castra.enemy.tank then
             event.entity.destroy()
             return
         end
-        give_tank_random_command(event.entity)
+        give_tank_random_command(event.entity, nil)
     end
 end)
 
@@ -466,7 +459,8 @@ local function update_combat_roboports(event)
                         for i = 1, 5 + roboport.quality.level do
                             -- Randomize the position
                             local pos = {
-                                x = roboport.position.x + math.random(-2, 2),
+                                x = roboport.position.x +
+                                    math.random(-2, 2),
                                 y = roboport.position.y +
                                     math.random(-2, 2)
                             }
@@ -489,12 +483,81 @@ local function update_combat_roboports(event)
     end
 end
 
--- on_built_entity for combat roboports
-script.on_event(defines.events.on_built_entity, function(event)
+local function built_event(event)
     if event.entity.name == "combat-roboport" then
         storage.castra.combat_roboports = storage.castra.combat_roboports or {}
         table.insert(storage.castra.combat_roboports, event.entity)
     end
+    if event.entity.surface.name == "castra" then
+        if event.entity.name == "artillery-turret" and event.entity.force.name == "enemy" then
+            storage.castra.enemy_artillery = storage.castra.enemy_artillery or {}
+            table.insert(storage.castra.enemy_artillery, event.entity)
+        end
+        if event.entity.name == "data-collector" and event.entity.force.name == "enemy" then
+            storage.castra.dataCollectors = storage.castra.dataCollectors or {}
+            table.insert(storage.castra.dataCollectors, event.entity)
+            -- Update roboportInRange
+            local roboport = event.entity.surface.find_entities_filtered({ force = "player", name = "roboport", position = event.entity.position, area = {{-55, -55}, {55, 55}} })
+            if roboport and #roboport > 0 then
+                storage.castra.dataCollectorsRoboportStatus[event.entity.unit_number] = true
+            else
+                storage.castra.dataCollectorsRoboportStatus[event.entity.unit_number] = false
+            end
+        end
+        if event.entity.name == "roboport" and event.entity.force.name == "player" then
+            -- Look for any data collectors in range and mark them as in range of a roboport if they are
+            -- Use a 55 tile +/- 55 tile area to check for data collectors
+            local dataCollectors = storage.castra.dataCollectors or {}
+            for _, dataCollector in pairs(dataCollectors) do
+                if dataCollector.valid and math.abs(dataCollector.position.x - event.entity.position.x) < 55 and math.abs(dataCollector.position.y - event.entity.position.y) < 55 then
+                    storage.castra.dataCollectorsRoboportStatus[dataCollector.unit_number] = true
+                end
+            end
+        end
+    end    
+end
+
+local function removed_entity(event)
+    -- Remove roboports from dataCollectorsRoboportStatus if needed
+    if event.entity.name == "roboport" and event.entity.force.name == "player" then
+        -- Look for any data collectors in range and mark them as in range of a roboport if they are
+        -- Use a 55 tile +/- 55 tile area to check for data collectors
+        local dataCollectors = storage.castra.dataCollectors or {}
+        for _, dataCollector in pairs(dataCollectors) do
+            if dataCollector.valid and math.abs(dataCollector.position.x - event.entity.position.x) < 55 and math.abs(dataCollector.position.y - event.entity.position.y) < 55 then
+                -- Check if there are any other roboports in range
+                local roboport = event.entity.surface.find_entities_filtered({ force = "player", name = "roboport", position = dataCollector.position, area = {{-55, -55}, {55, 55}} })
+                if roboport and #roboport > 0 then
+                    storage.castra.dataCollectorsRoboportStatus[dataCollector.unit_number] = true
+                else
+                    storage.castra.dataCollectorsRoboportStatus[dataCollector.unit_number] = false
+                end
+            end
+        end
+    end
+end
+
+script.on_event(defines.events.on_built_entity, function(event)
+    built_event(event)
+end)
+script.on_event(defines.events.on_robot_built_entity, function(event)
+    built_event(event)
+end)
+script.on_event(defines.events.script_raised_built, function(event)
+    built_event(event)
+end)
+
+script.on_event(defines.events.on_player_mined_entity, function(event)
+    removed_entity(event)
+end)
+script.on_event(defines.events.on_entity_died, function(event)
+    removed_entity(event)
+end)
+script.on_event(defines.events.on_robot_mined_entity, function(event)
+    removed_entity(event)
+end)
+script.on_event(defines.events.script_raised_destroy, function(event)
+    removed_entity(event)
 end)
 
 local function get_available_upgrades()
@@ -522,8 +585,8 @@ local function get_available_upgrades()
 end
 
 local function randomly_upgrade_base(event)
-    -- Every 5 minutes, randomly upgrade either 5% of the bases or 20 bases, whichever is lower. and at least 5
-    if event.tick % 18000 == 13743 then
+    -- Every minute, upgrade 1 data collector
+    if event.tick % 3600 == 3747 then
         if not item_cache.castra_exists() then
             return
         end
@@ -533,25 +596,51 @@ local function randomly_upgrade_base(event)
         end
 
         local surface = game.surfaces["castra"]
-        local dataCollectors = surface.find_entities_filtered { name = "data-collector", force = "enemy" }
+        local dataCollectors = storage.castra.dataCollectors or {}
         if #dataCollectors > 0 then
-            local count = math.max(math.min(#dataCollectors, 5), math.min(20, math.floor(#dataCollectors * 0.05)))
-            for i = 1, count do
-                local dataCollector = dataCollectors[math.random(1, #dataCollectors)]
-                if dataCollector.valid then
-                    local upgrade_type = possible[math.random(1, #possible)]
-                    local position = dataCollector.position
-                    upgrade_type(dataCollector)
-                    -- If the data collector is no longer valid, its quality was upgraded and we need to find a new one at its position
-                    if not dataCollector.valid then
-                        dataCollectors = surface.find_entities_filtered { name = "data-collector", force = "enemy", position = position }
-                        if #dataCollectors == 0 then
-                            break
-                        end
-                        dataCollector = dataCollectors[1]
-                    end
-                    base_upgrades.fill_roboports(dataCollector)
-                    base_upgrades.fill_turrets(dataCollector)
+            local dataCollector = dataCollectors[math.random(1, #dataCollectors)]
+            if dataCollector.valid then
+                local upgrade_type = possible[math.random(1, #possible)]                  local position = dataCollector.position
+                upgrade_type(dataCollector)
+                -- If the data collector is no longer valid, its quality was upgraded and we need to find a new one at its position
+                if not dataCollector.valid then
+                    dataCollectors = surface.find_entities_filtered { name = "data-collector", force = "enemy", position = position }
+                    dataCollector = dataCollectors[1]
+                end
+                base_upgrades.fill_roboports(dataCollector)
+                base_upgrades.fill_turrets(dataCollector)
+            end
+        end
+    end
+end
+
+local function random_artillery_firing(event)
+    -- Every 3 minutes, randomly fire a group of artillery shells at a random player entity within range
+    if event.tick % 108000 == 56883 then
+        if not item_cache.castra_exists() then
+            return
+        end
+
+        local artillery = storage.castra.enemy_artillery or {}
+        -- Remove any invalid artillery
+        for i = #artillery, 1, -1 do
+            if not artillery[i].valid then
+                table.remove(artillery, i)
+            end
+        end
+
+        if #artillery == 0 then
+            return
+        end
+
+        local surface = game.surfaces["castra"]
+        -- Each artillery has a 10% chance to fire
+        for _, artillery in pairs(artillery) do            
+            if math.random() < 0.1 then
+                -- Find a player entity within range
+                local closest = surface.find_nearest_enemy { position = artillery.position, force = "player", max_distance = artillery.turret_range }
+                if closest and closest.valid then
+                    artillery.shooting_target = closest
                 end
             end
         end
@@ -564,35 +653,7 @@ script.on_event(defines.events.on_tick, function(event)
     on_tick_update_data_collectors(event)
     update_combat_roboports(event)
     randomly_upgrade_base(event)
-
-    -- Every 13 minutes
-    if event.tick % 46800 == 34273 then
-        storage.castra.combat_roboports = storage.castra.combat_roboports or {}
-        for i = #storage.castra.combat_roboports, 1, -1 do
-            if not storage.castra.combat_roboports[i].valid then
-                table.remove(storage.castra.combat_roboports, i)
-            end
-        end
-
-        -- Check for any combat roboports on any surface
-        for _, surface in pairs(game.surfaces) do
-            local combatRoboports = surface.find_entities_filtered { name = "combat-roboport" }
-            for _, roboport in pairs(combatRoboports) do
-                storage.castra.combat_roboports = storage.castra.combat_roboports or {}
-                -- Only add if it's not already in the list
-                local found = false
-                for _, storedRoboport in pairs(storage.castra.combat_roboports) do
-                    if storedRoboport == roboport then
-                        found = true
-                        break
-                    end
-                end
-                if not found then
-                    table.insert(storage.castra.combat_roboports, roboport)
-                end
-            end
-        end
-    end
+    random_artillery_firing(event)
 end)
 
 script.on_event(defines.events.on_lua_shortcut, function(event)
