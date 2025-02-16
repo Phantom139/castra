@@ -1,4 +1,16 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.4.2
+Date: 2025-02-16
+  Bugfixes:
+    - Fix enemy bases not upgrading
+  Changes:
+    - Enemy tanks are slighly more aggressive to nearby player bases (actually)
+---------------------------------------------------------------------------------------------------
+Version: 0.4.1
+Date: 2025-02-16
+  Bugfixes:
+    - Fix error in migration script
+---------------------------------------------------------------------------------------------------
 Version: 0.4.0
 Date: 2025-02-16
   Note:

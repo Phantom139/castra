@@ -55,7 +55,10 @@ populate_data_collectors()
 
 -- Rebuild castra data collector roboportInRange
 local function update_roboport_in_range()
-    if not storage.castra then return end
+    local surface = game.surfaces["castra"]
+    if not surface then return end
+    storage.castra = storage.castra or {}
+    storage.castra.dataCollectors = storage.castra.dataCollectors or {}
     storage.castra.dataCollectorsRoboportStatus = {}
 
     for _, entity in pairs(storage.castra.dataCollectors) do

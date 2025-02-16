@@ -92,14 +92,23 @@ local function on_tick_update_data_collectors(event)
             return
         end
 
-        local surface = game.surfaces["castra"]
-        -- Get a random chunk to limit search for performance reasons
-        local chunk = surface.get_random_chunk()
-        -- Get all tanks around the chunk in a 100 tile radius
+        storage.castra = storage.castra or {}
+        storage.castra.dataCollectors = storage.castra.dataCollectors or {}
 
-        local tanks = surface.find_entities_filtered { name = "castra-enemy-tank", area = { { chunk.x * 32 - 100, chunk.y * 32 - 100 }, { chunk.x * 32 + 100, chunk.y * 32 + 100 } } }
+        if #storage.castra.dataCollectors == 0 then
+            return
+        end
+
+        local surface = game.surfaces["castra"]
+        -- Select random valid data collector
+        local collector = nil
+        while not collector or not collector.valid do
+            collector = storage.castra.dataCollectors[math.random(1, #storage.castra.dataCollectors)]
+        end
+
+        local tanks = surface.find_entities_filtered { name = "castra-enemy-tank", area = { { collector.position.x - 100, collector.position.y - 100 }, { collector.position.x + 100, collector.position.y + 100 } } }
         for _, tank in pairs(tanks) do
-            if tank.commandable and tank.commandable.command and tank.commandable.command.type == defines.command.wander and math.random() < 0.5 then
+            if tank.commandable and tank.commandable.command and tank.commandable.command.type == defines.command.wander then
                 -- Give attack command
                 give_tank_random_command(tank, 0.97)
             end
@@ -586,7 +595,7 @@ end
 
 local function randomly_upgrade_base(event)
     -- Every minute, upgrade 1 data collector
-    if event.tick % 3600 == 3747 then
+    if event.tick % 3600 == 2747 then
         if not item_cache.castra_exists() then
             return
         end
@@ -600,7 +609,8 @@ local function randomly_upgrade_base(event)
         if #dataCollectors > 0 then
             local dataCollector = dataCollectors[math.random(1, #dataCollectors)]
             if dataCollector.valid then
-                local upgrade_type = possible[math.random(1, #possible)]                  local position = dataCollector.position
+                local upgrade_type = possible[math.random(1, #possible)]                  
+                local position = dataCollector.position
                 upgrade_type(dataCollector)
                 -- If the data collector is no longer valid, its quality was upgraded and we need to find a new one at its position
                 if not dataCollector.valid then
