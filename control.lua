@@ -52,7 +52,8 @@ function on_data_collector_item_spawned(event)
         return
     end
 
-    -- Check if the spawner is in range of a player roboport
+    -- Check if the spawner is in range of a player roboport    
+    storage.castra.dataCollectorsRoboportStatus = storage.castra.dataCollectorsRoboportStatus or {}
     local roboportInRange = storage.castra.dataCollectorsRoboportStatus[event.spawner.unit_number] or false
     local quality = event.spawner.quality
     local force = nil
@@ -504,9 +505,10 @@ local function built_event(event)
         end
         if event.entity.name == "data-collector" and event.entity.force.name == "enemy" then
             storage.castra.dataCollectors = storage.castra.dataCollectors or {}
+            storage.castra.dataCollectorsRoboportStatus = storage.castra.dataCollectorsRoboportStatus or {}
             table.insert(storage.castra.dataCollectors, event.entity)
             -- Update roboportInRange
-            local roboport = event.entity.surface.find_entities_filtered({ force = "player", name = "roboport", position = event.entity.position, area = {{-55, -55}, {55, 55}} })
+            local roboport = event.entity.surface.find_entities_filtered({ force = "player", name = "roboport", position = event.entity.position, area = {{-55 + event.entity.position.x, -55 + event.entity.position.y}, {55 + event.entity.position.x, 55 + event.entity.position.y}} })
             if roboport and #roboport > 0 then
                 storage.castra.dataCollectorsRoboportStatus[event.entity.unit_number] = true
             else
@@ -517,6 +519,7 @@ local function built_event(event)
             -- Look for any data collectors in range and mark them as in range of a roboport if they are
             -- Use a 55 tile +/- 55 tile area to check for data collectors
             local dataCollectors = storage.castra.dataCollectors or {}
+            storage.castra.dataCollectorsRoboportStatus = storage.castra.dataCollectorsRoboportStatus or {}
             for _, dataCollector in pairs(dataCollectors) do
                 if dataCollector.valid and math.abs(dataCollector.position.x - event.entity.position.x) < 55 and math.abs(dataCollector.position.y - event.entity.position.y) < 55 then
                     storage.castra.dataCollectorsRoboportStatus[dataCollector.unit_number] = true
@@ -532,10 +535,11 @@ local function removed_entity(event)
         -- Look for any data collectors in range and mark them as in range of a roboport if they are
         -- Use a 55 tile +/- 55 tile area to check for data collectors
         local dataCollectors = storage.castra.dataCollectors or {}
+        storage.castra.dataCollectorsRoboportStatus = storage.castra.dataCollectorsRoboportStatus or {}
         for _, dataCollector in pairs(dataCollectors) do
             if dataCollector.valid and math.abs(dataCollector.position.x - event.entity.position.x) < 55 and math.abs(dataCollector.position.y - event.entity.position.y) < 55 then
                 -- Check if there are any other roboports in range
-                local roboport = event.entity.surface.find_entities_filtered({ force = "player", name = "roboport", position = dataCollector.position, area = {{-55, -55}, {55, 55}} })
+                local roboport = event.entity.surface.find_entities_filtered({ force = "player", name = "roboport", position = dataCollector.position, area = {{-55 + dataCollector.position.x, -55 + dataCollector.position.y}, {55 + dataCollector.position.x, 55 + dataCollector.position.y}} })
                 if roboport and #roboport > 0 then
                     storage.castra.dataCollectorsRoboportStatus[dataCollector.unit_number] = true
                 else
