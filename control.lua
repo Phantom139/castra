@@ -52,23 +52,21 @@ function on_data_collector_item_spawned(event)
         return
     end
 
-    -- Check if the spawner is in range of a player roboport    
-    storage.castra.dataCollectorsRoboportStatus = storage.castra.dataCollectorsRoboportStatus or {}
-    local roboportInRange = storage.castra.dataCollectorsRoboportStatus[event.spawner.unit_number] or false
-    local quality = event.spawner.quality
-    local force = nil
-    if roboportInRange then
-        force = "player"
-    end
+    local quality = base_gen.select_random_quality_max(event.spawner.quality)
 
     -- Spawn item on the ground with the suffix
     local item_name = string.gsub(event.entity.name, "data%-collector%-", "")
     local created = event.entity.surface.spill_item_stack { position = event.spawner.position, 
         stack = { name = item_name, count = 1, quality = quality }, 
-        enable_looted = true, allow_belts = true, force = force, max_radius = 5, use_start_position_on_failure = false }
+        enable_looted = true, allow_belts = true, force = "player", max_radius = 5, use_start_position_on_failure = false }
     if not created or #created == 0 then
         event.entity.destroy()
         return
+    else
+        -- Update player item statistics
+        local stats = game.forces["player"].get_item_production_statistics("castra")
+        local item_id = {name = item_name, quality = quality}
+        stats.on_flow(item_id, 1)
     end
 
     -- Increase evolution by 0.0000015 / (evolution_factor * 2 + 1)
@@ -88,7 +86,7 @@ local function on_tick_update_data_collectors(event)
     end
 
     -- Check for any wandering tanks and give them a random command
-    if event.tick % 3000 == 1277 then
+    if event.tick % 2000 == 1277 then
         if not item_cache.castra_exists() then
             return
         end
@@ -110,8 +108,14 @@ local function on_tick_update_data_collectors(event)
         local tanks = surface.find_entities_filtered { name = "castra-enemy-tank", area = { { collector.position.x - 100, collector.position.y - 100 }, { collector.position.x + 100, collector.position.y + 100 } } }
         for _, tank in pairs(tanks) do
             if tank.commandable and tank.commandable.command and tank.commandable.command.type == defines.command.wander then
-                -- Give attack command
-                give_tank_random_command(tank, 0.97)
+                -- Give attack command to either a military target or any player entity, or full random
+                if math.random() < 0.5 then
+                    give_tank_random_command(tank, 0.97)
+                elseif math.random() < 0.5 then
+                    give_tank_random_command(tank, 1)
+                else
+                    give_tank_random_command(tank, nil)
+                end
             end
         end
     end
@@ -223,24 +227,12 @@ local function get_castra_research_speed()
 
     -- Include a bonus based on speed module tier: 1 = 5%, 2 = 10%, 3 = 20%
     if storage.castra.enemy.speed_module_tier then
-        if storage.castra.enemy.speed_module_tier == 1 then
-            research_speed = research_speed * 1.05
-        elseif storage.castra.enemy.speed_module_tier == 2 then
-            research_speed = research_speed * 1.10
-        elseif storage.castra.enemy.speed_module_tier == 3 then
-            research_speed = research_speed * 1.20
-        end
+        research_speed = research_speed * (1 + math.pow(2, storage.castra.enemy.speed_module_tier - 1) * 0.05)
     end
 
-    -- Include les a bonus based on productivity module tier: 1 = 2%, 2 = 4%, 3 = 7%
+    -- Include les a bonus based on productivity module tier: 1 = 2%, 2 = 4%, 3 = 8%
     if storage.castra.enemy.productivity_module_tier then
-        if storage.castra.enemy.productivity_module_tier == 1 then
-            research_speed = research_speed * 1.02
-        elseif storage.castra.enemy.productivity_module_tier == 2 then
-            research_speed = research_speed * 1.04
-        elseif storage.castra.enemy.productivity_module_tier == 3 then
-            research_speed = research_speed * 1.07
-        end
+        research_speed = research_speed * (1 + math.pow(2, storage.castra.enemy.speed_module_tier - 1) * 0.02)
     end
 
     -- Include bonus from quality
@@ -505,49 +497,9 @@ local function built_event(event)
         end
         if event.entity.name == "data-collector" and event.entity.force.name == "enemy" then
             storage.castra.dataCollectors = storage.castra.dataCollectors or {}
-            storage.castra.dataCollectorsRoboportStatus = storage.castra.dataCollectorsRoboportStatus or {}
             table.insert(storage.castra.dataCollectors, event.entity)
-            -- Update roboportInRange
-            local roboport = event.entity.surface.find_entities_filtered({ force = "player", name = "roboport", position = event.entity.position, area = {{-55 + event.entity.position.x, -55 + event.entity.position.y}, {55 + event.entity.position.x, 55 + event.entity.position.y}} })
-            if roboport and #roboport > 0 then
-                storage.castra.dataCollectorsRoboportStatus[event.entity.unit_number] = true
-            else
-                storage.castra.dataCollectorsRoboportStatus[event.entity.unit_number] = false
-            end
-        end
-        if event.entity.name == "roboport" and event.entity.force.name == "player" then
-            -- Look for any data collectors in range and mark them as in range of a roboport if they are
-            -- Use a 55 tile +/- 55 tile area to check for data collectors
-            local dataCollectors = storage.castra.dataCollectors or {}
-            storage.castra.dataCollectorsRoboportStatus = storage.castra.dataCollectorsRoboportStatus or {}
-            for _, dataCollector in pairs(dataCollectors) do
-                if dataCollector.valid and math.abs(dataCollector.position.x - event.entity.position.x) < 55 and math.abs(dataCollector.position.y - event.entity.position.y) < 55 then
-                    storage.castra.dataCollectorsRoboportStatus[dataCollector.unit_number] = true
-                end
-            end
         end
     end    
-end
-
-local function removed_entity(event)
-    -- Remove roboports from dataCollectorsRoboportStatus if needed
-    if event.entity.name == "roboport" and event.entity.force.name == "player" then
-        -- Look for any data collectors in range and mark them as in range of a roboport if they are
-        -- Use a 55 tile +/- 55 tile area to check for data collectors
-        local dataCollectors = storage.castra.dataCollectors or {}
-        storage.castra.dataCollectorsRoboportStatus = storage.castra.dataCollectorsRoboportStatus or {}
-        for _, dataCollector in pairs(dataCollectors) do
-            if dataCollector.valid and math.abs(dataCollector.position.x - event.entity.position.x) < 55 and math.abs(dataCollector.position.y - event.entity.position.y) < 55 then
-                -- Check if there are any other roboports in range
-                local roboport = event.entity.surface.find_entities_filtered({ force = "player", name = "roboport", position = dataCollector.position, area = {{-55 + dataCollector.position.x, -55 + dataCollector.position.y}, {55 + dataCollector.position.x, 55 + dataCollector.position.y}} })
-                if roboport and #roboport > 0 then
-                    storage.castra.dataCollectorsRoboportStatus[dataCollector.unit_number] = true
-                else
-                    storage.castra.dataCollectorsRoboportStatus[dataCollector.unit_number] = false
-                end
-            end
-        end
-    end
 end
 
 script.on_event(defines.events.on_built_entity, function(event)
@@ -558,19 +510,6 @@ script.on_event(defines.events.on_robot_built_entity, function(event)
 end)
 script.on_event(defines.events.script_raised_built, function(event)
     built_event(event)
-end)
-
-script.on_event(defines.events.on_player_mined_entity, function(event)
-    removed_entity(event)
-end)
-script.on_event(defines.events.on_entity_died, function(event)
-    removed_entity(event)
-end)
-script.on_event(defines.events.on_robot_mined_entity, function(event)
-    removed_entity(event)
-end)
-script.on_event(defines.events.script_raised_destroy, function(event)
-    removed_entity(event)
 end)
 
 local function get_available_upgrades()

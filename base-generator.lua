@@ -226,10 +226,10 @@ local function floodFill(hull, x, y)
     end
 end
 
-local function select_random_quality()
+local function select_random_quality_max(max_quality_in)
     item_cache.build_cache_if_needed()
     local qualities = {}
-    local max_quality = storage.castra.enemy.quality_tier
+    local max_quality = max_quality_in or storage.castra.enemy.quality_tier
 
     -- Add any qualities from the table that are lower thanl the max quality
     for _, quality in pairs(prototypes.quality) do
@@ -238,15 +238,16 @@ local function select_random_quality()
         end
     end
 
-    if #qualities == 0 then
+    if #qualities == 0 or storage.castra.enemy.quality_module_tier == 0 then
         return prototypes.quality["normal"]
     end
 
-    -- Assign a weight to each quality based on the level: (1/2)^level * 1000
+    -- Assign a weight to each quality based on the level and the current quality module tier
     local total_weight = 0
     local weights = {}
+    local base = 0.5 * math.sqrt(storage.castra.enemy.quality_module_tier * math.sqrt(max_quality.level))
     for _, quality in pairs(qualities) do
-        local weight = math.pow(0.5, quality.level) * 1000
+        local weight = math.ceil(math.pow(base, quality.level) * 1000)
         total_weight = total_weight + weight
         table.insert(weights, weight)
     end
@@ -262,6 +263,10 @@ local function select_random_quality()
     end
 
     return prototypes.quality["normal"]
+end
+
+local function select_random_quality()
+    return select_random_quality_max(nil)
 end
 
 local function build_enemy_wall(chunk_area, pos)
@@ -540,7 +545,7 @@ local function get_enemy_variant(name)
     if name == "flamethrower-turret" then
         return "castra-enemy-flamethrower-turret"
     elseif name == "railgun-turret" then
-        return "castra-enemy-railgurret"
+        return "castra-enemy-railgun-turret"
     elseif name == "tesla-turret" then
         return "castra-enemy-tesla-turret"
     elseif name == "laser-turret" then
@@ -708,4 +713,5 @@ return {
     get_corresponding_ammo = get_corresponding_ammo,
     select_random_quality = select_random_quality,
     get_enemy_variant = get_enemy_variant,
+    select_random_quality_max = select_random_quality_max,
 }

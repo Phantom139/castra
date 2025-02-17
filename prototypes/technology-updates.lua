@@ -173,44 +173,31 @@ if data.raw["technology"]["battery-mk3-equipment"] then
     table.insert(data.raw["technology"]["battery-mk3-equipment"].prerequisites, "lithium-battery")
 end
 
-for _, tech in pairs(data.raw["technology"]) do
-    if string.find(tech.name, "plastic%-bar%-productivity") then
-        table.insert(tech.effects, { type = "change-recipe-productivity", recipe = "plastic-hydrogen-sulfide", change = 0.1 })
-    end
-end
+local function add_productivity_bonus(search_name, add_recipe, amount)
+    if not add_recipe then return end
 
-for _, tech in pairs(data.raw["technology"]) do
-    if string.find(tech.name, "rocket%-fuel%-productivity") then
-        table.insert(tech.effects, { type = "change-recipe-productivity", recipe = "rocket-fuel-sulfur", change = 0.1 })
-    end
-end
-
-if mods["planet-muluna"] then
-    -- Add electric-engine-unit-from-carbon to producitivty tech
-    local recipe = data.raw["recipe"]["electric-engine-unit-from-carbon"]
-    if recipe then
-        for _, tech in pairs(data.raw["technology"]) do
-            if string.find(tech.name, "engine%-productivity") then
-                table.insert(tech.effects, {
-                    type = "change-recipe-productivity",
-                    recipe = "electric-engine-unit-from-carbon",
-                    change = 0.1
-                })
+    -- Find any tech which has "change-recipe-productivity" for the search_name
+    for _, tech in pairs(data.raw["technology"]) do
+        if tech.effects then
+            for _, effect in pairs(tech.effects) do
+                if effect.type == "change-recipe-productivity" and effect.recipe == search_name then
+                    table.insert(tech.effects, { type = "change-recipe-productivity", recipe = add_recipe, change = amount })
+                end
             end
         end
     end
 end
 
-if mods["Cerys-Moon-of-Fulgora"] then
-    -- Find any holmium-plate-productivity-# and add holmium-catalyzing
-    for _, tech in pairs(data.raw["technology"]) do
-        if string.find(tech.name, "holmium%-plate%-productivity") then
-            table.insert(tech.effects, {
-                type = "change-recipe-productivity",
-                recipe = "holmium-catalyzing",
-                change = 0.1
-            })
-        end
+add_productivity_bonus("plastic-bar", "plastic-hydrogen-sulfide", 0.1)
+add_productivity_bonus("rocket-fuel", "rocket-fuel-sulfur", 0.1)
+
+if mods["planet-muluna"] then
+    -- Add electric-engine-unit-from-carbon to producitivty tech
+    local recipe = data.raw["recipe"]["electric-engine-unit-from-carbon"]
+    if recipe then
+        add_productivity_bonus("electric-engine-unit", "electric-engine-unit-from-carbon", 0.1)
     end
 end
+
+add_productivity_bonus("holmium-plate", "holmium-catalyzing", 0.1)
 

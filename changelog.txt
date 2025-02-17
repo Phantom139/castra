@@ -1,4 +1,21 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.4.5
+Date: 2025-02-17
+  Bugfixes:
+    - Fix tier 1 modules not getting detected as researched for the enemy
+    - Fix some items not being marked for deconstruction by always marking them for deconstruction now, regardless of any roboport in range
+  Changes:
+    - Reduced chance of quality items from data collectors from 100%
+    - Adjusted quality formula for spawning entity quality items/entity to also account for the quality module tier unlocked
+    - Tier 4 modules and even higher tiers if they exist are now supported by the enemy
+    - Increased tank aggressiveness again
+    - Adjusted battlefield data packet amounts in recipes to better reflect the low amount you get
+---------------------------------------------------------------------------------------------------
+Version: 0.4.4
+Date: 2025-02-16
+  Bugfixes:
+    - Fix enemy railgun turret placement error
+---------------------------------------------------------------------------------------------------
 Version: 0.4.3
 Date: 2025-02-16
   Bugfixes:

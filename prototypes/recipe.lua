@@ -90,7 +90,9 @@ data:extend(
       allow_productivity = true,
       auto_recycle = false,
       hide_from_signal_gui = false,
-      main_product = ""
+      main_product = "",
+      allow_decomposition = false,
+      allow_as_intermediate  = false,
     },
     {
       type = "recipe",
@@ -115,6 +117,8 @@ data:extend(
       auto_recycle = false,
       hide_from_signal_gui = false,
       main_product = "",
+      allow_decomposition = false,
+      allow_as_intermediate  = false,
       subgroup = "castra-military",
       order = "a[firearm-magazine]"
     },
@@ -145,6 +149,8 @@ data:extend(
       auto_recycle = false,
       hide_from_signal_gui = false,
       main_product = "",
+      allow_decomposition = false,
+      allow_as_intermediate  = false,
       subgroup = "castra-military",
       order = "b[piercing-rounds-magazine]"
     },
@@ -186,7 +192,9 @@ data:extend(
       allow_productivity = true,
       auto_recycle = false,
       hide_from_signal_gui = false,
-      main_product = ""
+      main_product = "",
+      allow_decomposition = false,
+      allow_as_intermediate  = false,
     },
     {
       -- explosives from gunpowder instead of coal
@@ -217,6 +225,8 @@ data:extend(
       auto_recycle = false,
       hide_from_signal_gui = false,
       main_product = "",
+      allow_decomposition = false,
+      allow_as_intermediate  = false,
       subgroup = "castra-military",
       order = "c[explosives]"
     },
@@ -246,6 +256,8 @@ data:extend(
       auto_recycle = false,
       hide_from_signal_gui = false,
       main_product = "",
+      allow_decomposition = false,
+      allow_as_intermediate  = false,
       subgroup = "castra-military",
       order = "d[grenade]"
     },
@@ -278,6 +290,8 @@ data:extend(
       auto_recycle = false,
       hide_from_signal_gui = false,
       main_product = "",
+      allow_decomposition = false,
+      allow_as_intermediate  = false,
       subgroup = "castra-processes",
       order = "e[engine-unit]"
     },
@@ -315,6 +329,8 @@ data:extend(
       auto_recycle = false,
       hide_from_signal_gui = false,
       main_product = "",
+      allow_decomposition = false,
+      allow_as_intermediate  = false,
       subgroup = "castra-processes",
       order = "f[plastic-bar]"
     },
@@ -348,6 +364,8 @@ data:extend(
       auto_recycle = false,
       hide_from_signal_gui = false,
       main_product = "",
+      allow_decomposition = false,
+      allow_as_intermediate  = false,
       subgroup = "castra-processes",
       order = "g[battery]"
     },
@@ -449,7 +467,9 @@ data:extend(
       allow_productivity = true,
       auto_recycle = false,
       hide_from_signal_gui = false,
-      main_product = ""
+      main_product = "",
+      allow_decomposition = false,
+      allow_as_intermediate  = false
     },
     {
       -- tank with nickel instead of steel
@@ -481,6 +501,8 @@ data:extend(
       auto_recycle = false,
       hide_from_signal_gui = false,
       main_product = "",
+      allow_decomposition = false,
+      allow_as_intermediate  = false,
       subgroup = "castra-military",
       order = "b[tank]"
     },
@@ -523,7 +545,9 @@ data:extend(
       allow_productivity = true,
       auto_recycle = false,
       hide_from_signal_gui = false,
-      main_product = ""
+      main_product = "",
+      allow_decomposition = false,
+      allow_as_intermediate  = false
     },
     {
       type = "recipe",
@@ -571,6 +595,8 @@ data:extend(
       auto_recycle = false,
       hide_from_signal_gui = false,
       main_product = "",
+      allow_decomposition = false,
+      allow_as_intermediate  = false,
       subgroup = "castra-processes",
       order = "i[holmium-catalyzing]"
     },
@@ -595,7 +621,7 @@ data:extend(
       ingredients = {
         {type="item", name="nickel-plate", amount=50},
         {type="item", name="processing-unit", amount=20},
-        {type="item", name="castra-data", amount=5}
+        {type="item", name="castra-data", amount=1}
       },
       results = {{type="item", name="combat-roboport", amount=1}},
       main_product = "combat-roboport"
@@ -628,6 +654,8 @@ data:extend(
       category = "basic-crafting",
       hide_from_signal_gui = false,
       main_product = "",
+      allow_decomposition = false,
+      allow_as_intermediate  = false,
       subgroup = "castra-processes",
       order = "b[gunpowder-carbon]"
     },
@@ -665,6 +693,8 @@ data:extend(
       category = "basic-crafting",
       hide_from_signal_gui = false,
       main_product = "",
+      allow_decomposition = false,
+      allow_as_intermediate  = false,
       subgroup = "castra-military",
       order = "e[poison-capsule]"
     },
@@ -701,6 +731,8 @@ data:extend(
       category = "basic-crafting",
       hide_from_signal_gui = false,
       main_product = "",
+      allow_decomposition = false,
+      allow_as_intermediate  = false,
       subgroup = "castra-military",
       order = "d[slowdown-capsule]"
     },
@@ -708,13 +740,13 @@ data:extend(
       type = "recipe",
       name = "defender-capsule-castra-data",
       enabled = false,
-      energy_required = 8,
+      energy_required = 32,
       ingredients = {
         {type="item", name="castra-data", amount=1},
-        {type="item", name="piercing-rounds-magazine", amount=3},
-        {type="item", name="iron-gear-wheel", amount=3}
+        {type="item", name="piercing-rounds-magazine", amount=12},
+        {type="item", name="iron-gear-wheel", amount=12}
       },
-      results = {{type="item", name="defender-capsule", amount=1}},
+      results = {{type="item", name="defender-capsule", amount=4}},
       icons =
       {
         {
@@ -733,6 +765,8 @@ data:extend(
       allow_productivity = false,
       hide_from_signal_gui = false,
       main_product = "",
+      allow_decomposition = false,
+      allow_as_intermediate  = false,
       subgroup = "castra-military",
       order = "m[defender-capsule]"
     },
@@ -740,12 +774,12 @@ data:extend(
       type = "recipe",
       name = "distractor-capsule-castra-data",
       enabled = false,
-      energy_required = 15,
+      energy_required = 60,
       ingredients = {
         {type="item", name="castra-data", amount=1},
-        {type="item", name="defender-capsule", amount=4}
+        {type="item", name="defender-capsule", amount=16}
       },
-      results = {{type="item", name="distractor-capsule", amount=1}},
+      results = {{type="item", name="distractor-capsule", amount=4}},
       icons =
       {
         {
@@ -764,6 +798,8 @@ data:extend(
       allow_productivity = false,
       hide_from_signal_gui = false,
       main_product = "",
+      allow_decomposition = false,
+      allow_as_intermediate  = false,
       subgroup = "castra-military",
       order = "n[distractor-capsule]"
     },
@@ -771,12 +807,12 @@ data:extend(
       type = "recipe",
       name = "destroyer-capsule-castra-data",
       enabled = false,
-      energy_required = 15,
+      energy_required = 60,
       ingredients = {
         {type="item", name="castra-data", amount=2},
-        {type="item", name="distractor-capsule", amount=4}
+        {type="item", name="distractor-capsule", amount=16}
       },
-      results = {{type="item", name="destroyer-capsule", amount=1}},
+      results = {{type="item", name="destroyer-capsule", amount=4}},
       icons =
       {
         {
@@ -795,6 +831,8 @@ data:extend(
       allow_productivity = false,
       hide_from_signal_gui = false,
       main_product = "",
+      allow_decomposition = false,
+      allow_as_intermediate  = false,
       subgroup = "castra-military",
       order = "o[destroyer-capsule]"
     },
@@ -802,12 +840,12 @@ data:extend(
       type = "recipe",
       name = "electronic-circuit-battlefield-data",
       enabled = false,
-      energy_required = 4,
+      energy_required = 16,
       ingredients = {
         {type="item", name="castra-data", amount=1},
-        {type="item", name="copper-cable", amount=3}
+        {type="item", name="copper-cable", amount=12}
       },
-      results = {{type="item", name="electronic-circuit", amount=1}},
+      results = {{type="item", name="electronic-circuit", amount=4}},
       icons =
       {
         {
@@ -826,6 +864,8 @@ data:extend(
       allow_productivity = true,
       hide_from_signal_gui = false,
       main_product = "",
+      allow_decomposition = false,
+      allow_as_intermediate  = false,
       subgroup = "castra-processes",
       order = "e[electronic-circuit]"
     },
@@ -833,13 +873,13 @@ data:extend(
       type = "recipe",
       name = "advanced-circuit-battlefield-data",
       enabled = false,
-      energy_required = 8,
+      energy_required = 32,
       ingredients = {
         {type="item", name="castra-data", amount=1},
-        {type="item", name="electronic-circuit", amount=2},
-        {type="item", name="plastic-bar", amount=2}
+        {type="item", name="electronic-circuit", amount=8},
+        {type="item", name="plastic-bar", amount=8}
       },
-      results = {{type="item", name="advanced-circuit", amount=1}},
+      results = {{type="item", name="advanced-circuit", amount=4}},
       icons =
       {
         {
@@ -858,6 +898,8 @@ data:extend(
       allow_productivity = true,
       hide_from_signal_gui = false,
       main_product = "",
+      allow_decomposition = false,
+      allow_as_intermediate  = false,
       subgroup = "castra-processes",
       order = "f[advanced-circuit]"
     },
@@ -865,13 +907,13 @@ data:extend(
       type = "recipe",
       name = "processing-unit-battlefield-data",
       enabled = false,
-      energy_required = 12,
+      energy_required = 48,
       ingredients = {
-        {type="item", name="castra-data", amount=4},
-        {type="item", name="advanced-circuit", amount=2},
-        {type="fluid", name="sulfuric-acid", amount=10}
+        {type="item", name="castra-data", amount=2},
+        {type="item", name="advanced-circuit", amount=8},
+        {type="fluid", name="sulfuric-acid", amount=40}
       },
-      results = {{type="item", name="processing-unit", amount=1}},
+      results = {{type="item", name="processing-unit", amount=4}},
       icons =
       {
         {
@@ -890,6 +932,8 @@ data:extend(
       allow_productivity = true,
       hide_from_signal_gui = false,
       main_product = "",
+      allow_decomposition = false,
+      allow_as_intermediate  = false,
       subgroup = "castra-processes",
       order = "g[processing-unit]"
     },
@@ -935,6 +979,8 @@ data:extend(
       auto_recycle = false,
       hide_from_signal_gui = false,
       main_product = "",
+      allow_decomposition = false,
+      allow_as_intermediate  = false,
       subgroup = "castra-processes",
       order = "d[nickel-sulfide-reduction]"
     },
@@ -971,6 +1017,8 @@ data:extend(
       auto_recycle = false,
       hide_from_signal_gui = false,
       main_product = "",
+      allow_decomposition = false,
+      allow_as_intermediate  = false,
       subgroup = "castra-processes",
       order = "g[rocket-fuel]"
     },

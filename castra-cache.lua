@@ -31,6 +31,25 @@ local function has_castra_researched_item(item_name)
     return has_item_cache[item_name]
 end
 
+local function does_module_exist(module_type, tier)
+    if tier == 1 then
+        -- Special case for tier 1 modules, which are not named with a number, 
+        -- but just in case, also check in the numbered version exists
+        return prototypes.item[module_type] ~= nil or prototypes.item[module_type .. "-1"] ~= nil
+    end
+
+    return prototypes.item[module_type .. "-" .. tier] ~= nil
+end
+
+local function get_highest_module_tier(module_type)
+    -- Increment a number until the module does not exist as an item
+    local i = 1
+    while does_module_exist(module_type, i) do
+        i = i + 1
+    end
+    return i - 1
+end
+
 local function update_castra_enemy_data()
     storage.castra = storage.castra or {}
     local enemy_storage = storage.castra.enemy or {}
@@ -39,7 +58,10 @@ local function update_castra_enemy_data()
 
     -- Update the highest tier of speed module unlocked by checking recipes
     local speed_module_tier = 0
-    for i = 1, 3 do
+    for i = 1, get_highest_module_tier("speed-module") do
+        if i == 1 and has_castra_researched_item("speed-module") then
+            speed_module_tier = i
+        end
         if has_castra_researched_item("speed-module-" .. i) then
             speed_module_tier = i
         end
@@ -48,12 +70,27 @@ local function update_castra_enemy_data()
 
     -- Update the highest tier of productivity module unlocked by checking recipes
     local productivity_module_tier = 0
-    for i = 1, 3 do
+    for i = 1, get_highest_module_tier("productivity-module") do
+        if i == 1 and has_castra_researched_item("productivity-module") then
+            productivity_module_tier = i
+        end
         if has_castra_researched_item("productivity-module-" .. i) then
             productivity_module_tier = i
         end
     end
     enemy_storage.productivity_module_tier = productivity_module_tier
+
+    -- Update highest tier of quality module
+    local quality_module_tier = 0
+    for i = 1, get_highest_module_tier("quality-module") do
+        if i == 1 and has_castra_researched_item("quality-module") then
+            quality_module_tier = i
+        end
+        if has_castra_researched_item("quality-module-" .. i) then
+            quality_module_tier = i
+        end
+    end
+    enemy_storage.quality_module_tier = quality_module_tier
 
     -- Check for the best power pole: none > small > medium > substation
     local best_power_pole = nil
