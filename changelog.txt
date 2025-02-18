@@ -1,4 +1,21 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.4.6
+Date: 2025-02-18
+  Bugfixes:
+    - Fix error when giving tank commands, combat roboports, and other misc issues due to missing caching
+    - Fix occasional error when enemy artillery fires
+    - Fix enemy base upgrading also filling player turrets and roboports
+    - Fix enemy base upgrading losing orientation and direction
+    - Fix lag spike due to pollution data caching
+    - Fix combat roboports losing the robot's quality
+  Changes:
+    - Move the planet further down in the list to be with other planets of similar tier
+    - Carbon fiber walls can now be placed on water and oceans of varying types
+    - Foundation can now be placed on light oil oceans
+  Compatibility:
+    - Enemy will now use Maraxis and Cerys ammo types  
+    - Disallow rocket fuel from sulfur recipe on Cerys
+---------------------------------------------------------------------------------------------------
 Version: 0.4.5
 Date: 2025-02-17
   Bugfixes:

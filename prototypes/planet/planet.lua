@@ -59,7 +59,7 @@ data:extend(
     distance = 21,
     orientation = 0.05,
     magnitude = 1,
-    order = "c[castra]",
+    order = "d[castra]",
     subgroup = "planets",
     map_seed_offset = 420354692,
     map_gen_settings = planet_map_gen.castra(),

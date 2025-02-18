@@ -50,6 +50,14 @@ local function get_highest_module_tier(module_type)
     return i - 1
 end
 
+-- Dictionary of lists of ammo types, sorted by damage value
+local sorted_ammo_types = {
+    bullet = {"firearm-magazine", "piercing-rounds-magazine", "uranium-rounds-magazine", "plutonium-rounds-magazine"},
+    rocket = {"rocket", "explosive-rocket", "atomic-bomb", "hydrogen-bomb"},
+    railgun = {"railgun-ammo" },
+    artillery_shell = {"artillery-shell", "cerys-neutron-bomb", "maraxsis-fat-man" },
+}
+
 local function update_castra_enemy_data()
     storage.castra = storage.castra or {}
     local enemy_storage = storage.castra.enemy or {}
@@ -117,31 +125,41 @@ local function update_castra_enemy_data()
 
     -- Check highest tier of ammo
     local ammo_tier = nil
-    if has_castra_researched_item("firearm-magazine") then
-        ammo_tier = "firearm-magazine"
-    end
-    if has_castra_researched_item("piercing-rounds-magazine") then
-        ammo_tier = "piercing-rounds-magazine"
-    end
-    if has_castra_researched_item("uranium-rounds-magazine") then
-        ammo_tier = "uranium-rounds-magazine"
+    for _, ammo in pairs(sorted_ammo_types.bullet) do
+        if has_castra_researched_item(ammo) then
+            ammo_tier = ammo
+        end
     end
     enemy_storage.ammo_tier = ammo_tier
 
     -- Check highest tier of rocket
     local rocket_tier = nil
-    if has_castra_researched_item("rocket") then
-        rocket_tier = "rocket"
-    end
-    if has_castra_researched_item("explosive-rocket") then
-        rocket_tier = "explosive-rocket"
-    end
-    if has_castra_researched_item("atomic-bomb") then
-        rocket_tier = "atomic-bomb"
+    for _, rocket in pairs(sorted_ammo_types.rocket) do
+        if has_castra_researched_item(rocket) then
+            rocket_tier = rocket
+        end
     end
     enemy_storage.rocket_tier = rocket_tier
 
-    -- Check best combat robot
+    -- Check highest tier of railgun ammo
+    local railgun_tier = nil
+    for _, railgun in pairs(sorted_ammo_types.railgun) do
+        if has_castra_researched_item(railgun) then
+            railgun_tier = railgun
+        end
+    end
+    enemy_storage.railgun_tier = railgun_tier
+
+    -- Check highest tier of artillery-shell
+    local artillery_tier = nil
+    for _, artillery in pairs(sorted_ammo_types.artillery_shell) do
+        if has_castra_researched_item(artillery) then
+            artillery_tier = artillery
+        end
+    end
+    enemy_storage.artillery_tier = artillery_tier
+
+    -- Check highest tier of combat robot
     local combat_robot = nil
     if has_castra_researched_item("defender-capsule") then
         combat_robot = "defender-capsule"
@@ -171,7 +189,6 @@ local function update_castra_enemy_data()
     enemy_storage.flamethrower_turret = has_castra_researched_item("flamethrower-turret")
     enemy_storage.rocket_turret = has_castra_researched_item("rocket-turret")
     enemy_storage.railgun_turret = has_castra_researched_item("railgun-turret")
-    enemy_storage.railgun_ammo = has_castra_researched_item("railgun_ammo")
     enemy_storage.solar_panel = has_castra_researched_item("solar-panel")
     enemy_storage.repair_pack = has_castra_researched_item("repair-pack")
     enemy_storage.big_electric_pole = has_castra_researched_item("big-electric-pole")
@@ -179,7 +196,6 @@ local function update_castra_enemy_data()
     enemy_storage.construction_robot = has_castra_researched_item("construction-robot")
     enemy_storage.tank = has_castra_researched_item("tank")
     enemy_storage.artillery_turret = has_castra_researched_item("artillery-turret")
-    enemy_storage.artillery_shell = has_castra_researched_item("artillery-shell")
     enemy_storage.spidertron = has_castra_researched_item("spidertron")
     enemy_storage.land_mine = has_castra_researched_item("land-mine")
     enemy_storage.tesla_turret = has_castra_researched_item("tesla-turret")
@@ -202,19 +218,26 @@ local function build_pollution_cache()
     storage.castra = storage.castra or {}
     storage.castra.dataCollectors = storage.castra.dataCollectors or {}
     storage.castra.dataCollectorsPollution = storage.castra.dataCollectorsPollution or {}
+    if #storage.castra.dataCollectors == 0 then
+        return
+    end
+    storage.castra.pollution_iterator = storage.castra.pollution_iterator or 0
 
-    for _, dataCollector in pairs(storage.castra.dataCollectors) do
-        if dataCollector.valid then
-            local pollution = 0
-            -- Get 3x3 chunk pollution sum
-            for x = -1, 1 do
-                for y = -1, 1 do
-                    pollution = pollution + dataCollector.surface.get_pollution { x = dataCollector.position.x + x * 32, y = dataCollector.position.y + y * 32 }
-                end
+    storage.castra.pollution_iterator = storage.castra.pollution_iterator + 1
+    if storage.castra.pollution_iterator > #storage.castra.dataCollectors then
+        storage.castra.pollution_iterator = 1
+    end
+    local dataCollector = storage.castra.dataCollectors[storage.castra.pollution_iterator]
+    if dataCollector.valid then
+        local pollution = 0
+        -- Get 3x3 chunk pollution sum
+        for x = -1, 1 do
+            for y = -1, 1 do
+                pollution = pollution + dataCollector.surface.get_pollution { x = dataCollector.position.x + x * 32, y = dataCollector.position.y + y * 32 }
             end
-            -- Update pollution in storage
-            storage.castra.dataCollectorsPollution[dataCollector.unit_number] = pollution
         end
+        -- Update pollution in storage
+        storage.castra.dataCollectorsPollution[dataCollector.unit_number] = pollution
     end
 end
 

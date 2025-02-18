@@ -21,6 +21,7 @@ data:extend({
         open_sound = sounds.machine_open,
         close_sound = sounds.machine_close,
         impact_category = "metal",
+        collision_mask = {layers={object=true, is_object=true, is_lower_object=true}},
         attack_reaction =
         {
             {

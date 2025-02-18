@@ -68,12 +68,11 @@ end
 
 local function fill_turrets(data_collector)
     -- Fill all turrets in the area with ammo
-    local area = get_search_area_size(data_collector, 30)
+    local area = get_search_area_size(data_collector, 20)
     local turret_types = { "gun-turret", "laser-turret", "rocket-turret", "railgun-turret",
         "tesla-turret", "combat-roboport", "flamethrower-turret", "artillery-turret" }
     for _, turret_type in pairs(turret_types) do
-        for _, turret in pairs(data_collector.surface.find_entities_filtered { area = area, type = base_gen.get_enemy_variant(turret_type) }) do
-            turrets_found = true
+        for _, turret in pairs(data_collector.surface.find_entities_filtered { area = area, type = base_gen.get_enemy_variant(turret_type), force = "enemy" }) do
             local ammo = base_gen.get_corresponding_ammo(turret_type)
             if ammo and ammo ~= "N_A" then
                 turret.insert({ name = ammo, count = prototypes.item[ammo].stack_size, quality = base_gen.select_random_quality() })
@@ -90,7 +89,7 @@ local function fill_roboports(data_collector)
     item_cache.build_cache_if_needed()
     -- Stock up on construction bots and repair packs if available
     local area = get_search_area_size(data_collector, 30)
-    for _, roboport in pairs(data_collector.surface.find_entities_filtered { area = area, type = "roboport" }) do
+    for _, roboport in pairs(data_collector.surface.find_entities_filtered { area = area, type = "roboport", force = "enemy" }) do
         if storage.castra.enemy.construction_robot then
             local construction_bots = roboport.get_item_count("construction-robot")
             if construction_bots < 25 then
@@ -171,9 +170,12 @@ local function upgrade_quality(data_collector)
             local entity_name = entity.name
             local surface = entity.surface
             local position = entity.position
-            -- Delete the old one and place the new one
+            local direction = entity.direction
+            local orientation = entity.orientation
+            surface.create_entity { name = entity_name, position = position, force = "enemy", quality = random_quality, raise_built = true, direction = direction, orientation = orientation }
+
+            -- Delete the old one
             entity.destroy()
-            surface.create_entity { name = entity_name, position = position, force = "enemy", quality = random_quality }
         end
         ::continue::
     end

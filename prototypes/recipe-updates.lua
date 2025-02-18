@@ -188,3 +188,31 @@ if mods["modules-t4"] then
         end
     end
 end
+
+local function get_surface_condition(recipe, condition_type)
+    if recipe.surface_conditions then
+        for _, condition in pairs(recipe.surface_conditions) do
+            if condition.property == condition_type then
+                return condition
+            end
+        end
+    end
+    -- If the condition doesn't exist, add it and return it
+    local new_condition = { property = condition_type }
+    table.insert(recipe.surface_conditions, new_condition)
+    return new_condition
+end
+
+-- Limit rocket-fuel-sulfur recipe to >= 255 K if cerys is installed
+if mods["Cerys-Moon-of-Fulgora"] then
+    local recipe = data.raw["recipe"]["rocket-fuel-sulfur"]
+    if recipe then
+        if not recipe.surface_conditions then
+            recipe.surface_conditions = {}
+        end
+        local temperature_condition = get_surface_condition(recipe, "temperature")
+        if temperature_condition.min == nil or temperature_condition.min < 255 then
+            temperature_condition.min = 255
+        end
+    end
+end

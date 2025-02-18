@@ -80,8 +80,8 @@ end
 -- on_tick command to track all data-collector entities and keep in storage
 local function on_tick_update_data_collectors(event)
     
-    -- Update pollution storage every 10 min
-    if event.tick % 36000 == 22542 then
+    -- Update pollution storage every 10 ticks for the next data collector in the list
+    if event.tick % 10 == 3 then
         item_cache.build_pollution_cache()
     end
 
@@ -159,7 +159,7 @@ function give_tank_random_command(tank, selection)
         tank.commandable.set_command { type = defines.command.wander, distraction = defines.distraction.by_anything, ticks_to_wait = math.random(600, 5000) }
     elseif randSelection < 0.95 then
         -- Pick a random data collector to go to from storage
-        if storage.castra and storage.castra.dataCollectors then
+        if storage.castra and storage.castra.dataCollectors and #storage.castra.dataCollectors > 0 then
             local dataCollector = storage.castra.dataCollectors[math.random(1, #storage.castra.dataCollectors)]
             if dataCollector.valid then
                 tank.commandable.set_command { type = defines.command.go_to_location, destination = dataCollector.position, distraction = defines.distraction.by_anything }
@@ -436,49 +436,57 @@ local function update_combat_roboports(event)
     if event.tick % 600 == 474 then
         storage.castra = storage.castra or {}
         storage.castra.combat_roboports = storage.castra.combat_roboports or {}
+
+        -- Remove invalid roboports
+        for i = #storage.castra.combat_roboports, 1, -1 do
+            if not storage.castra.combat_roboports[i].valid then
+                table.remove(storage.castra.combat_roboports, i)
+            end
+        end
+
         -- Loop through all combat roboports
         for _, roboport in pairs(storage.castra.combat_roboports) do
-            if roboport.valid then
-                -- Get the opposite force
-                local enemy_force = roboport.force.name == "enemy" and game.forces["player"] or game.forces["enemy"]
+            -- Get the opposite force
+            local enemy_force = roboport.force.name == "enemy" and game.forces["player"] or game.forces["enemy"]
 
-                -- Find any enemies within 10 tiles
-                local enemies = roboport.surface.find_entities_filtered { force = enemy_force, area = { { roboport.position.x - 10, roboport.position.y - 10 }, { roboport.position.x + 10, roboport.position.y + 10 } }, is_military_target = true }
-                if #enemies > 0 then
-                    -- Check inventory if it's a valid combat robot
-                    local combat_robot = nil
-                    local inventory = roboport.get_inventory(defines.inventory.chest)
-                    if inventory and inventory[1] and inventory[1].valid and inventory[1].name and
-                        (inventory[1].name == "destroyer-capsule" or
-                            inventory[1].name == "distractor-capsule" or
-                            inventory[1].name == "defender-capsule") then
-                        -- Remove the capsule part of the name
-                        combat_robot = string.gsub(inventory[1].name, "-capsule", "")
-                    end
+            -- Find any enemies within 10 tiles
+            local enemies = roboport.surface.find_entities_filtered { force = enemy_force, area = { { roboport.position.x - 10, roboport.position.y - 10 }, { roboport.position.x + 10, roboport.position.y + 10 } }, is_military_target = true }
+            if #enemies > 0 then
+                -- Check inventory if it's a valid combat robot
+                local combat_robot = nil
+                local robot_quality = nil
+                local inventory = roboport.get_inventory(defines.inventory.chest)
+                if inventory and inventory[1] and inventory[1].valid and inventory[1].name and
+                    (inventory[1].name == "destroyer-capsule" or
+                        inventory[1].name == "distractor-capsule" or
+                        inventory[1].name == "defender-capsule") then
+                    -- Remove the capsule part of the name
+                    combat_robot = string.gsub(inventory[1].name, "-capsule", "")
+                    robot_quality = inventory[1].quality
+                end
 
-                    if combat_robot then
-                        -- Spawn 5 + quality combat robots
-                        for i = 1, 5 + roboport.quality.level do
-                            -- Randomize the position
-                            local pos = {
-                                x = roboport.position.x +
-                                    math.random(-2, 2),
-                                y = roboport.position.y +
-                                    math.random(-2, 2)
-                            }
-                            local robot = roboport.surface.create_entity { name = combat_robot, position = pos, force = roboport.force }
+                if combat_robot then
+                    -- Spawn 5 + quality combat robots
+                    for i = 1, 5 + roboport.quality.level do
+                        -- Randomize the position
+                        local pos = {
+                            x = roboport.position.x +
+                                math.random(-2, 2),
+                            y = roboport.position.y +
+                                math.random(-2, 2)
+                        }
+                        local robot = roboport.surface.create_entity { name = combat_robot, position = pos, force = roboport.force, raise_built = true, quality = robot_quality }
 
-                            -- Pick a random enemy to be their "owner"
-                            local enemy = enemies[math.random(1, #enemies)]
-                            if enemy.valid then
-                                robot.combat_robot_owner = enemy
-                            else
-                                robot.combat_robot_owner = roboport
-                            end
+                        -- Pick a random enemy to be their "owner"
+                        local enemy = enemies[math.random(1, #enemies)]
+                        if enemy.valid then
+                            robot.combat_robot_owner = enemy
+                        else
+                            robot.combat_robot_owner = roboport
                         end
-                        -- Remove 1 combat robot from the inventory
-                        inventory[1].count = inventory[1].count - 1
                     end
+                    -- Remove 1 combat robot from the inventory
+                    inventory[1].count = inventory[1].count - 1
                 end
             end
         end
@@ -549,6 +557,14 @@ local function randomly_upgrade_base(event)
 
         local surface = game.surfaces["castra"]
         local dataCollectors = storage.castra.dataCollectors or {}
+
+        -- Remove any invalid data collectors
+        for i = #dataCollectors, 1, -1 do
+            if not dataCollectors[i].valid then
+                table.remove(dataCollectors, i)
+            end
+        end
+
         if #dataCollectors > 0 then
             local dataCollector = dataCollectors[math.random(1, #dataCollectors)]
             if dataCollector.valid then
@@ -567,46 +583,12 @@ local function randomly_upgrade_base(event)
     end
 end
 
-local function random_artillery_firing(event)
-    -- Every 3 minutes, randomly fire a group of artillery shells at a random player entity within range
-    if event.tick % 108000 == 56883 then
-        if not item_cache.castra_exists() then
-            return
-        end
-
-        local artillery = storage.castra.enemy_artillery or {}
-        -- Remove any invalid artillery
-        for i = #artillery, 1, -1 do
-            if not artillery[i].valid then
-                table.remove(artillery, i)
-            end
-        end
-
-        if #artillery == 0 then
-            return
-        end
-
-        local surface = game.surfaces["castra"]
-        -- Each artillery has a 10% chance to fire
-        for _, artillery in pairs(artillery) do            
-            if math.random() < 0.1 then
-                -- Find a player entity within range
-                local closest = surface.find_nearest_enemy { position = artillery.position, force = "player", max_distance = artillery.turret_range }
-                if closest and closest.valid then
-                    artillery.shooting_target = closest
-                end
-            end
-        end
-    end
-end
-
 -- on_tick for updating the combat roboport storage
 script.on_event(defines.events.on_tick, function(event)
     update_castra_research_progress(event)
     on_tick_update_data_collectors(event)
     update_combat_roboports(event)
     randomly_upgrade_base(event)
-    random_artillery_firing(event)
 end)
 
 script.on_event(defines.events.on_lua_shortcut, function(event)

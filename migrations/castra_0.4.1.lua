@@ -8,7 +8,7 @@ local function convert_enemy_entities(name)
     local new_name = "castra-enemy-" .. name
     for _, entity in pairs(surface.find_entities_filtered({ name = name, force = "enemy" })) do
         local quality = entity.quality or "normal"
-        local new_entity = surface.create_entity({ name = new_name, position = entity.position, force = "enemy", quality = quality, direction = entity.direction })
+        local new_entity = surface.create_entity({ name = new_name, position = entity.position, force = "enemy", quality = quality, direction = entity.direction, raise_built = true })
         if new_entity then
             -- Copy ammo inventory if it exists
             if entity.get_inventory(defines.inventory.turret_ammo) then
