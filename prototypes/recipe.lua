@@ -567,30 +567,17 @@ data:extend(
       order = "h[lithium-battery]"
     },
     {
-      -- holmium solution + millerite = more holmium plate
       type = "recipe",
       name = "holmium-catalyzing",
       enabled = false,
       energy_required = 4,
       category = "metallurgy-or-assembling",
       ingredients = {
-        {type="fluid", name="holmium-solution", amount=20},
+        {type="fluid", name="holmium-solution", amount=30},
         {type="item", name="millerite", amount=1}
       },
       results = {{type="item", name="holmium-plate", amount=2}},
-      icons =
-      {
-        {
-          icon = "__space-age__/graphics/icons/holmium-plate.png",
-          scale = 0.7,
-          shift = {0, -10}
-        },
-        {
-          icon = "__castra__/graphics/icons/millerite.png",
-          scale = 0.5,
-          shift = {-10, 10}
-        }
-      },
+      icon = "__castra__/graphics/icons/holmium-catalyzing.png",
       allow_productivity = true,
       auto_recycle = false,
       hide_from_signal_gui = false,

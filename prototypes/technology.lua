@@ -44,8 +44,8 @@ data:extend(
     {
       type = "technology",
       name = "millerite-processing",
-      icon = "__castra__/graphics/icons/millerite.png",
-      icon_size = 64,
+      icon = "__castra__/graphics/technology/millerite.png",
+      icon_size = 256,
       prerequisites = { "planet-discovery-castra" },
       research_trigger =
       {
@@ -83,8 +83,8 @@ data:extend(
     {
       type = "technology",
       name = "hydrogen-sulfide-processing",
-      icon = "__castra__/graphics/icons/fluid/hydrogen-sulfide.png",
-      icon_size = 64,
+      icon = "__castra__/graphics/technology/hydrogen-sulfide-vent.png",
+      icon_size = 256,
       prerequisites = { "planet-discovery-castra" },
       research_trigger =
       {
@@ -112,11 +112,10 @@ data:extend(
       }
     },
     {
-      -- mine gunpowder
       type = "technology",
       name = "gunpowder-processing",
-      icon = "__castra__/graphics/icons/gunpowder.png",
-      icon_size = 64,
+      icon = "__castra__/graphics/technology/gunpowder.png",
+      icon_size = 256,
       prerequisites = { "planet-discovery-castra" },
       research_trigger =
       {
@@ -144,11 +143,10 @@ data:extend(
       }
     },
     {
-      -- forge
       type = "technology",
       name = "forge",
-      icon = "__castra__/graphics/atom-forge/atom-forge-icon.png",
-      icon_size = 64,
+      icon = "__castra__/graphics/technology/atom-forge.png",
+      icon_size = 256,
       prerequisites = { "millerite-processing", "hydrogen-sulfide-processing", "gunpowder-processing", "quality-module-2" },
       effects =
       {
@@ -166,8 +164,8 @@ data:extend(
     {
       type = "technology",
       name = "battlefield-science-pack",
-      icon = "__castra__/graphics/icons/battlefield-science-pack.png",
-      icon_size = 64,
+      icon = "__castra__/graphics/technology/battlefield-science-pack.png",
+      icon_size = 256,
       prerequisites = { "forge", "tank", "uranium-ammo" },
       effects =
       {
@@ -285,8 +283,8 @@ data:extend(
     {
       type = "technology",
       name = "lithium-battery",
-      icon = "__castra__/graphics/icons/lithium-battery.png",
-      icon_size = 64,
+      icon = "__castra__/graphics/technology/lithium-battery.png",
+      icon_size = 256,
       prerequisites = { "battlefield-science-pack", "cryogenic-science-pack" },
       effects =
       {
@@ -313,20 +311,8 @@ data:extend(
     {
       type = "technology",
       name = "holmium-catalyzing",
-      icons =
-      {
-        {
-          icon = "__space-age__/graphics/icons/holmium-plate.png",
-          scale = 0.7,
-          shift = { 0, -10 }
-        },
-        {
-          icon = "__castra__/graphics/icons/millerite.png",
-          scale = 0.5,
-          shift = { -10, 10 }
-        }
-      },
-      icon_size = 64,
+      icon = "__castra__/graphics/technology/holmium-catalyzing.png",
+      icon_size = 256,
       prerequisites = { "battlefield-science-pack", "electromagnetic-science-pack" },
       effects =
       {
@@ -353,8 +339,8 @@ data:extend(
     {
       type = "technology",
       name = "energy-shield-mk3-equipment",
-      icon = "__castra__/graphics/icons/energy-shield-mk3-equipment.png",
-      icon_size = 64,
+      icon = "__castra__/graphics/technology/energy-shield-mk3-equipment.png",
+      icon_size = 256,
       prerequisites = { "lithium-battery", "quantum-processor", "energy-shield-mk2-equipment" },
       effects =
       {
@@ -384,11 +370,10 @@ data:extend(
       }
     },
     {
-      -- combat-roboport
       type = "technology",
       name = "combat-roboport",
-      icon = "__castra__/graphics/icons/combat-roboport.png",
-      icon_size = 64,
+      icon = "__castra__/graphics/technology/combat-roboport.png",
+      icon_size = 256,
       prerequisites = { "battlefield-science-pack", "defender" },
       effects =
       {

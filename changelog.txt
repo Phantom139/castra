@@ -1,4 +1,23 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.5.0
+Date: 2025-02-22
+  Bugfixes:
+    - Fix combat roboport error
+  Changes:
+    - Updated some more technology, recipe, and item icons thanks to Gencris
+    - Increased holmium solution required in holmium catalyzing recipe by 50%
+---------------------------------------------------------------------------------------------------
+Version: 0.4.9
+Date: 2025-02-21
+  Changes:
+    - Removed nickel from flamethrower recipes
+---------------------------------------------------------------------------------------------------
+Version: 0.4.8
+Date: 2025-02-20
+  Changes:
+    - Added new technology icons thanks to Gencris
+    - Moved flamethrower back to logistics tech
+---------------------------------------------------------------------------------------------------
 Version: 0.4.7
 Date: 2025-02-18
   Bugfixes:

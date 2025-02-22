@@ -147,17 +147,6 @@ table.insert(data.raw["recipe"]["railgun-turret"].ingredients, { type="item", na
 -- Add lithium battery to the promethium-science-pack recipe
 table.insert(data.raw["recipe"]["promethium-science-pack"].ingredients, { type="item", name="lithium-battery", amount=1 })
 
--- Replace steel with nickel in the flamethrower recipes
-for _, recipe in pairs(data.raw["recipe"]) do
-    if string.find(recipe.name, "flamethrower") and recipe.ingredients then
-        for _, ingredient in pairs(recipe.ingredients) do
-            if ingredient.name == "steel-plate" then
-                ingredient.name = "nickel-plate"
-            end
-        end
-    end
-end
-
 -- Replace battery-mk3-equipment supercapacitor with lithium battery
 for _, recipe in pairs(data.raw["recipe"]) do
     if recipe.name == "battery-mk3-equipment" then

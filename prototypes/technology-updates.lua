@@ -36,14 +36,6 @@ if data.raw["technology"]["atomic-bomb"] then
     table.insert(data.raw["technology"]["atomic-bomb"].prerequisites, "battlefield-science-pack")
 end
 
-if data.raw["technology"]["flamethrower"] then
-    if data.raw["technology"]["flamethrower"].unit and data.raw["technology"]["flamethrower"].unit.ingredients and data.raw["technology"]["flamethrower"].unit.count then
-        data.raw["technology"]["flamethrower"].unit.count = 500
-        table.insert(data.raw["technology"]["flamethrower"].unit.ingredients, { "battlefield-science-pack", 1 })
-    end
-    table.insert(data.raw["technology"]["flamethrower"].prerequisites, "battlefield-science-pack")
-end
-
 -- Add battlefield-science-pack to all refined flammables techs and remove agricultural from any of them
 if data.raw["technology"]["refined-flammables-1"] then
     table.insert(data.raw["technology"]["refined-flammables-1"].prerequisites, "battlefield-science-pack")
@@ -200,4 +192,5 @@ if mods["planet-muluna"] then
 end
 
 add_productivity_bonus("holmium-plate", "holmium-catalyzing", 0.1)
+add_productivity_bonus("processing-unit", "processing-unit-battlefield-data", 0.1)
 
