@@ -402,7 +402,7 @@ data:extend({
             fade_in_ticks = 4,
             fade_out_ticks = 20,
             sound = {
-                filename = "__base__/sound/open-close/roboport-open.ogg",
+                filename = "__base__/sound/roboport-working.ogg",
                 volume = 0.45
             }
         },
