@@ -194,3 +194,14 @@ end
 add_productivity_bonus("holmium-plate", "holmium-catalyzing", 0.1)
 add_productivity_bonus("processing-unit", "processing-unit-battlefield-data", 0.1)
 
+-- If Cerys is installed and the user has enabled the option to claim Engine producitivty, remove the Cerys tech.
+if mods["Cerys-Moon-of-Fulgora"] then
+	if settings.startup["castra-edits-claim-engine-productivity"].value then
+		if data.raw["technology"]["cerys-engine-unit-productivity-1"] then
+			table.insert(data.raw["technology"]["cerys-engine-unit-productivity-1"].enabled, false)
+		end
+		if data.raw["technology"]["cerys-engine-unit-productivity-2"] then
+			table.insert(data.raw["technology"]["cerys-engine-unit-productivity-2"].enabled, false)
+		end
+	end
+end
