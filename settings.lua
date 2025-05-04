@@ -1,1 +1,65 @@
-
+data:extend({
+		{
+			type = "bool-setting",
+			name = "castra-enemy-allowed-artillery",
+			setting-type = "startup",
+			default_value = true,
+			order = "a",
+		},
+		{
+			type = "bool-setting",
+			name = "castra-enemy-allowed-nukes",
+			setting-type = "startup",
+			default_value = true,
+			order = "b",
+		},	
+		{
+			type = "bool-setting",
+			name = "castra-enemy-add-cars",
+			setting-type = "startup",
+			default_value = true,
+			order = "c",
+		},	
+		{
+			type = "bool-setting",
+			name = "castra-edits-claim-engine-productivity",
+			setting-type = "startup",
+			default_value = false,
+			order = "d",
+		},	
+		{
+			type = "bool-setting",
+			name = "castra-edits-extend-RC",
+			setting-type = "startup",
+			default_value = false,
+			order = "e",
+		},			
+		{
+			type = "bool-setting",
+			name = "castra-edits-extend-Mammoth",
+			setting-type = "startup",
+			default_value = false,
+			order = "f",
+		},	
+		{
+			type = "bool-setting",
+			name = "castra-edits-extend-Cannons",
+			setting-type = "startup",
+			default_value = false,
+			order = "g",
+		},	
+		{
+			type = "bool-setting",
+			name = "castra-edits-extend-LaserFence",
+			setting-type = "startup",
+			default_value = false,
+			order = "h",
+		},			
+		{
+			type = "bool-setting",
+			name = "castra-edits-extend-GrenadeLauncher",
+			setting-type = "startup",
+			default_value = false,
+			order = "i",
+		},			
+})
