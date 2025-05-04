@@ -135,9 +135,17 @@ local function update_castra_enemy_data()
     -- Check highest tier of rocket
     local rocket_tier = nil
     for _, rocket in pairs(sorted_ammo_types.rocket) do
-        if has_castra_researched_item(rocket) then
-            rocket_tier = rocket
-        end
+		if rocket == "atomic-bomb" or rocket == "hydrogen-bomb" then:
+			if settings.startup["castra-enemy-allowed-nukes"].value then
+				if has_castra_researched_item(rocket) then
+					rocket_tier = rocket
+				end		
+			end
+		else
+			if has_castra_researched_item(rocket) then
+				rocket_tier = rocket
+			end
+		end
     end
     enemy_storage.rocket_tier = rocket_tier
 
@@ -152,11 +160,21 @@ local function update_castra_enemy_data()
 
     -- Check highest tier of artillery-shell
     local artillery_tier = nil
-    for _, artillery in pairs(sorted_ammo_types.artillery_shell) do
-        if has_castra_researched_item(artillery) then
-            artillery_tier = artillery
-        end
-    end
+	if settings.startup["castra-enemy-allowed-artillery"].value then
+		for _, artillery in pairs(sorted_ammo_types.artillery_shell) do
+			if artillery == "cerys-neutron-bomb" or artillery == "maraxsis-fat-man":
+				if settings.startup["castra-enemy-allowed-nukes"].value then
+					if has_castra_researched_item(artillery) then
+						artillery_tier = artillery
+					end				
+				end
+			else		
+				if has_castra_researched_item(artillery) then
+					artillery_tier = artillery
+				end
+			end
+		end
+	end
     enemy_storage.artillery_tier = artillery_tier
 
     -- Check highest tier of combat robot

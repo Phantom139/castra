@@ -45,11 +45,14 @@ local function add_turrets(data_collector)
     local turret_types = { "gun-turret", "laser-turret", "rocket-turret", "railgun-turret",
     "tesla-turret", "combat-roboport", "flamethrower-turret", "artillery-turret" }
 
-    -- Remove any unresearched turrets
+    -- Remove any unresearched turrets, and artillery-turret if not allowed.
     for i = #turret_types, 1, -1 do
         if not item_cache[hyphen_to_underscore(turret_types[i])] then
             table.remove(turret_types, i)
         end
+		if turret_types[i] == "artillery-turret" and not settings.startup["castra-enemy-allowed-artillery"].value
+			table.remove(turret_types, i)
+		end
     end
 
     if #turret_types == 0 then

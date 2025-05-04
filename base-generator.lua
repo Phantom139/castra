@@ -574,6 +574,11 @@ local function place_turrets(data_collector_pos, type)
         if not storage.castra.enemy.solar_panel and (turret_types[i] == "laser-turret" or turret_types[i] == "railgun-turret" or turret_types[i] == "tesla-turret") then
             table.remove(turret_types, i)
         end
+		
+		-- Remove artillery if disabled in settings
+		if turret_types[i] == "artillery-turret" and not settings.startup["castra-enemy-allowed-artillery"].value
+			table.remove(turret_types, i)
+		end		
     end
 
     if #turret_types == 0 then
