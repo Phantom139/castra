@@ -1,5 +1,44 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.5.4
+Date: 2025-03-18
+  Bugfixes:
+    - Fix jammed data collector crash
+---------------------------------------------------------------------------------------------------
+Version: 0.5.3
+Date: 2025-03-15
+  Bugfixes:
+    - Fix range rendering error
+---------------------------------------------------------------------------------------------------
+Version: 0.5.2
+Date: 2025-03-11
+  Bugfixes:
+    - Fix combat roboport crash
+---------------------------------------------------------------------------------------------------
 Version: 0.5.0
+Date: 2025-03-11
+  Changes:
+    - Added jammer radar and jammed data collector   
+    - Drops are no longer marked for deconstruction to encourage use of belts and jammed data collectors
+---------------------------------------------------------------------------------------------------
+Version: 0.4.16
+Date: 2025-03-01
+  Balancing:
+    - Reduce enemy tank electric resistance to 60%
+    - Significantly reduce chance of higher quality items from data collectors
+  Changes:
+    - Limited items dropped by data collectors to the max quality researched by the player as well    
+---------------------------------------------------------------------------------------------------
+Version: 0.4.15
+Date: 2025-02-27
+  Changes:
+    - Fix enemy quality upgrading error when trying to upgrade unsupported entities
+---------------------------------------------------------------------------------------------------
+Version: 0.4.11
+Date: 2025-02-23
+  Changes:
+    - Lower enemy resistances and health
+---------------------------------------------------------------------------------------------------
+Version: 0.4.10
 Date: 2025-02-22
   Bugfixes:
     - Fix combat roboport error

@@ -245,7 +245,7 @@ local function select_random_quality_max(max_quality_in)
     -- Assign a weight to each quality based on the level and the current quality module tier
     local total_weight = 0
     local weights = {}
-    local base = 0.5 * math.sqrt(storage.castra.enemy.quality_module_tier * math.sqrt(max_quality.level))
+    local base = 0.1 * math.sqrt(storage.castra.enemy.quality_module_tier * math.sqrt(max_quality.level))
     for _, quality in pairs(qualities) do
         local weight = math.ceil(math.pow(base, quality.level) * 1000)
         total_weight = total_weight + weight
@@ -282,7 +282,7 @@ local function build_enemy_wall(chunk_area, pos)
     local entities = surface.find_entities_filtered { force = enemy_force, area = { { chunk_area.left_top.x - 15, chunk_area.left_top.y - 15 }, { chunk_area.right_bottom.x + 15, chunk_area.right_bottom.y + 15 } } }
     -- Remove walls from entities list
     for i = #entities, 1, -1 do
-        if entities[i].type == "wall" then
+        if not entities[i].valid or entities[i].type == "wall" then
             table.remove(entities, i)
         end
     end
@@ -439,7 +439,7 @@ local function find_closest_entity(filters)
 
     for _, entity in pairs(entities) do
         -- Ignore entity at this position
-        if filters.position and entity.position.x == filters.position.x and entity.position.y == filters.position.y then
+        if not entity.valid or (filters.position and entity.position.x == filters.position.x and entity.position.y == filters.position.y) then
             goto continue_entity
         end
 

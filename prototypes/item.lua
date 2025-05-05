@@ -18,7 +18,7 @@ data:extend({
         name = "forge",
         icon = "__castra__/graphics/atom-forge/atom-forge-icon.png",
         subgroup = "production-machine",
-        order = "i[forge]",
+        order = "i[castra]-a[forge]",
         inventory_move_sound = item_sounds.steam_inventory_move,
         pick_sound = item_sounds.steam_inventory_pickup,
         drop_sound = item_sounds.steam_inventory_move,
@@ -26,6 +26,28 @@ data:extend({
         stack_size = 20,
         default_import_location = "castra",
         weight = 120 * kg
+    },
+    {
+        type = "item",
+        name = "jammed-data-collector",
+        icons = {
+            {
+                icon = "__castra__/graphics/fusion-reactor/fusion-reactor-icon.png"
+            },            
+            {
+                icon = "__castra__/graphics/fusion-reactor/fusion-reactor-icon.png",
+                tint = { r = 0.5, g = 0.1, b = 0.5, a = 0.3 }
+            }
+        },
+        subgroup = "production-machine",
+        order = "i[castra]-b[jammed-data-collector]",
+        inventory_move_sound = item_sounds.steam_inventory_move,
+        pick_sound = item_sounds.steam_inventory_pickup,
+        drop_sound = item_sounds.steam_inventory_move,
+        place_result = "jammed-data-collector",
+        stack_size = 10,
+        default_import_location = "castra",
+        weight = 200 * kg
     },
     {
         type = "item",
@@ -46,7 +68,7 @@ data:extend({
         drop_sound = item_sounds.resource_inventory_move,
         stack_size = 50,
         default_import_location = "castra",
-        weight = 10 * kg
+        weight = 4 * kg
     },
     {
       type = "item",
@@ -198,6 +220,30 @@ data:extend({
       place_result = "carbon-fiber-wall",
       stack_size = 100,
       weight = 20*kg
+    },
+    {
+      type = "item",
+      name = "jammer-interference",
+      icons = {
+        {
+          icon = "__castra__/graphics/icons/jammer-radar.png"
+        },
+        {
+          icon = "__core__/graphics/icons/alerts/electricity-icon-red.png",
+          icon_size = 64,
+          scale = 0.25,
+          shift = {12, -12}
+        }
+      },
+      subgroup = "castra-processes",
+      order = "z[jammer-interference]",
+      inventory_move_sound = item_sounds.concrete_inventory_move,
+      pick_sound = item_sounds.concrete_inventory_pickup,
+      drop_sound = item_sounds.concrete_inventory_move,
+      fuel_category = "castra-jammer",
+      fuel_value = "1000kJ",
+      stack_size = 10,
+      spoil_ticks = 10 * second
     },
 })
 
