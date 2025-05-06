@@ -857,3 +857,29 @@ data:extend(
     }
   }
 )
+
+if settings.startup["castra-edits-add-disruption"].value then
+	data:extend({
+	  type = "technology",
+	  name = "castra-enemy-research-disruption",
+	  icons = "__castra__/graphics/technology/research-disruption.png",
+	  effects = {},
+	  prerequisites = { "battlefield-science-pack", "jammer-radar" },
+	  unit =
+	  {
+		count_formula = "1.5^(L-1)*1000",
+		ingredients =
+		{
+		  { "automation-science-pack",  1 },
+		  { "logistic-science-pack",    1 },
+		  { "chemical-science-pack",    1 },
+		  { "military-science-pack",    1 },
+		  { "space-science-pack",       1 },
+		  { "battlefield-science-pack", 1 }
+		},
+		time = 60
+	  },
+	  max_level = "infinite",
+	  upgrade = true
+	})	
+end

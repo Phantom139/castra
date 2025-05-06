@@ -260,10 +260,18 @@ local function get_castra_research_speed()
             research_speed = research_speed / (math.log(#current_research.research_unit_ingredients, 2) + 1)
         end
     end
+	
+	-- Reduce based on player research into disruption
+	if settings.startup["castra-edits-add-disruption"].value then
+		if game.forces["player"].technologies["castra-enemy-research-disruption"].researched then
+			research_speed = research_speed - (research_speed * ((1 - 0.1) ^ game.forces["player"].technologies["castra-enemy-research-disruption"].level))	
+		end
 
-    -- Minimum of 5
-    if research_speed < 5 then
-        research_speed = 5
+	end
+
+    -- Minimum of 2
+    if research_speed < 2 then
+        research_speed = 2
     end
 
     return research_speed
@@ -308,8 +316,7 @@ local function update_castra_research_progress(event)
         if current_research_units > 0 then
             local progress = enemy_force.research_progress * current_research_units + research_speed
             if progress / current_research_units >= 1 then
-                game.forces["player"].print("Castra enemies have completed [technology=" ..
-                    enemy_force.current_research.name .. ",level=" .. enemy_force.current_research.level .. "]")
+                game.forces["player"].print("Castra enemies have completed [technology=" .. enemy_force.current_research.name .. ",level=" .. enemy_force.current_research.level .. "]")
                 enemy_force.current_research.researched = true
                 -- Infinite techs will not be cleared so we need to manually clear the progress
                 if enemy_force.current_research then
@@ -340,7 +347,7 @@ local function update_castra_research_progress(event)
             -- Find any researches that have not been fully researched and have all prerequisites
             local valid = {}
             for _, research in pairs(enemy_force.technologies) do
-                if (not research.researched or research.level < research.prototype.max_level) and research.enabled then
+                if ((not research.name == "castra-enemy-research-disruption") and (not research.researched or research.level < research.prototype.max_level) and research.enabled) then
                     local allPrereqs = true
                     for _, prereq in pairs(research.prerequisites) do
                         if not prereq.researched then
@@ -867,16 +874,25 @@ script.on_event(defines.events.on_lua_shortcut, function(event)
         local current_research_progress = 0
         if enemy_force.current_research then
             current_research_progress = math.floor(enemy_force.research_progress * 10000) / 100
-            player.print("Currently researching: [technology=" ..
-                enemy_force.current_research.name ..
-                ",level=" ..
-                enemy_force.current_research.level ..
-                "] " .. current_research_progress .. "% at " .. research_speed .. "/m")
+			if settings.startup["castra-edits-add-disruption"].value and game.forces["player"].technologies["castra-enemy-research-disruption"].researched then
+				player.print("Currently researching: [technology=" ..
+					enemy_force.current_research.name ..
+					",level=" ..
+					enemy_force.current_research.level ..
+					"] " .. current_research_progress .. "% at " .. research_speed .. "/m" ..
+					",disruption=" .. (((1 - 0.1) ^ (game.forces["player"].technologies["castra-enemy-research-disruption"].level)) * 10) .. "%")			
+			else
+				player.print("Currently researching: [technology=" ..
+					enemy_force.current_research.name ..
+					",level=" ..
+					enemy_force.current_research.level ..
+					"] " .. current_research_progress .. "% at " .. research_speed .. "/m")
+			end
         elseif trigger_research then
             player.print("Currently researching: [technology=" ..
                 trigger_research.name .. ",level=" .. trigger_research.level .. "]")
         else
-            player.print("Curre researching nothing, or a trigger technology.")
+            player.print("Currently researching nothing, or working on a trigger technology.")
         end
     end
 end)
