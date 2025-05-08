@@ -44,6 +44,13 @@ local function add_turrets(data_collector)
     -- Select a random turret type
     local turret_types = { "gun-turret", "laser-turret", "rocket-turret", "railgun-turret",
     "tesla-turret", "combat-roboport", "flamethrower-turret", "artillery-turret" }
+	if mods["vtk-cannon-turret"] and settings.startup["castra-edits-extend-Cannons"].value then
+		table.insert(turret_types, "vtk-cannon-turret")
+		table.insert(turret_types, "vtk-cannon-turret-heavy")
+	end
+	if mods["PLORD_Prometheus_GrenadeLauncher"] and settings.startup["castra-edits-extend-GrenadeLauncher"].value then
+		table.insert(turret_types, "PLORD_gl_40mm_turret")
+	end	
 
     -- Remove any unresearched turrets, and artillery-turret if not allowed.
     for i = #turret_types, 1, -1 do
@@ -74,6 +81,14 @@ local function fill_turrets(data_collector)
     local area = get_search_area_size(data_collector, 20)
     local turret_types = { "gun-turret", "laser-turret", "rocket-turret", "railgun-turret",
         "tesla-turret", "combat-roboport", "flamethrower-turret", "artillery-turret" }
+	if mods["vtk-cannon-turret"] and settings.startup["castra-edits-extend-Cannons"].value then
+		table.insert(turret_types, "vtk-cannon-turret")
+		table.insert(turret_types, "vtk-cannon-turret-heavy")
+	end
+	if mods["PLORD_Prometheus_GrenadeLauncher"] and settings.startup["castra-edits-extend-GrenadeLauncher"].value then
+		table.insert(turret_types, "PLORD_gl_40mm_turret")
+	end			
+		
     for _, turret_type in pairs(turret_types) do
         for _, turret in pairs(data_collector.surface.find_entities_filtered { area = area, type = base_gen.get_enemy_variant(turret_type), force = "enemy" }) do
             if turret.valid then

@@ -297,14 +297,42 @@ data:extend({
         call_for_help_radius = 0,
         result_units = (function()
             local res = {}
-            res[1] = { "data-collector-electronic-circuit", { { 0.0, 0.1 }, { 0.7, 0.05 }, { 1.0, 0.0 } } }
-            res[2] = { "data-collector-advanced-circuit", { { 0.0, 0.0 }, { 0.4, 0.0 }, { 0.9, 0.4 } } }
-            res[3] = { "data-collector-millerite", { { 0.0, 0.4 }, { 0.3, 0.2 }, { 0.6, 0.1 } } }
-            res[4] = { "data-collector-gunpowder", { { 0.0, 0.8 }, { 0.5, 0.5 }, { 0.8, 0.0 } } }
-            res[5] = { "data-collector-low-density-structure", { { 0.0, 0.15 }, { 0.2, 0.2 }, { 1.0, 0.3 } } }
-            res[6] = { "data-collector-electric-engine-unit", { { 0.0, 0.05 }, { 0.2, 0.1 }, { 1.0, 0.1 } } }
-            res[7] = { "data-collector-castra-data", { { 0.0, 0.1 }, { 0.5, 0.4 }, { 1.0, 1.0 } } }
-            res[8] = { "castra-enemy-tank", { { 0.0, 0.0 }, { 0.4, 0.0 }, { 0.405, 0.05 }, { 1.0, 0.1 } } }
+			local i = 1
+			
+            res[i] = { "data-collector-electronic-circuit", { { 0.0, 0.1 }, { 0.7, 0.05 }, { 1.0, 0.0 } } }; 
+			i = i + 1
+            
+			res[i] = { "data-collector-advanced-circuit", { { 0.0, 0.0 }, { 0.4, 0.0 }, { 0.9, 0.4 } } };
+			i = i + 1
+			
+            res[i] = { "data-collector-millerite", { { 0.0, 0.4 }, { 0.3, 0.2 }, { 0.6, 0.1 } } };
+			i = i + 1
+			
+            res[i] = { "data-collector-gunpowder", { { 0.0, 0.8 }, { 0.5, 0.5 }, { 0.8, 0.0 } } };
+			i = i + 1
+			
+            res[i] = { "data-collector-low-density-structure", { { 0.0, 0.15 }, { 0.2, 0.2 }, { 1.0, 0.3 } } };
+			i = i + 1
+			
+            res[i] = { "data-collector-electric-engine-unit", { { 0.0, 0.05 }, { 0.2, 0.1 }, { 1.0, 0.1 } } };
+			i = i + 1
+			
+            res[i] = { "data-collector-castra-data", { { 0.0, 0.1 }, { 0.5, 0.4 }, { 1.0, 1.0 } } };
+			i = i + 1
+			
+			if settings.startup["castra-enemy-add-cars"].value then
+				res[i] = { "castra-enemy-car", { { 0.0, 0.0 }, { 0.25, 0.05 }, { 0.4, 0.1 }, { 0.65, 0.15 }, { 1.0, 0.2 } } };
+				i = i + 1		
+			end			
+			
+            res[i] = { "castra-enemy-tank", { { 0.0, 0.0 }, { 0.4, 0.0 }, { 0.405, 0.05 }, { 1.0, 0.1 } } };
+			i = i + 1
+			
+			if mods["Explosive_RC_Car"] and settings.startup["castra-edits-extend-RC"].value then
+				res[i] = { "castra-enemy-explosive-rc", { { 0.0, 0.0 }, { 0.5, 0.01 }, { 0.65, 0.05 }, { 1.0, 0.075 } } };
+				i = i + 1		
+			end
+			
             return res
         end)(),
         loot = {
@@ -603,6 +631,44 @@ data:extend({
     }
 })
 
+-- Create a car enemy based on the small-spitter
+local car = table.deepcopy(data.raw["unit"]["small-spitter"])
+car.name = "castra-enemy-car"
+car.icon = "__base__/graphics/icons/car.png"
+-- Use the normal car's health and resistances
+car.max_health = data.raw["car"]["car"].max_health
+car.factoriopedia_simulation = nil
+car.resistances = data.raw["car"]["car"].resistances
+car.absorptions_to_join_attack = { data = 250 }
+car.run_animation = data.raw["car"]["car"].animation
+car.run_animation.tint = { r = 0, g = 0.5, b = 0.2, a = 1 }
+car.working_sound = data.raw["car"]["car"].working_sound
+car.rotation_speed = data.raw["car"]["car"].rotation_speed
+car.alternative_attacking_frame_sequence = nil
+car.corpse = data.raw["car"]["car"].corpse
+car.dying_explosion = data.raw["car"]["car"].dying_explosion
+car.dying_sound = nil
+car.walking_sound = nil
+car.water_reflection = nil
+car.movement_speed = 0.25
+car.collision_box = data.raw["car"]["car"].collision_box
+car.selection_box = data.raw["car"]["car"].selection_box
+car.attack_parameters = {
+    type = "projectile",
+    range = 12,
+    cooldown = 10,
+    cooldown_deviation = 0.1,
+    ammo_category = "bullet",
+    ammo_type = {
+        target_type = "entity",
+        action = table.deepcopy(data.raw["ammo"]["firearm-magazine"].action)
+    },
+    animation = car.run_animation,
+    range_mode = "bounding-box-to-bounding-box"
+}
+
+data:extend({ car })
+
 -- Create a tank enemy based on the medium-spitter
 local tank = table.deepcopy(data.raw["unit"]["medium-spitter"])
 tank.name = "castra-enemy-tank"
@@ -656,42 +722,13 @@ tank.collision_box = data.raw["car"]["tank"].collision_box
 tank.selection_box = data.raw["car"]["tank"].selection_box
 tank.attack_parameters = {
     type = "projectile",
-    range = 10,
-    cooldown = 30,
+    range = 15,
+    cooldown = 90,
     cooldown_deviation = 0.15,
     ammo_category = "bullet",
     ammo_type = {
         target_type = "entity",
-        action =
-        {
-            type = "direct",
-            action_delivery =
-            {
-                type = "instant",
-                source_effects =
-                {
-                    type = "create-explosion",
-                    entity_name = "explosion-gunshot"
-                },
-                target_effects =
-                {
-                    {
-                        type = "create-entity",
-                        entity_name = "explosion-hit",
-                        offsets = { { 0, 1 } },
-                        offset_deviation = { { -0.5, -0.5 }, { 0.5, 0.5 } }
-                    },
-                    {
-                        type = "damage",
-                        damage = { amount = 24, type = "physical" }
-                    },
-                    {
-                        type = "activate-impact",
-                        deliver_category = "bullet"
-                    }
-                }
-            }
-        }
+        action = table.deepcopy(data.raw["ammo"]["cannon-shell"].action)
     },
     animation = tank.run_animation,
     range_mode = "bounding-box-to-bounding-box"

@@ -1,10 +1,10 @@
 {
   "name": "castra",
-  "version": "0.4.10",
+  "version": "0.5.5",
   "title": "Castra",
   "author": "Bartz24, LogicDolphin",
   "factorio_version": "2.0",
   "space_travel_required": true,
-  "dependencies": [ "base >= 2.0.43", "space-age", "? alien-biomes", "? landing-pad-research", "? maraxsis", "? planet-muluna", "? Cerys-Moon-of-Fulgora", "? modules-t4", "? Explosive_RC_Car", "? Mammoth-MK3", "? laserfence", "? PLORD_Prometheus_GrenadeLauncher", "? vtk-cannon-turret" ],
+  "dependencies": [ "base >= 2.0.43", "space-age", "? alien-biomes", "? landing-pad-research", "? maraxsis", "? planet-muluna", "? Cerys-Moon-of-Fulgora", "? modules-t4", "? Explosive_RC_Car", "? Mammoth-MK3", "? PLORD_Prometheus_GrenadeLauncher", "? vtk-cannon-turret" ],
   "description": "Adds a new militaristic planet to the game. Claim the defended post-apocalyptic planet and use its resources to build a new base."
 }

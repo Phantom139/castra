@@ -54,8 +54,22 @@ end
 local sorted_ammo_types = {
     bullet = {"firearm-magazine", "piercing-rounds-magazine", "uranium-rounds-magazine", "plutonium-rounds-magazine"},
     rocket = {"rocket", "explosive-rocket", "atomic-bomb", "hydrogen-bomb"},
-    railgun = {"railgun-ammo" },
+    railgun = {"railgun-ammo"},
     artillery_shell = {"artillery-shell", "cerys-neutron-bomb", "maraxsis-fat-man" },
+	if mods["PLORD_Prometheus_GrenadeLauncher"] and settings.startup["castra-edits-extend-GrenadeLauncher"].value then
+		grenades = {"PLORD_40mm_gl_flare", "PLORD_40mm_gl_lighted", "PLORD_40mm_gl_pellets_piercing", "PLORD_40mm_gl_uranium_fist", "PLORD_40mm_gl_promethium" ,"PLORD_40mm_gl_he", 
+					"PLORD_40mm_gl_cluster", "PLORD_40mm_gl_plasma_hydroxygen", "PLORD_40mm_gl_uranium_frag", "PLORD_40mm_gl_plasma_phosphorus", "PLORD_40mm_gl_plasma_hydrargyrum",
+					"PLORD_40mm_gl_inferno", "PLORD_40mm_gl_incendiary", "PLORD_40mm_gl_poison", "PLORD_40mm_gl_venom", "PLORD_40mm_gl_acidic", "PLORD_40mm_gl_thermobaric", 
+					"PLORD_40mm_gl_shock", "PLORD_40mm_gl_stun", "PLORD_40mm_gl_stasis", "PLORD_40mm_gl_discharge"},
+	end
+	if mods["vtk-cannon-turret"] and settings.startup["castra-edits-extend-Cannons"].value then
+		cannon_turret_rounds = {}
+		if settings.startup["vtk-cannon-turret-ammo-use"].value == 1 or 3 then
+			cannon_turret_rounds = {"cannon-shell-magazine", "explosive-cannon-shell-magazine", "uranium-cannon-shell-magazine", "explosive-uranium-cannon-shell-magazine"}
+		else
+			cannon_turret_rounds = {"cannon-shell", "explosive-cannon-shell", "uranium-cannon-shell", "explosive-uranium-cannon-shell"}
+		end
+	end
 }
 
 local function update_castra_enemy_data()
@@ -212,12 +226,44 @@ local function update_castra_enemy_data()
     enemy_storage.big_electric_pole = has_castra_researched_item("big-electric-pole")
     enemy_storage.roboport = has_castra_researched_item("roboport")
     enemy_storage.construction_robot = has_castra_researched_item("construction-robot")
+	enemy_storage.car = has_castra_researched_item("car")
     enemy_storage.tank = has_castra_researched_item("tank")
     enemy_storage.artillery_turret = has_castra_researched_item("artillery-turret")
     enemy_storage.spidertron = has_castra_researched_item("spidertron")
     enemy_storage.land_mine = has_castra_researched_item("land-mine")
     enemy_storage.tesla_turret = has_castra_researched_item("tesla-turret")
     enemy_storage.combat_roboport = has_castra_researched_item("combat-roboport")
+	-- Mod extensions
+	if mods["Explosive_RC_Car"] and settings.startup["castra-edits-extend-RC"].value then
+		enemy_storage.explosive_rc = has_castra_researched_item("explosive-rc-car")
+	end
+	if mods["Mammoth-MK3"] and settings.startup["castra-edits-extend-Mammoth"].value then
+		enemy_storage.mammoth = has_castra_researched_item("mammoth-mk3")
+	end	
+	if mods["PLORD_Prometheus_GrenadeLauncher"] and settings.startup["castra-edits-extend-GrenadeLauncher"].value then
+		enemy_storage.grenade_turret = has_castra_researched_item("PLORD_gl_40mm_turret")
+		enemy_storage.grenade_tank = has_castra_researched_item("PLORD_gl_tank")	
+		enemy_storage.available_grenades = {}
+		-- Individual grenades are not "sorted", but instead are just added to a dictionary of availability, the enemy will use all of the different types as they see fit.
+		for _, grenade in pairs(sorted_ammo_types.grenades) do
+			enemy_storage.available_grenades[grenade] = false
+			if has_castra_researched_item(grenade) then
+				enemy_storage.available_grenades[grenade] = true
+			end
+		end
+	end
+	if mods["vtk-cannon-turret"] and settings.startup["castra-edits-extend-Cannons"].value then
+		enemy_storage.cannon_turret = has_castra_researched_item("vtk-cannon-turret")
+		enemy_storage.heavy_cannon_turret = has_castra_researched_item("vtk-cannon-turret-heavy")
+	
+		local cannon_shell_tier = nil
+		for _, ammo in pairs(sorted_ammo_types.cannon_turret_rounds) do
+			if has_castra_researched_item(ammo) then
+				cannon_shell_tier = ammo
+			end
+		end
+		enemy_storage.cannon_shell_tier = cannon_shell_tier	
+	end
 
     storage.castra.enemy = enemy_storage
 end

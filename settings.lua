@@ -55,18 +55,19 @@ data:extend({
 			default_value = false,
 			order = "h",
 		},	
-		{
-			type = "bool-setting",
-			name = "castra-edits-extend-LaserFence",
-			setting-type = "startup",
-			default_value = false,
-			order = "i",
-		},			
+		--
+		--{
+		--	type = "bool-setting",
+		--	name = "castra-edits-extend-LaserFence",
+		--	setting-type = "startup",
+		--	default_value = false,
+		--	order = "i",
+		--},			
 		{
 			type = "bool-setting",
 			name = "castra-edits-extend-GrenadeLauncher",
 			setting-type = "startup",
 			default_value = false,
-			order = "j",
+			order = "i",
 		},			
 })

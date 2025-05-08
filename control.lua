@@ -1,6 +1,7 @@
 local item_cache = require("castra-cache")
 local base_gen = require("base-generator")
 local base_upgrades = require("base-upgrades")
+local mod_extensions = require("mod-extensions")
 
 -- Event: on_chunk_generated
 script.on_event(defines.events.on_chunk_generated, function(event)
@@ -98,7 +99,7 @@ local function on_tick_update_data_collectors(event)
         item_cache.build_pollution_cache()
     end
 
-    -- Check for any wandering tanks and give them a random command
+    -- Check for any wandering tanks / cars and give them a random command
     if event.tick % 2000 == 1277 then
         if not item_cache.castra_exists() then
             return
@@ -117,8 +118,9 @@ local function on_tick_update_data_collectors(event)
         while not collector or not collector.valid do
             collector = storage.castra.dataCollectors[math.random(1, #storage.castra.dataCollectors)]
         end
-
-        local tanks = surface.find_entities_filtered { name = "castra-enemy-tank", area = { { collector.position.x - 100, collector.position.y - 100 }, { collector.position.x + 100, collector.position.y + 100 } } }
+		
+		-- Update tanks
+        local tanks = surface.find_entities_filtered { name = {"castra-enemy-tank", "castra-enemy-car"}, area = { { collector.position.x - 100, collector.position.y - 100 }, { collector.position.x + 100, collector.position.y + 100 } } }
         for _, tank in pairs(tanks) do
             if tank.valid and tank.commandable and tank.commandable.command and tank.commandable.command.type == defines.command.wander then
                 -- Give attack command to either a military target or any player entity, or full random
@@ -131,6 +133,22 @@ local function on_tick_update_data_collectors(event)
                 end
             end
         end
+		
+		-- Update RC Cars
+		local rcCars = surface.find_entities_filtered { name = "castra-enemy-explosive-rc", area = { { collector.position.x - 100, collector.position.y - 100 }, { collector.position.x + 100, collector.position.y + 100 } } }
+        for _, rcCar in pairs(rcCars) do
+            if rcCar.valid and rcCar.commandable and rcCar.commandable.command and rcCar.commandable.command.type == defines.command.wander then
+                -- Give attack command to either a military target or any player entity, or full random
+                if math.random() < 0.5 then
+                    mod_extensions.give_RC_Car_random_command(rcCar, 0.97)
+                elseif math.random() < 0.5 then
+                    mod_extensions.give_RC_Car_random_command(rcCar, 1)
+                else
+                    mod_extensions.give_RC_Car_random_command(rcCar, nil)
+                end
+            end
+        end		
+		
     end
 end
 
@@ -210,6 +228,16 @@ script.on_event(defines.events.on_entity_spawned, function(event)
         on_data_collector_item_spawned(event)
         return
     end
+	
+    if event.entity.name == "castra-enemy-car" and event.spawner.name == "data-collector" then
+        -- If the car is not yet unlocked, destroy it
+        item_cache.build_cache_if_needed()
+        if not storage.castra.enemy.car then
+            event.entity.destroy()
+            return
+        end
+        give_tank_random_command(event.entity, nil)
+    end	
 
     if event.entity.name == "castra-enemy-tank" and event.spawner.name == "data-collector" then
         -- If the tank is not yet unlocked, destroy it
@@ -220,6 +248,19 @@ script.on_event(defines.events.on_entity_spawned, function(event)
         end
         give_tank_random_command(event.entity, nil)
     end
+	
+	-- RC cars
+	if mods["Explosive_RC_Car"] and settings.startup["castra-edits-extend-RC"].value then
+		if event.entity.name == "castra-enemy-explosive-rc" and event.spawner.name == "data-collector" then
+			-- If the car is not yet unlocked, destroy it
+			item_cache.build_cache_if_needed()
+			if not storage.castra.enemy.explosive_rc then
+				event.entity.destroy()
+				return
+			end
+			mod_extensions.give_RC_Car_random_command(event.entity, nil)
+		end		
+	end
 end)
 
 local function get_castra_research_speed()
@@ -318,6 +359,18 @@ local function update_castra_research_progress(event)
             if progress / current_research_units >= 1 then
                 game.forces["player"].print("Castra enemies have completed [technology=" .. enemy_force.current_research.name .. ",level=" .. enemy_force.current_research.level .. "]")
                 enemy_force.current_research.researched = true
+					-- Throw a prompt if the research involves disabled items.
+					if not settings.startup["castra-enemy-allowed-nukes"].value then
+						if enemy_force.current_research.name == "atomic-bomb" or enemy_force.current_research.name == "cerys-plutonium-weaponry" or enemy_force.current_research.name == "maraxsis-depth-charges" then:
+							game.forces["player"].print("strings.castra-disabled-tech-alert")						
+						end					
+					end
+					if not settings.startup["castra-enemy-allowed-artillery"].value then						
+						if enemy_force.current_research.name == "artillery" then
+							game.forces["player"].print("strings.castra-disabled-tech-alert")						
+						end		
+					end				
+				
                 -- Infinite techs will not be cleared so we need to manually clear the progress
                 if enemy_force.current_research then
                     enemy_force.research_progress = 0
@@ -429,6 +482,18 @@ local function update_castra_research_progress(event)
                 if progress >= 10 then
                     game.forces["player"].print("Castra enemies have completed [technology=" ..
                         nextResearch.name .. ",level=" .. nextResearch.level .. "]")
+					-- Throw a prompt if the research involves disabled items.
+					if not settings.startup["castra-enemy-allowed-nukes"].value then
+						if nextResearch.name == "atomic-bomb" or nextResearch.name == "cerys-plutonium-weaponry" or nextResearch.name == "maraxsis-depth-charges" then:
+							game.forces["player"].print("strings.castra-disabled-tech-alert")						
+						end					
+					end
+					if not settings.startup["castra-enemy-allowed-artillery"].value then						
+						if nextResearch.name == "artillery" then
+							game.forces["player"].print("strings.castra-disabled-tech-alert")						
+						end		
+					end
+						
                     nextResearch.researched = true
                     item_cache.update_castra_enemy_data()
                     trigger_research = nil
