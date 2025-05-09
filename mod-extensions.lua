@@ -47,3 +47,7 @@ function give_RC_Car_random_command(rcCar, selection)
     -- Default to wander
     rcCar.commandable.set_command { type = defines.command.wander, distraction = defines.distraction.by_anything, ticks_to_wait = math.random(600, 5000) }
 end
+
+return {
+    give_RC_Car_random_command = give_RC_Car_random_command
+}

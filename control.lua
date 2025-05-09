@@ -362,19 +362,28 @@ local function update_castra_research_progress(event)
         if current_research_units > 0 then
             local progress = enemy_force.research_progress * current_research_units + research_speed
             if progress / current_research_units >= 1 then
-                game.forces["player"].print("Castra enemies have completed [technology=" .. enemy_force.current_research.name .. ",level=" .. enemy_force.current_research.level .. "]")
-                enemy_force.current_research.researched = true
-					-- Throw a prompt if the research involves disabled items.
-					if not settings.startup["castra-enemy-allowed-nukes"].value then
-						if enemy_force.current_research.name == "atomic-bomb" or enemy_force.current_research.name == "cerys-plutonium-weaponry" or enemy_force.current_research.name == "maraxsis-depth-charges" then
-							game.forces["player"].print("strings.castra-disabled-tech-alert")						
-						end					
-					end
-					if not settings.startup["castra-enemy-allowed-artillery"].value then						
-						if enemy_force.current_research.name == "artillery" then
-							game.forces["player"].print("strings.castra-disabled-tech-alert")						
-						end		
-					end				
+				if enemy_force.current_research == nil then
+					finished_tech = ""
+					finished_level = 0
+				else
+					finished_tech = enemy_force.current_research.name
+					finished_level = enemy_force.current_research.level
+					
+					game.forces["player"].print("Castra enemies have completed [technology=" .. finished_tech .. ",level=" .. finished_level .. "]")
+					enemy_force.current_research.researched = true					
+				end
+
+				-- Throw a prompt if the research involves disabled items.
+				if not settings.startup["castra-enemy-allowed-nukes"].value then
+					if finished_tech == "atomic-bomb" or finished_tech == "cerys-plutonium-weaponry" or finished_tech == "maraxsis-depth-charges" then
+						game.forces["player"].print("strings.castra-disabled-tech-alert")						
+					end					
+				end
+				if not settings.startup["castra-enemy-allowed-artillery"].value then						
+					if finished_tech == "artillery" then
+						game.forces["player"].print("strings.castra-disabled-tech-alert")						
+					end		
+				end				
 				
                 -- Infinite techs will not be cleared so we need to manually clear the progress
                 if enemy_force.current_research then
@@ -486,19 +495,7 @@ local function update_castra_research_progress(event)
                 local progress = nextResearch.saved_progress * 10 + research_speed
                 if progress >= 10 then
                     game.forces["player"].print("Castra enemies have completed [technology=" ..
-                        nextResearch.name .. ",level=" .. nextResearch.level .. "]")
-					-- Throw a prompt if the research involves disabled items.
-					if not settings.startup["castra-enemy-allowed-nukes"].value then
-						if nextResearch.name == "atomic-bomb" or nextResearch.name == "cerys-plutonium-weaponry" or nextResearch.name == "maraxsis-depth-charges" then
-							game.forces["player"].print("strings.castra-disabled-tech-alert")						
-						end					
-					end
-					if not settings.startup["castra-enemy-allowed-artillery"].value then						
-						if nextResearch.name == "artillery" then
-							game.forces["player"].print("strings.castra-disabled-tech-alert")						
-						end		
-					end
-						
+                        nextResearch.name .. ",level=" .. nextResearch.level .. "]")						
                     nextResearch.researched = true
                     item_cache.update_castra_enemy_data()
                     trigger_research = nil
