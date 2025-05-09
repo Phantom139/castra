@@ -101,6 +101,12 @@ local function createDataCollectorSpawn(item_name, icon)
     }
 end
 
+-- Create enemy projectiles
+local enemy_shell = table.deepcopy(data.raw["projectile"]["cannon-projectile"])
+enemy_shell.name = "castra-enemy-shell"
+data:extend({ enemy_shell })
+
+
 data:extend({
     {
         type = "assembling-machine",
@@ -661,10 +667,39 @@ car.attack_parameters = {
     ammo_category = "bullet",
     ammo_type = {
         target_type = "entity",
-        action = table.deepcopy(data.raw["ammo"]["firearm-magazine"].action)
-    },
+        action =
+        {
+            type = "direct",
+            action_delivery =
+            {
+                type = "instant",
+                source_effects =
+                {
+                    type = "create-explosion",
+                    entity_name = "explosion-gunshot"
+                },
+                target_effects =
+                {
+                    {
+                        type = "create-entity",
+                        entity_name = "explosion-hit",
+                        offsets = { { 0, 1 } },
+                        offset_deviation = { { -0.5, -0.5 }, { 0.5, 0.5 } }
+                    },
+                    {
+                        type = "damage",
+                        damage = { amount = 6, type = "physical" }
+                    },
+                    {
+                        type = "activate-impact",
+                        deliver_category = "bullet"
+                    }
+                }
+            }
+        }
+	},
     animation = car.run_animation,
-    range_mode = "bounding-box-to-bounding-box"
+    range_mode = "bounding-box-to-bounding-box"	
 }
 
 data:extend({ car })
@@ -721,17 +756,26 @@ tank.movement_speed = 0.08
 tank.collision_box = data.raw["car"]["tank"].collision_box
 tank.selection_box = data.raw["car"]["tank"].selection_box
 tank.attack_parameters = {
-    type = "projectile",
-    range = 15,
-    cooldown = 90,
-    cooldown_deviation = 0.15,
-    ammo_category = "bullet",
-    ammo_type = {
-        target_type = "entity",
-        action = table.deepcopy(data.raw["ammo"]["cannon-shell"].action)
-    },
-    animation = tank.run_animation,
-    range_mode = "bounding-box-to-bounding-box"
+	type = "projectile",
+	range = 20,
+	cooldown = 90,
+	cooldown_deviation = 0.15,
+	ammo_category = "cannon-shell", 
+	ammo_type = {
+	category = "cannon-shell",
+	target_type = "entity",
+	action = {
+	type = "direct",
+		action_delivery = {
+			type = "projectile",
+				projectile = "castra-enemy-shell",
+				starting_speed = 1,
+				max_range = 30
+			}
+		}
+	},
+	animation = tank.run_animation, 
+	range_mode = "bounding-box-to-bounding-box"
 }
 
 data:extend({ tank })

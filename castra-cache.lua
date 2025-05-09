@@ -56,21 +56,23 @@ local sorted_ammo_types = {
     rocket = {"rocket", "explosive-rocket", "atomic-bomb", "hydrogen-bomb"},
     railgun = {"railgun-ammo"},
     artillery_shell = {"artillery-shell", "cerys-neutron-bomb", "maraxsis-fat-man" },
-	if mods["PLORD_Prometheus_GrenadeLauncher"] and settings.startup["castra-edits-extend-GrenadeLauncher"].value then
-		grenades = {"PLORD_40mm_gl_flare", "PLORD_40mm_gl_lighted", "PLORD_40mm_gl_pellets_piercing", "PLORD_40mm_gl_uranium_fist", "PLORD_40mm_gl_promethium" ,"PLORD_40mm_gl_he", 
-					"PLORD_40mm_gl_cluster", "PLORD_40mm_gl_plasma_hydroxygen", "PLORD_40mm_gl_uranium_frag", "PLORD_40mm_gl_plasma_phosphorus", "PLORD_40mm_gl_plasma_hydrargyrum",
-					"PLORD_40mm_gl_inferno", "PLORD_40mm_gl_incendiary", "PLORD_40mm_gl_poison", "PLORD_40mm_gl_venom", "PLORD_40mm_gl_acidic", "PLORD_40mm_gl_thermobaric", 
-					"PLORD_40mm_gl_shock", "PLORD_40mm_gl_stun", "PLORD_40mm_gl_stasis", "PLORD_40mm_gl_discharge"},
-	end
-	if mods["vtk-cannon-turret"] and settings.startup["castra-edits-extend-Cannons"].value then
-		cannon_turret_rounds = {}
-		if settings.startup["vtk-cannon-turret-ammo-use"].value == 1 or 3 then
-			cannon_turret_rounds = {"cannon-shell-magazine", "explosive-cannon-shell-magazine", "uranium-cannon-shell-magazine", "explosive-uranium-cannon-shell-magazine"}
-		else
-			cannon_turret_rounds = {"cannon-shell", "explosive-cannon-shell", "uranium-cannon-shell", "explosive-uranium-cannon-shell"}
-		end
-	end
 }
+if settings.startup["castra-edits-extend-GrenadeLauncher"].value then
+	grenades = {"PLORD_40mm_gl_flare", "PLORD_40mm_gl_lighted", "PLORD_40mm_gl_pellets_piercing", "PLORD_40mm_gl_uranium_fist", "PLORD_40mm_gl_promethium" ,"PLORD_40mm_gl_he", 
+				"PLORD_40mm_gl_cluster", "PLORD_40mm_gl_plasma_hydroxygen", "PLORD_40mm_gl_uranium_frag", "PLORD_40mm_gl_plasma_phosphorus", "PLORD_40mm_gl_plasma_hydrargyrum",
+				"PLORD_40mm_gl_inferno", "PLORD_40mm_gl_incendiary", "PLORD_40mm_gl_poison", "PLORD_40mm_gl_venom", "PLORD_40mm_gl_acidic", "PLORD_40mm_gl_thermobaric", 
+				"PLORD_40mm_gl_shock", "PLORD_40mm_gl_stun", "PLORD_40mm_gl_stasis", "PLORD_40mm_gl_discharge"}
+	sorted_ammo_types["grenades"] = grenades
+end
+if settings.startup["castra-edits-extend-Cannons"].value then
+	cannon_turret_rounds = {}
+	if settings.startup["vtk-cannon-turret-ammo-use"].value == 1 or 3 then
+		cannon_turret_rounds = {"cannon-shell-magazine", "explosive-cannon-shell-magazine", "uranium-cannon-shell-magazine", "explosive-uranium-cannon-shell-magazine"}
+	else
+		cannon_turret_rounds = {"cannon-shell", "explosive-cannon-shell", "uranium-cannon-shell", "explosive-uranium-cannon-shell"}
+	end
+	sorted_ammo_types["cannon_turret_rounds"] = cannon_turret_rounds
+end
 
 local function update_castra_enemy_data()
     storage.castra = storage.castra or {}
@@ -149,7 +151,7 @@ local function update_castra_enemy_data()
     -- Check highest tier of rocket
     local rocket_tier = nil
     for _, rocket in pairs(sorted_ammo_types.rocket) do
-		if rocket == "atomic-bomb" or rocket == "hydrogen-bomb" then:
+		if rocket == "atomic-bomb" or rocket == "hydrogen-bomb" then
 			if settings.startup["castra-enemy-allowed-nukes"].value then
 				if has_castra_researched_item(rocket) then
 					rocket_tier = rocket
@@ -176,7 +178,7 @@ local function update_castra_enemy_data()
     local artillery_tier = nil
 	if settings.startup["castra-enemy-allowed-artillery"].value then
 		for _, artillery in pairs(sorted_ammo_types.artillery_shell) do
-			if artillery == "cerys-neutron-bomb" or artillery == "maraxsis-fat-man":
+			if artillery == "cerys-neutron-bomb" or artillery == "maraxsis-fat-man" then
 				if settings.startup["castra-enemy-allowed-nukes"].value then
 					if has_castra_researched_item(artillery) then
 						artillery_tier = artillery
@@ -234,13 +236,13 @@ local function update_castra_enemy_data()
     enemy_storage.tesla_turret = has_castra_researched_item("tesla-turret")
     enemy_storage.combat_roboport = has_castra_researched_item("combat-roboport")
 	-- Mod extensions
-	if mods["Explosive_RC_Car"] and settings.startup["castra-edits-extend-RC"].value then
+	if settings.startup["castra-edits-extend-RC"].value then
 		enemy_storage.explosive_rc = has_castra_researched_item("explosive-rc-car")
 	end
-	if mods["Mammoth-MK3"] and settings.startup["castra-edits-extend-Mammoth"].value then
+	if settings.startup["castra-edits-extend-Mammoth"].value then
 		enemy_storage.mammoth = has_castra_researched_item("mammoth-mk3")
 	end	
-	if mods["PLORD_Prometheus_GrenadeLauncher"] and settings.startup["castra-edits-extend-GrenadeLauncher"].value then
+	if settings.startup["castra-edits-extend-GrenadeLauncher"].value then
 		enemy_storage.grenade_turret = has_castra_researched_item("PLORD_gl_40mm_turret")
 		enemy_storage.grenade_tank = has_castra_researched_item("PLORD_gl_tank")	
 		enemy_storage.available_grenades = {}
@@ -252,7 +254,7 @@ local function update_castra_enemy_data()
 			end
 		end
 	end
-	if mods["vtk-cannon-turret"] and settings.startup["castra-edits-extend-Cannons"].value then
+	if settings.startup["castra-edits-extend-Cannons"].value then
 		enemy_storage.cannon_turret = has_castra_researched_item("vtk-cannon-turret")
 		enemy_storage.heavy_cannon_turret = has_castra_researched_item("vtk-cannon-turret-heavy")
 	

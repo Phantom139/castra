@@ -44,11 +44,11 @@ local function add_turrets(data_collector)
     -- Select a random turret type
     local turret_types = { "gun-turret", "laser-turret", "rocket-turret", "railgun-turret",
     "tesla-turret", "combat-roboport", "flamethrower-turret", "artillery-turret" }
-	if mods["vtk-cannon-turret"] and settings.startup["castra-edits-extend-Cannons"].value then
+	if settings.startup["castra-edits-extend-Cannons"].value then
 		table.insert(turret_types, "vtk-cannon-turret")
 		table.insert(turret_types, "vtk-cannon-turret-heavy")
 	end
-	if mods["PLORD_Prometheus_GrenadeLauncher"] and settings.startup["castra-edits-extend-GrenadeLauncher"].value then
+	if settings.startup["castra-edits-extend-GrenadeLauncher"].value then
 		table.insert(turret_types, "PLORD_gl_40mm_turret")
 	end	
 
@@ -57,7 +57,7 @@ local function add_turrets(data_collector)
         if not item_cache[hyphen_to_underscore(turret_types[i])] then
             table.remove(turret_types, i)
         end
-		if turret_types[i] == "artillery-turret" and not settings.startup["castra-enemy-allowed-artillery"].value
+		if turret_types[i] == "artillery-turret" and not settings.startup["castra-enemy-allowed-artillery"].value then
 			table.remove(turret_types, i)
 		end		
     end
@@ -81,11 +81,11 @@ local function fill_turrets(data_collector)
     local area = get_search_area_size(data_collector, 20)
     local turret_types = { "gun-turret", "laser-turret", "rocket-turret", "railgun-turret",
         "tesla-turret", "combat-roboport", "flamethrower-turret", "artillery-turret" }
-	if mods["vtk-cannon-turret"] and settings.startup["castra-edits-extend-Cannons"].value then
+	if settings.startup["castra-edits-extend-Cannons"].value then
 		table.insert(turret_types, "vtk-cannon-turret")
 		table.insert(turret_types, "vtk-cannon-turret-heavy")
 	end
-	if mods["PLORD_Prometheus_GrenadeLauncher"] and settings.startup["castra-edits-extend-GrenadeLauncher"].value then
+	if settings.startup["castra-edits-extend-GrenadeLauncher"].value then
 		table.insert(turret_types, "PLORD_gl_40mm_turret")
 	end			
 		

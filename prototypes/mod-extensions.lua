@@ -61,7 +61,7 @@ if mods["Explosive_RC_Car"] and settings.startup["castra-edits-extend-RC"].value
 	rc_clone.dying_sound = nil
 	rc_clone.walking_sound = nil
 	rc_clone.water_reflection = nil
-	rc_clone.movement_speed = 0.4
+	rc_clone.movement_speed = 0.3
 	rc_clone.collision_box = data.raw["car"]["explosive-rc-car"].collision_box
 	rc_clone.selection_box = data.raw["car"]["explosive-rc-car"].selection_box
 	
@@ -72,31 +72,21 @@ if mods["Explosive_RC_Car"] and settings.startup["castra-edits-extend-RC"].value
 		cooldown_deviation = 0.1,
 		ammo_category = "bullet",
 		ammo_type = {
-			target_type = "entity",
-			action = {
-			  category = "bullet",
-			  action = {
-				type = "direct",
-				action_delivery = {
-				  type = "instant",
-				  target_effects = {
-					{
-					  type = "damage",
-					  damage = { amount = 1, type = "physical" },
-					  apply_damage_to_target = false 
-					},
-					-- Insta-kill the RC car to trigger the detonation
-					{
-					  type = "damage",
-					  damage = { amount = 999999, type = "physical" },
-					  force = "enemy"  
-					}
-				  }
+		  category = "bullet",
+		  action = {
+			type = "direct",
+			action_delivery = {
+			  type = "instant",
+			  source_effects = {
+				{
+				  type = "damage",
+				  damage = { amount = 99999, type = "physical" },
 				}
 			  }
 			}
+		  }
 		},
-		animation = car.run_animation,
+		animation = rc_clone.run_animation,
 		range_mode = "bounding-box-to-bounding-box"
 	}	
 

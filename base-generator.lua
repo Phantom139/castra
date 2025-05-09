@@ -534,10 +534,8 @@ local function get_corresponding_ammo(turret_type)
         return "N_A"
     elseif turret_type == "combat-roboport" then
         return storage.castra.enemy.combat_robot
-    end
 	elseif turret_type == "vtk-cannon-turret" or turret_type == "vtk-cannon-turret-heavy" then
 		return storage.castra.enemy.cannon_shell_tier
-	end
 	elseif turret_type == "PLORD_gl_40mm_turret" then
 		-- To-do: Code in the random grenade selection here.
 		return "PLORD_40mm_gl_he"
@@ -574,11 +572,11 @@ local function place_turrets(data_collector_pos, type)
         -- Select a random turret type from the available turrets
         turret_types = { "gun-turret", "laser-turret", "rocket-turret", "railgun-turret",
             "tesla-turret", "combat-roboport", "flamethrower-turret", "artillery-turret" }
-		if mods["vtk-cannon-turret"] and settings.startup["castra-edits-extend-Cannons"].value then
+		if settings.startup["castra-edits-extend-Cannons"].value then
 			table.insert(turret_types, "vtk-cannon-turret")
 			table.insert(turret_types, "vtk-cannon-turret-heavy")
 		end
-		if mods["PLORD_Prometheus_GrenadeLauncher"] and settings.startup["castra-edits-extend-GrenadeLauncher"].value then
+		if settings.startup["castra-edits-extend-GrenadeLauncher"].value then
 			table.insert(turret_types, "PLORD_gl_40mm_turret")
 		end		
     else
@@ -596,7 +594,7 @@ local function place_turrets(data_collector_pos, type)
         end
 		
 		-- Remove artillery if disabled in settings
-		if turret_types[i] == "artillery-turret" and not settings.startup["castra-enemy-allowed-artillery"].value
+		if turret_types[i] == "artillery-turret" and not settings.startup["castra-enemy-allowed-artillery"].value then
 			table.remove(turret_types, i)
 		end		
     end

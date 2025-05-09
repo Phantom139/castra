@@ -198,10 +198,10 @@ add_productivity_bonus("processing-unit", "processing-unit-battlefield-data", 0.
 if mods["Cerys-Moon-of-Fulgora"] then
 	if settings.startup["castra-edits-claim-engine-productivity"].value then
 		if data.raw["technology"]["cerys-engine-unit-productivity-1"] then
-			table.insert(data.raw["technology"]["cerys-engine-unit-productivity-1"].enabled, false)
+			data.raw["technology"]["cerys-engine-unit-productivity-1"].enabled = false
 		end
 		if data.raw["technology"]["cerys-engine-unit-productivity-2"] then
-			table.insert(data.raw["technology"]["cerys-engine-unit-productivity-2"].enabled, false)
+			data.raw["technology"]["cerys-engine-unit-productivity-2"].enabled = false
 		end
 	end
 end

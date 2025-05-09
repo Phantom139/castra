@@ -250,7 +250,7 @@ script.on_event(defines.events.on_entity_spawned, function(event)
     end
 	
 	-- RC cars
-	if mods["Explosive_RC_Car"] and settings.startup["castra-edits-extend-RC"].value then
+	if settings.startup["castra-edits-extend-RC"].value then
 		if event.entity.name == "castra-enemy-explosive-rc" and event.spawner.name == "data-collector" then
 			-- If the car is not yet unlocked, destroy it
 			item_cache.build_cache_if_needed()
@@ -304,7 +304,7 @@ local function get_castra_research_speed()
 	
 	-- Reduce based on player research into disruption
 	if settings.startup["castra-edits-add-disruption"].value then
-		if game.forces["player"].technologies["castra-enemy-research-disruption"].researched then
+		if game.forces["player"].technologies["castra-enemy-research-disruption"].level > 0 then
 			research_speed = research_speed - (research_speed * ((1 - 0.1) ^ game.forces["player"].technologies["castra-enemy-research-disruption"].level))	
 		end
 
@@ -361,7 +361,7 @@ local function update_castra_research_progress(event)
                 enemy_force.current_research.researched = true
 					-- Throw a prompt if the research involves disabled items.
 					if not settings.startup["castra-enemy-allowed-nukes"].value then
-						if enemy_force.current_research.name == "atomic-bomb" or enemy_force.current_research.name == "cerys-plutonium-weaponry" or enemy_force.current_research.name == "maraxsis-depth-charges" then:
+						if enemy_force.current_research.name == "atomic-bomb" or enemy_force.current_research.name == "cerys-plutonium-weaponry" or enemy_force.current_research.name == "maraxsis-depth-charges" then
 							game.forces["player"].print("strings.castra-disabled-tech-alert")						
 						end					
 					end
@@ -484,7 +484,7 @@ local function update_castra_research_progress(event)
                         nextResearch.name .. ",level=" .. nextResearch.level .. "]")
 					-- Throw a prompt if the research involves disabled items.
 					if not settings.startup["castra-enemy-allowed-nukes"].value then
-						if nextResearch.name == "atomic-bomb" or nextResearch.name == "cerys-plutonium-weaponry" or nextResearch.name == "maraxsis-depth-charges" then:
+						if nextResearch.name == "atomic-bomb" or nextResearch.name == "cerys-plutonium-weaponry" or nextResearch.name == "maraxsis-depth-charges" then
 							game.forces["player"].print("strings.castra-disabled-tech-alert")						
 						end					
 					end
@@ -939,7 +939,7 @@ script.on_event(defines.events.on_lua_shortcut, function(event)
         local current_research_progress = 0
         if enemy_force.current_research then
             current_research_progress = math.floor(enemy_force.research_progress * 10000) / 100
-			if settings.startup["castra-edits-add-disruption"].value and game.forces["player"].technologies["castra-enemy-research-disruption"].researched then
+			if settings.startup["castra-edits-add-disruption"].value and game.forces["player"].technologies["castra-enemy-research-disruption"].level > 0 then
 				player.print("Currently researching: [technology=" ..
 					enemy_force.current_research.name ..
 					",level=" ..
