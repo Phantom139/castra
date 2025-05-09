@@ -304,10 +304,15 @@ local function get_castra_research_speed()
 	
 	-- Reduce based on player research into disruption
 	if settings.startup["castra-edits-add-disruption"].value then
-		if game.forces["player"].technologies["castra-enemy-research-disruption"].level > 0 then
-			research_speed = research_speed - (research_speed * ((1 - 0.1) ^ game.forces["player"].technologies["castra-enemy-research-disruption"].level))	
+		local disruptTech = game.forces["player"].technologies["castra-enemy-research-disruption"]
+		local disrupt_levels = disruptTech.level
+		if not disruptTech.researched then
+			disrupt_levels = disrupt_levels - 1
+		end		
+	
+		if disrupt_levels > 0 then
+			research_speed = research_speed * (0.9 ^ disrupt_levels)
 		end
-
 	end
 
     -- Minimum of 2
@@ -932,20 +937,34 @@ script.on_event(defines.events.on_lua_shortcut, function(event)
         if not hasRadar then
             player.print("You need a powered radar on Castra to get an update on enemy research progress.")
             return
-        end
+        end	
 
         local enemy_force = game.forces["enemy"]
         local research_speed = math.floor(get_castra_research_speed() * 100) / 100
         local current_research_progress = 0
         if enemy_force.current_research then
             current_research_progress = math.floor(enemy_force.research_progress * 10000) / 100
-			if settings.startup["castra-edits-add-disruption"].value and game.forces["player"].technologies["castra-enemy-research-disruption"].level > 0 then
-				player.print("Currently researching: [technology=" ..
-					enemy_force.current_research.name ..
-					",level=" ..
-					enemy_force.current_research.level ..
-					"] " .. current_research_progress .. "% at " .. research_speed .. "/m" ..
-					",disruption=" .. (((1 - 0.1) ^ (game.forces["player"].technologies["castra-enemy-research-disruption"].level)) * 10) .. "%")			
+			if settings.startup["castra-edits-add-disruption"].value then
+				local disruptTech = game.forces["player"].technologies["castra-enemy-research-disruption"]
+				local disrupt_levels = disruptTech.level
+				if not disruptTech.researched then
+					disrupt_levels = disrupt_levels - 1
+				end	
+
+				if disrupt_levels > 0 then
+					player.print("Currently researching: [technology=" ..
+						enemy_force.current_research.name ..
+						",level=" ..
+						enemy_force.current_research.level ..
+						"] " .. current_research_progress .. "% at " .. research_speed .. "/m" ..
+						",disruption=" .. (100 - (100 * (0.9 ^ disrupt_levels))) .. "%")
+				else
+					player.print("Currently researching: [technology=" ..
+						enemy_force.current_research.name ..
+						",level=" ..
+						enemy_force.current_research.level ..
+						"] " .. current_research_progress .. "% at " .. research_speed .. "/m")				
+				end
 			else
 				player.print("Currently researching: [technology=" ..
 					enemy_force.current_research.name ..
