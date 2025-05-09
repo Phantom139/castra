@@ -786,6 +786,108 @@ data:extend(
         },
         time = 30
       }
+    },
+    {
+      type = "technology",
+      name = "jammer-radar",
+      icon = "__castra__/graphics/technology/jammer-radar.png",
+      icon_size = 256,
+      effects =
+      {
+        {
+          type = "unlock-recipe",
+          recipe = "jammer-radar"
+        }
+      },
+      prerequisites = {"battlefield-science-pack", "castra-enemy-research", "electromagnetic-science-pack"},
+      unit =
+      {
+        count = 2000,
+        ingredients =
+        {
+          {"automation-science-pack", 1},
+          {"logistic-science-pack", 1},
+          {"chemical-science-pack", 1},
+          {"military-science-pack", 1},
+          {"space-science-pack", 1},
+          {"battlefield-science-pack", 1},
+          {"electromagnetic-science-pack", 1}
+        },
+        time = 30
+      }
+    },
+    {
+      type = "technology",
+      name = "jammed-data-collector",
+      icons = {
+        {
+          icon = "__castra__/graphics/technology/combat-roboport.png",
+          icon_size = 256,
+        },
+        {
+          icon = "__castra__/graphics/technology/combat-roboport.png",
+          icon_size = 256,
+          tint = { r = 0.5, g = 0.0, b = 0.5, a = 0.3 }
+        }
+      },
+      effects =
+      {
+        {
+          type = "unlock-recipe",
+          recipe = "jammed-data-collector"
+        }
+      },
+      prerequisites = {"jammer-radar", "quantum-processor", "lithium-battery"},
+      unit =
+      {
+        count = 5000,
+        ingredients =
+        {
+          {"automation-science-pack", 1},
+          {"logistic-science-pack", 1},
+          {"chemical-science-pack", 1},
+          {"military-science-pack", 1},
+          {"space-science-pack", 1},
+          {"battlefield-science-pack", 1},
+          {"electromagnetic-science-pack", 1},
+          {"cryogenic-science-pack", 1}
+        },
+        time = 30
+      }
     }
   }
 )
+
+if settings.startup["castra-edits-add-disruption"].value then
+	data:extend({
+		{
+		  type = "technology",
+		  name = "castra-enemy-research-disruption",
+		  icon = "__castra__/graphics/technology/research-disruption.png",
+		  icon_size = 256,
+		  effects = {
+			{
+			  type = "nothing",
+			  effect_description = { "technology-effect-description.castra-enemy-research-disruption" }	  
+			}
+		  },
+		  prerequisites = { "battlefield-science-pack", "jammer-radar" },
+		  unit =
+		  {
+			count_formula = "1.5^(L-1)*1000",
+			ingredients =
+			{
+			  { "automation-science-pack",  1 },
+			  { "logistic-science-pack",    1 },
+			  { "chemical-science-pack",    1 },
+			  { "military-science-pack",    1 },
+			  { "space-science-pack",       1 },
+			  { "battlefield-science-pack", 1 }
+			},
+			time = 60
+		  },
+		  max_level = "infinite",
+		  upgrade = true
+		}
+	})	
+end

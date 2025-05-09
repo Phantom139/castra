@@ -101,6 +101,12 @@ local function createDataCollectorSpawn(item_name, icon)
     }
 end
 
+-- Create enemy projectiles
+local enemy_shell = table.deepcopy(data.raw["projectile"]["cannon-projectile"])
+enemy_shell.name = "castra-enemy-shell"
+data:extend({ enemy_shell })
+
+
 data:extend({
     {
         type = "assembling-machine",
@@ -201,7 +207,7 @@ data:extend({
         name = "data-collector",
         icon = "__castra__/graphics/fusion-reactor/fusion-reactor-icon.png",
         flags = { "placeable-player", "placeable-enemy", "not-repairable" },
-        max_health = 15000,
+        max_health = 12000,
         order = "f-g-b",
         subgroup = "enemies",
         resistances =
@@ -217,19 +223,9 @@ data:extend({
                 percent = 95
             },
             {
-                type = "fire",
-                decrease = 10,
-                percent = 30
-            },
-            {
-                type = "electric",
-                decrease = 10,
-                percent = 20
-            },
-            {
                 type = "laser",
                 decrease = 20,
-                percent = 95
+                percent = 90
             },
             {
                 type = "poison",
@@ -245,7 +241,7 @@ data:extend({
                 volume = 0.45
             }
         },
-        healing_per_tick = 20/60.0,
+        healing_per_tick = 20 / 60.0,
         collision_box = { { -2.7, -2.7 }, { 2.7, 2.7 } },
         map_generator_bounding_box = { { -3.7, -3.2 }, { 3.7, 3.2 } },
         selection_box = { { -3, -3 }, { 3, 3 } },
@@ -307,14 +303,42 @@ data:extend({
         call_for_help_radius = 0,
         result_units = (function()
             local res = {}
-            res[1] = { "data-collector-electronic-circuit", { { 0.0, 0.1 }, { 0.7, 0.05 }, { 1.0, 0.0 } } }
-            res[2] = { "data-collector-advanced-circuit", { { 0.0, 0.0 }, { 0.4, 0.0 }, { 0.9, 0.4 } } }
-            res[3] = { "data-collector-millerite", { { 0.0, 0.4 }, { 0.3, 0.2 }, { 0.6, 0.1 } } }
-            res[4] = { "data-collector-gunpowder", { { 0.0, 0.8 }, { 0.5, 0.5 }, { 0.8, 0.0 } } }
-            res[5] = { "data-collector-low-density-structure", { { 0.0, 0.15 }, { 0.2, 0.2 }, { 1.0, 0.3 } } }
-            res[6] = { "data-collector-electric-engine-unit", { { 0.0, 0.05 }, { 0.2, 0.1 }, { 1.0, 0.1 } } }
-            res[7] = { "data-collector-castra-data", { { 0.0, 0.1 }, { 0.5, 0.4 }, { 1.0, 1.0 } } }
-            res[8] = { "castra-enemy-tank", { { 0.0, 0.0 }, { 0.4, 0.0 }, { 0.405, 0.05 }, { 1.0, 0.1 } } }
+			local i = 1
+			
+            res[i] = { "data-collector-electronic-circuit", { { 0.0, 0.1 }, { 0.7, 0.05 }, { 1.0, 0.0 } } }; 
+			i = i + 1
+            
+			res[i] = { "data-collector-advanced-circuit", { { 0.0, 0.0 }, { 0.4, 0.0 }, { 0.9, 0.4 } } };
+			i = i + 1
+			
+            res[i] = { "data-collector-millerite", { { 0.0, 0.4 }, { 0.3, 0.2 }, { 0.6, 0.1 } } };
+			i = i + 1
+			
+            res[i] = { "data-collector-gunpowder", { { 0.0, 0.8 }, { 0.5, 0.5 }, { 0.8, 0.0 } } };
+			i = i + 1
+			
+            res[i] = { "data-collector-low-density-structure", { { 0.0, 0.15 }, { 0.2, 0.2 }, { 1.0, 0.3 } } };
+			i = i + 1
+			
+            res[i] = { "data-collector-electric-engine-unit", { { 0.0, 0.05 }, { 0.2, 0.1 }, { 1.0, 0.1 } } };
+			i = i + 1
+			
+            res[i] = { "data-collector-castra-data", { { 0.0, 0.1 }, { 0.5, 0.4 }, { 1.0, 1.0 } } };
+			i = i + 1
+			
+			if settings.startup["castra-enemy-add-cars"].value then
+				res[i] = { "castra-enemy-car", { { 0.0, 0.0 }, { 0.25, 0.05 }, { 0.4, 0.1 }, { 0.65, 0.15 }, { 1.0, 0.2 } } };
+				i = i + 1		
+			end			
+			
+            res[i] = { "castra-enemy-tank", { { 0.0, 0.0 }, { 0.4, 0.0 }, { 0.405, 0.05 }, { 1.0, 0.1 } } };
+			i = i + 1
+			
+			if mods["Explosive_RC_Car"] and settings.startup["castra-edits-extend-RC"].value then
+				res[i] = { "castra-enemy-explosive-rc", { { 0.0, 0.0 }, { 0.5, 0.01 }, { 0.65, 0.05 }, { 1.0, 0.075 } } };
+				i = i + 1		
+			end
+			
             return res
         end)(),
         loot = {
@@ -402,7 +426,7 @@ data:extend({
             fade_in_ticks = 4,
             fade_out_ticks = 20,
             sound = {
-                filename = "__base__/sound/open-close/roboport-open.ogg",
+                filename = "__base__/sound/roboport-working.ogg",
                 volume = 0.45
             }
         },
@@ -452,63 +476,194 @@ data:extend({
         circuit_wire_max_distance = default_circuit_wire_max_distance,
         quality_affects_inventory_size = false,
         is_military_target = true
+    },
+    {
+        type = "assembling-machine",
+        name = "jammed-data-collector",
+        icons = {
+            {
+                icon = "__castra__/graphics/fusion-reactor/fusion-reactor-icon.png"
+            },
+            {
+                icon = "__castra__/graphics/fusion-reactor/fusion-reactor-icon.png",
+                tint = { r = 0.5, g = 0.1, b = 0.5, a = 0.3 }
+            }
+        },
+        flags = { "placeable-neutral", "placeable-player", "player-creation", "not-repairable", "not-deconstructable" },
+        max_health = 12000,
+        create_ghost_on_death = false,
+        show_recipe_icon = false,
+        production_health_effect =
+        {
+            not_producing = -50,
+            producing = 50
+        },
+        ignore_output_full = true,
+        dying_trigger_effect =
+        {
+            type = "create-entity",
+            entity_name = "data-collector",
+            as_enemy = true,
+            ignore_no_enemies_mode = true,
+            protected = true,
+            trigger_created_entity = true
+        },
+        resistances = {
+            {
+                type = "physical",
+                decrease = 20,
+                percent = 10
+            },
+            {
+                type = "explosion",
+                decrease = 10,
+                percent = 95
+            },
+            {
+                type = "laser",
+                decrease = 20,
+                percent = 90
+            },
+            {
+                type = "poison",
+                percent = 100
+            }
+        },
+        working_sound = {
+            audible_distance_modifier = 0.5,
+            fade_in_ticks = 4,
+            fade_out_ticks = 20,
+            sound = {
+                filename = "__base__/sound/assembling-machine-t3-1.ogg",
+                volume = 0.45
+            }
+        },
+        collision_box = { { -2.7, -2.7 }, { 2.7, 2.7 } },
+        map_generator_bounding_box = { { -3.7, -3.2 }, { 3.7, 3.2 } },
+        selection_box = { { -3, -3 }, { 3, 3 } },
+        impact_category = "metal",
+        graphics_set = {
+            animation = {
+                layers = {
+                    {
+                        filename = "__castra__/graphics/fusion-reactor/fusion-reactor-hr-shadow.png",
+                        priority = "high",
+                        width = 700,
+                        height = 600,
+                        frame_count = 1,
+                        line_length = 1,
+                        repeat_count = 60,
+                        draw_as_shadow = true,
+                        animation_speed = 0.3,
+                        scale = 0.5,
+                    },
+                    {
+                        priority = "high",
+                        width = 400,
+                        height = 400,
+                        animation_speed = 0.3,
+                        scale = 0.5,
+                        filename =
+                        "__castra__/graphics/fusion-reactor/fusion-reactor-hr-animation.png",
+                        frame_count = 60,
+                        line_length = 8
+                    },
+                    {
+                        priority = "high",
+                        width = 400,
+                        height = 400,
+                        animation_speed = 0.3,
+                        scale = 0.5,
+                        filename =
+                        "__castra__/graphics/fusion-reactor/fusion-reactor-hr-animation.png",
+                        frame_count = 60,
+                        line_length = 8,
+                        tint = { r = 0.5, g = 0.1, b = 0.5, a = 0.3 }
+                    },
+                    {
+                        priority = "high",
+                        width = 400,
+                        height = 400,
+                        animation_speed = 0.3,
+                        scale = 0.5,
+                        filename =
+                        "__castra__/graphics/fusion-reactor/fusion-reactor-hr-animation-emission.png",
+                        frame_count = 60,
+                        line_length = 8,
+                        draw_as_glow = true,
+                        blend_mode = "additive",
+                        tint = { r = 0.5, g = 0.1, b = 0.5, a = 0.3 }
+                    }
+                }
+            },
+            reset_animation_when_frozen = true
+        },
+        crafting_categories = { "jammed-data-collector-process" },
+        fixed_recipe = "jammed-data-collector-process",
+        crafting_speed = 1,
+        energy_source =
+        {
+            type = "burner",
+            fuel_categories = { "castra-jammer" },
+            effectivity = 1,
+            fuel_inventory_size = 1,
+            emissions_per_minute = { data = -1000 },
+            burner_usage = "castra-jammer",
+            light_flicker =
+            {
+                minimum_intensity = 0,
+                maximum_intensity = 0,
+                derivation_change_frequency = 0,
+                derivation_change_deviation = 0,
+                border_fix_speed = 0,
+                minimum_light_size = 0,
+                light_intensity_to_size_coefficient = 0,
+                color = { 0, 0, 0, 1 }
+            }
+        },
+        energy_usage = "800kW",
+        module_slots = 4,
+        allowed_effects = { "quality" },
+        allowed_module_categories = { "quality" },
+        enable_logistic_control_behavior = false,
+        surface_conditions =
+        {
+            {
+                property = "pressure",
+                min = 1254,
+                max = 1254
+            }
+        },
     }
 })
 
--- Create a tank enemy based on the medium-spitter
-local tank = table.deepcopy(data.raw["unit"]["medium-spitter"])
-tank.name = "castra-enemy-tank"
-tank.icon = "__base__/graphics/icons/tank.png"
--- Use the normal tank's health and resistances
-tank.max_health = data.raw["car"]["tank"].max_health
-tank.resistances = {
-    {
-        type = "physical",
-        decrease = 10,
-        percent = 50
-    },
-    {
-        type = "explosion",
-        decrease = 10,
-        percent = 50
-    },
-    {
-        type = "fire",
-        percent = 100
-    },
-    {
-        type = "poison",
-        percent = 100
-    },
-    {
-        type = "laser",
-        decrease = 20,
-        percent = 99
-    },
-    {
-        type = "electric",
-        decrease = 10,
-        percent = 90
-    }
-}
-tank.absorptions_to_join_attack = { data = 1000 }
-tank.run_animation = data.raw["car"]["tank"].animation
-tank.working_sound = data.raw["car"]["tank"].working_sound
-tank.rotation_speed = data.raw["car"]["tank"].rotation_speed
-tank.alternative_attacking_frame_sequence = nil
-tank.corpse = data.raw["car"]["tank"].corpse
-tank.dying_explosion = data.raw["car"]["tank"].dying_explosion
-tank.dying_sound = nil
-tank.walking_sound = nil
-tank.water_reflection = nil
-tank.movement_speed = 0.08
-tank.collision_box = data.raw["car"]["tank"].collision_box
-tank.selection_box = data.raw["car"]["tank"].selection_box
-tank.attack_parameters = {
+-- Create a car enemy based on the small-spitter
+local car = table.deepcopy(data.raw["unit"]["small-spitter"])
+car.name = "castra-enemy-car"
+car.icon = "__base__/graphics/icons/car.png"
+-- Use the normal car's health and resistances
+car.max_health = data.raw["car"]["car"].max_health
+car.factoriopedia_simulation = nil
+car.resistances = data.raw["car"]["car"].resistances
+car.absorptions_to_join_attack = { data = 250 }
+car.run_animation = data.raw["car"]["car"].animation
+car.run_animation.tint = { r = 0, g = 0.5, b = 0.2, a = 1 }
+car.working_sound = data.raw["car"]["car"].working_sound
+car.rotation_speed = data.raw["car"]["car"].rotation_speed
+car.alternative_attacking_frame_sequence = nil
+car.corpse = data.raw["car"]["car"].corpse
+car.dying_explosion = data.raw["car"]["car"].dying_explosion
+car.dying_sound = nil
+car.walking_sound = nil
+car.water_reflection = nil
+car.movement_speed = 0.25
+car.collision_box = data.raw["car"]["car"].collision_box
+car.selection_box = data.raw["car"]["car"].selection_box
+car.attack_parameters = {
     type = "projectile",
-    range = 10,
-    cooldown = 30,
-    cooldown_deviation = 0.15,
+    range = 12,
+    cooldown = 10,
+    cooldown_deviation = 0.1,
     ammo_category = "bullet",
     ammo_type = {
         target_type = "entity",
@@ -533,7 +688,7 @@ tank.attack_parameters = {
                     },
                     {
                         type = "damage",
-                        damage = { amount = 24, type = "physical" }
+                        damage = { amount = 6, type = "physical" }
                     },
                     {
                         type = "activate-impact",
@@ -542,17 +697,94 @@ tank.attack_parameters = {
                 }
             }
         }
-    },
-    animation = tank.run_animation,
-    range_mode = "bounding-box-to-bounding-box"
+	},
+    animation = car.run_animation,
+    range_mode = "bounding-box-to-bounding-box"	
 }
+
+data:extend({ car })
+
+-- Create a tank enemy based on the medium-spitter
+local tank = table.deepcopy(data.raw["unit"]["medium-spitter"])
+tank.name = "castra-enemy-tank"
+tank.icon = "__base__/graphics/icons/tank.png"
+-- Use the normal tank's health and resistances
+tank.max_health = data.raw["car"]["tank"].max_health
+tank.factoriopedia_simulation = nil
+tank.resistances = {
+    {
+        type = "physical",
+        decrease = 10,
+        percent = 50
+    },
+    {
+        type = "explosion",
+        decrease = 10,
+        percent = 50
+    },
+    {
+        type = "fire",
+        percent = 90
+    },
+    {
+        type = "poison",
+        percent = 99
+    },
+    {
+        type = "laser",
+        decrease = 20,
+        percent = 90
+    },
+    {
+        type = "electric",
+        decrease = 10,
+        percent = 60
+    }
+}
+tank.absorptions_to_join_attack = { data = 1000 }
+tank.run_animation = data.raw["car"]["tank"].animation
+tank.run_animation.tint = { r = 0, g = 0.5, b = 0.2, a = 1 }
+tank.working_sound = data.raw["car"]["tank"].working_sound
+tank.rotation_speed = data.raw["car"]["tank"].rotation_speed
+tank.alternative_attacking_frame_sequence = nil
+tank.corpse = data.raw["car"]["tank"].corpse
+tank.dying_explosion = data.raw["car"]["tank"].dying_explosion
+tank.dying_sound = nil
+tank.walking_sound = nil
+tank.water_reflection = nil
+tank.movement_speed = 0.08
+tank.collision_box = data.raw["car"]["tank"].collision_box
+tank.selection_box = data.raw["car"]["tank"].selection_box
+tank.attack_parameters = {
+	type = "projectile",
+	range = 20,
+	cooldown = 90,
+	cooldown_deviation = 0.15,
+	ammo_category = "cannon-shell", 
+	ammo_type = {
+	category = "cannon-shell",
+	target_type = "entity",
+	action = {
+	type = "direct",
+		action_delivery = {
+			type = "projectile",
+				projectile = "castra-enemy-shell",
+				starting_speed = 1,
+				max_range = 30
+			}
+		}
+	},
+	animation = tank.run_animation, 
+	range_mode = "bounding-box-to-bounding-box"
+}
+
 data:extend({ tank })
 
 local function multiply_energy_amount(energy_string, multiplier)
     -- Extract the number and unit from the energy string
     local number, unit = energy_string:match("^(%d+%.?%d*)(%a*)$")
     if not number or not unit then return energy_string end
-    
+
     -- Convert the number to a number type and multiply it
     number = tonumber(number) * multiplier
 
@@ -595,11 +827,12 @@ local function create_enemy_version(entity)
         end
         if attack_param.ammo_type then
             if attack_param.ammo_type.energy_consumption then
-                attack_param.ammo_type.energy_consumption = multiply_energy_amount(attack_param.ammo_type.energy_consumption, mult)
+                attack_param.ammo_type.energy_consumption = multiply_energy_amount(
+                attack_param.ammo_type.energy_consumption, mult)
             end
         end
     end
-    return enemy_entity    
+    return enemy_entity
 end
 
 -- Create enemy versions of laser-turret, railgun, flamethrower

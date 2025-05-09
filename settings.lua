@@ -1,1 +1,73 @@
-
+data:extend({
+		{
+			type = "bool-setting",
+			name = "castra-enemy-allowed-artillery",
+			setting_type = "startup",
+			default_value = true,
+			order = "a",
+		},
+		{
+			type = "bool-setting",
+			name = "castra-enemy-allowed-nukes",
+			setting_type = "startup",
+			default_value = true,
+			order = "b",
+		},	
+		{
+			type = "bool-setting",
+			name = "castra-enemy-add-cars",
+			setting_type = "startup",
+			default_value = true,
+			order = "c",
+		},	
+		{
+			type = "bool-setting",
+			name = "castra-edits-add-disruption",
+			setting_type = "startup",
+			default_value = false,
+			order = "d",
+		},		
+		{
+			type = "bool-setting",
+			name = "castra-edits-claim-engine-productivity",
+			setting_type = "startup",
+			default_value = false,
+			order = "e",
+		},	
+		{
+			type = "bool-setting",
+			name = "castra-edits-extend-RC",
+			setting_type = "startup",
+			default_value = false,
+			order = "f",
+		},			
+		{
+			type = "bool-setting",
+			name = "castra-edits-extend-Mammoth",
+			setting_type = "startup",
+			default_value = false,
+			order = "g",
+		},	
+		{
+			type = "bool-setting",
+			name = "castra-edits-extend-Cannons",
+			setting_type = "startup",
+			default_value = false,
+			order = "h",
+		},	
+		--
+		--{
+		--	type = "bool-setting",
+		--	name = "castra-edits-extend-LaserFence",
+		--	setting_type = "startup",
+		--	default_value = false,
+		--	order = "i",
+		--},			
+		{
+			type = "bool-setting",
+			name = "castra-edits-extend-GrenadeLauncher",
+			setting_type = "startup",
+			default_value = false,
+			order = "i",
+		},			
+})

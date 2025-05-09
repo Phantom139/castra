@@ -194,3 +194,21 @@ end
 add_productivity_bonus("holmium-plate", "holmium-catalyzing", 0.1)
 add_productivity_bonus("processing-unit", "processing-unit-battlefield-data", 0.1)
 
+-- If Cerys is installed and the user has enabled the option to claim Engine producitivty, remove the Cerys tech.
+if mods["Cerys-Moon-of-Fulgora"] then
+	local cerys_techs = {
+		"cerys-engine-unit-productivity-1",
+		"cerys-engine-unit-productivity-2"
+	}
+
+	for _, name in pairs(cerys_techs) do
+		local tech = data.raw["technology"][name]
+		if tech then
+			tech.enabled = false             
+			tech.hidden = true               
+			tech.ignore_tech_cost_multiplier = true
+			tech.effects = {}               
+			tech.prerequisites = nil          
+		end
+	end
+end

@@ -1,5 +1,59 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.5.5
+Date: 2025-05-08
+  Bugfixes:
+    - Adjusted Combat Roboport audio to use the default roboport sound
+    - Fixed a typo in the enemy research monitor
+  Changes:
+    - Updated the planet definition so the usual drop in / launch out animation now shows
+    - Added a number of mod settings for more user control (Detailed below)
+    - Added the ability to toggle the enemy usage of "destructive" weaponry (Artillery and Nukes), they will still research these techs but a message prompt will inform you that this is only to progress the tree
+    - Added Enemy Cars which will spawn at a lower evolution factor and employ bullet ammunition
+    - Enemy Tanks now employ cannon shells
+    - The enemy faction can now employ mod content from a handful (Explosive RC Car, Prometheus Grenade Launcher, Vortik's Cannon Turrets) of other mods, more to come
+    - A recent update to Cerys added an Engine Unit productivity research chain. Added a setting to "claim" this research chain for Castra as the Castra research also includes the gunpowder recipe
+    - Added a new infinite technology to disrupt enemy research by a multiplicative factor of 10% per level (You won't be able to fully stop enemy research, but it will significantly slow it down)
+---------------------------------------------------------------------------------------------------
+Version: 0.5.4
+Date: 2025-03-18
+  Bugfixes:
+    - Fix jammed data collector crash
+---------------------------------------------------------------------------------------------------
+Version: 0.5.3
+Date: 2025-03-15
+  Bugfixes:
+    - Fix range rendering error
+---------------------------------------------------------------------------------------------------
+Version: 0.5.2
+Date: 2025-03-11
+  Bugfixes:
+    - Fix combat roboport crash
+---------------------------------------------------------------------------------------------------
 Version: 0.5.0
+Date: 2025-03-11
+  Changes:
+    - Added jammer radar and jammed data collector   
+    - Drops are no longer marked for deconstruction to encourage use of belts and jammed data collectors
+---------------------------------------------------------------------------------------------------
+Version: 0.4.16
+Date: 2025-03-01
+  Balancing:
+    - Reduce enemy tank electric resistance to 60%
+    - Significantly reduce chance of higher quality items from data collectors
+  Changes:
+    - Limited items dropped by data collectors to the max quality researched by the player as well    
+---------------------------------------------------------------------------------------------------
+Version: 0.4.15
+Date: 2025-02-27
+  Changes:
+    - Fix enemy quality upgrading error when trying to upgrade unsupported entities
+---------------------------------------------------------------------------------------------------
+Version: 0.4.11
+Date: 2025-02-23
+  Changes:
+    - Lower enemy resistances and health
+---------------------------------------------------------------------------------------------------
+Version: 0.4.10
 Date: 2025-02-22
   Bugfixes:
     - Fix combat roboport error

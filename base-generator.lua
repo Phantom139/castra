@@ -245,7 +245,7 @@ local function select_random_quality_max(max_quality_in)
     -- Assign a weight to each quality based on the level and the current quality module tier
     local total_weight = 0
     local weights = {}
-    local base = 0.5 * math.sqrt(storage.castra.enemy.quality_module_tier * math.sqrt(max_quality.level))
+    local base = 0.1 * math.sqrt(storage.castra.enemy.quality_module_tier * math.sqrt(max_quality.level))
     for _, quality in pairs(qualities) do
         local weight = math.ceil(math.pow(base, quality.level) * 1000)
         total_weight = total_weight + weight
@@ -282,7 +282,7 @@ local function build_enemy_wall(chunk_area, pos)
     local entities = surface.find_entities_filtered { force = enemy_force, area = { { chunk_area.left_top.x - 15, chunk_area.left_top.y - 15 }, { chunk_area.right_bottom.x + 15, chunk_area.right_bottom.y + 15 } } }
     -- Remove walls from entities list
     for i = #entities, 1, -1 do
-        if entities[i].type == "wall" then
+        if not entities[i].valid or entities[i].type == "wall" then
             table.remove(entities, i)
         end
     end
@@ -439,7 +439,7 @@ local function find_closest_entity(filters)
 
     for _, entity in pairs(entities) do
         -- Ignore entity at this position
-        if filters.position and entity.position.x == filters.position.x and entity.position.y == filters.position.y then
+        if not entity.valid or (filters.position and entity.position.x == filters.position.x and entity.position.y == filters.position.y) then
             goto continue_entity
         end
 
@@ -534,7 +534,12 @@ local function get_corresponding_ammo(turret_type)
         return "N_A"
     elseif turret_type == "combat-roboport" then
         return storage.castra.enemy.combat_robot
-    end
+	elseif turret_type == "vtk-cannon-turret" or turret_type == "vtk-cannon-turret-heavy" then
+		return storage.castra.enemy.cannon_shell_tier
+	elseif turret_type == "PLORD_gl_40mm_turret" then
+		-- To-do: Code in the random grenade selection here.
+		return "PLORD_40mm_gl_he"
+	end
 end
 
 local function hyphen_to_underscore(str)
@@ -550,6 +555,12 @@ local function get_enemy_variant(name)
         return "castra-enemy-tesla-turret"
     elseif name == "laser-turret" then
         return "castra-enemy-laser-turret"
+    elseif name == "vtk-cannon-turret" then
+        return "castra-enemy-vtk-cannon-turret"
+    elseif name == "vtk-cannon-turret-heavy" then
+        return "castra-enemy-vtk-cannon-turret-heavy"
+    elseif name == "PLORD_gl_40mm_turret" then
+        return "castra-enemy-PLORD_gl_40mm_turret"		
     else
         return name
     end
@@ -561,6 +572,13 @@ local function place_turrets(data_collector_pos, type)
         -- Select a random turret type from the available turrets
         turret_types = { "gun-turret", "laser-turret", "rocket-turret", "railgun-turret",
             "tesla-turret", "combat-roboport", "flamethrower-turret", "artillery-turret" }
+		if settings.startup["castra-edits-extend-Cannons"].value then
+			table.insert(turret_types, "vtk-cannon-turret")
+			table.insert(turret_types, "vtk-cannon-turret-heavy")
+		end
+		if settings.startup["castra-edits-extend-GrenadeLauncher"].value then
+			table.insert(turret_types, "PLORD_gl_40mm_turret")
+		end		
     else
         turret_types = { type }
     end
@@ -574,6 +592,11 @@ local function place_turrets(data_collector_pos, type)
         if not storage.castra.enemy.solar_panel and (turret_types[i] == "laser-turret" or turret_types[i] == "railgun-turret" or turret_types[i] == "tesla-turret") then
             table.remove(turret_types, i)
         end
+		
+		-- Remove artillery if disabled in settings
+		if turret_types[i] == "artillery-turret" and not settings.startup["castra-enemy-allowed-artillery"].value then
+			table.remove(turret_types, i)
+		end		
     end
 
     if #turret_types == 0 then
@@ -586,22 +609,22 @@ local function place_turrets(data_collector_pos, type)
     local turret_type = turret_types[math.random(1, #turret_types)]
 
     -- Railgun has 8 orientations
-    local railgun_orients = { defines.direction.east, defines.direction.northeast, defines.direction.north, defines.direction.northwest,
+    local eight_directional_orients = { defines.direction.east, defines.direction.northeast, defines.direction.north, defines.direction.northwest,
         defines.direction.west, defines.direction.southwest, defines.direction.south, defines.direction.southeast }
 
     -- Flamethrower has 4 orientations
-    local flamethrower_orients = { defines.direction.east, defines.direction.north, defines.direction.west, defines.direction.south }
+    local four_directional_orients = { defines.direction.east, defines.direction.north, defines.direction.west, defines.direction.south }
 
     -- Place a random number of turrets around the data-collector
-    for i = 1, math.random(1, 6) do
+    for i = 1, math.random(1, 10) do
         local turret_pos = game.surfaces["castra"].find_non_colliding_position(get_enemy_variant(turret_type),
             { data_collector_pos.x + math.random(-8, 8), data_collector_pos.y + math.random(-8, 8) }, 8, 0.5, true)
         if turret_pos then
             local orientation = nil
             if turret_type == "railgun-turret" then
-                orientation = railgun_orients[math.random(1, #railgun_orients)]
-            elseif turret_type == "flamethrower-turret" then
-                orientation = flamethrower_orients[math.random(1, #flamethrower_orients)]
+                orientation = eight_directional_orients[math.random(1, #eight_directional_orients)]
+            elseif turret_type == "flamethrower-turret" or turret_type == "vtk-cannon-turret" or turret_type == "vtk-cannon-turret-heavy" then
+                orientation = four_directional_orients[math.random(1, #four_directional_orients)]
             end
 
             local turret = game.surfaces["castra"].create_entity { name = get_enemy_variant(turret_type), position = turret_pos, force = game.forces["enemy"], direction = orientation, quality = select_random_quality(), raise_built = true }

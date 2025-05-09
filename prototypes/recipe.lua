@@ -1088,5 +1088,52 @@ data:extend(
       category = "castra-forge",
       energy_required = 2
     },
+    {
+      type = "recipe",
+      name = "jammer-radar",
+      enabled = false,
+      energy_required = 5,
+      ingredients = {
+        {type="item", name="radar", amount=1},
+        {type="item", name="processing-unit", amount=5},
+        {type="item", name="supercapacitor", amount=2}
+      },
+      results = {{type="item", name="jammer-radar", amount=1}},
+      category = "castra-forge"
+    },
+    {
+      type = "recipe",
+      name = "jammed-data-collector-process",
+      icon = "__castra__/graphics/icons/castra-data.png",
+      hide_from_player_crafting = true,
+      auto_recycle = false,
+      preserve_products_in_machine_output = true,
+      enabled = false,
+      order = "o[jammed-data-collector-process]",
+      energy_required = 16,
+      ingredients = {},
+      results = {
+        {type="item", name="advanced-circuit", amount=1, probability=0.17},
+        {type="item", name="millerite", amount=1, probability=0.08},
+        {type="item", name="low-density-structure", amount=1, probability=0.12},
+        {type="item", name="electric-engine-unit", amount=1, probability=0.04},
+        {type="item", name="castra-data", amount=1, probability=0.59}
+      },
+      category = "jammed-data-collector-process"
+    },
+    {
+      type = "recipe",
+      name = "jammed-data-collector",
+      enabled = false,
+      energy_required = 30,
+      ingredients = {
+        {type="item", name="jammer-radar", amount=1},
+        {type="item", name="quantum-processor", amount=50},
+        {type="item", name="lithium-battery", amount=200},
+        {type="item", name="castra-data", amount=10}
+      },
+      results = {{type="item", name="jammed-data-collector", amount=1}},
+      category = "cryogenics"
+    },
   }
 )
