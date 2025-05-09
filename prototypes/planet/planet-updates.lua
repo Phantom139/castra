@@ -15,3 +15,17 @@ for key, _ in pairs(castra.map_gen_settings.autoplace_settings.entity.settings) 
     castra.map_gen_settings.autoplace_settings.entity.settings[key] = nil
   end
 end
+
+-- Yoink the Vulcanus music so we at least have something to listen to...
+for _, music in pairs(data.raw["ambient-sound"]) do
+	if music.planet == "vulcanus" or (music.track_type == "hero-track" and music.name:find("vulcanus")) then
+		local new_music = table.deepcopy(music)
+		new_music.name = music.name .. "-castra"
+		new_music.planet = "castra"
+		if new_music.track_type == "hero-track" then
+			new_music.track_type = "main-track"
+			new_music.weight = 10
+		end
+		data:extend {new_music}
+	end
+end

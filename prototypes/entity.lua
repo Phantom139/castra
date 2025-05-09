@@ -2,6 +2,8 @@ require("__base__.prototypes.entity.assemblerpipes")
 require("__base__.prototypes.entity.pipecovers")
 require("__base__.prototypes.entity.biter-animations")
 
+local mod_functions = require("mod-functions")
+
 local pipe_pic = assembler3pipepictures()
 local pipecoverpic = pipecoverspictures()
 
@@ -15,95 +17,29 @@ local box7 = { { -3.5, -3.5 }, { 3.5, 3.5 } }
 local box8 = { { -4, -4 }, { 4, 4 } }
 local box11 = { { -5.5, -5.5 }, { 5.5, 5.5 } }
 
-local function createDataCollectorSpawn(item_name, icon)
-    return {
-        type = "unit",
-        name = "data-collector-" .. item_name,
-        icons =
-        {
-            -- data collector as the main icon and the icon as the sub
-            {
-                icon = "__castra__/graphics/fusion-reactor/fusion-reactor-icon.png",
-                scale = 0.7,
-                shift = { 0, -10 }
-            },
-            {
-                icon = icon,
-                scale = 0.5,
-                shift = { -10, 10 }
-            }
-        },
-        loot = {
-            {
-                item = item_name,
-                probability = 1,
-                count_min = 1,
-                count_max = 1
-            }
-        },
-        flags = { "placeable-player", "placeable-enemy", "placeable-off-grid", "not-repairable", "breaths-air" },
-        max_health = 1,
-        order = "n-a-a",
-        subgroup = "enemies",
-        resistances = {},
-        healing_per_tick = 0.01,
-        collision_box = { { -0.2, -0.2 }, { 0.2, 0.2 } },
-        selection_box = { { -0.4, -0.7 }, { 0.4, 0.4 } },
-        impact_category = "metal",
-        vision_distance = 30,
-        distance_per_frame = 0.125,
-        distraction_cooldown = 300,
-        absorptions_to_join_attack = { data = 100 },
-        movement_speed = 0,
-        run_animation =
-        {
-            layers =
-            {
-                {
-                    filename = icon,
-                    priority = "high",
-                    width = 64,
-                    height = 64,
-                    frame_count = 1,
-                    direction_count = 1,
-                    shift = { 0, 0 },
-                    scale = 1
-                }
-            }
-        },
-
-        attack_parameters =
-        {
-            type = "projectile",
-            range = 0,
-            cooldown = 0,
-            cooldown_deviation = 0.15,
-            ammo_category = "melee",
-            ammo_type = {
-                target_type = "entity",
-                action =
-                {
-                    type = "direct",
-                    action_delivery =
-                    {
-                        type = "instant",
-                        target_effects =
-                        {
-                            type = "damage",
-                            damage = { amount = 0, type = "physical" }
-                        }
-                    }
-                }
-            },
-            animation = biterattackanimation(small_biter_scale, small_biter_tint1, small_biter_tint2),
-            range_mode = "bounding-box-to-bounding-box"
-        },
-    }
-end
-
 -- Create enemy projectiles
 local enemy_shell = table.deepcopy(data.raw["projectile"]["cannon-projectile"])
 enemy_shell.name = "castra-enemy-shell"
+enemy_shell.action = {
+  type = "direct",
+  action_delivery = {
+    type = "instant",
+    target_effects = {
+      {
+        type = "damage",
+        damage = { amount = 25, type = "physical" }
+      },
+      {
+        type = "damage",
+        damage = { amount = 10, type = "explosion" }
+      },	  
+      {
+        type = "create-entity",
+        entity_name = "explosion"
+      }
+    }
+  }
+}
 data:extend({ enemy_shell })
 
 
@@ -374,13 +310,13 @@ data:extend({
             }
         }
     },
-    createDataCollectorSpawn("electronic-circuit", "__base__/graphics/icons/electronic-circuit.png"),
-    createDataCollectorSpawn("advanced-circuit", "__base__/graphics/icons/advanced-circuit.png"),
-    createDataCollectorSpawn("millerite", "__castra__/graphics/icons/millerite.png"),
-    createDataCollectorSpawn("gunpowder", "__castra__/graphics/icons/gunpowder.png"),
-    createDataCollectorSpawn("low-density-structure", "__base__/graphics/icons/low-density-structure.png"),
-    createDataCollectorSpawn("electric-engine-unit", "__base__/graphics/icons/electric-engine-unit.png"),
-    createDataCollectorSpawn("castra-data", "__castra__/graphics/icons/castra-data.png"),
+    mod_functions.createDataCollectorSpawn("electronic-circuit", "__base__/graphics/icons/electronic-circuit.png"),
+    mod_functions.createDataCollectorSpawn("advanced-circuit", "__base__/graphics/icons/advanced-circuit.png"),
+    mod_functions.createDataCollectorSpawn("millerite", "__castra__/graphics/icons/millerite.png"),
+    mod_functions.createDataCollectorSpawn("gunpowder", "__castra__/graphics/icons/gunpowder.png"),
+    mod_functions.createDataCollectorSpawn("low-density-structure", "__base__/graphics/icons/low-density-structure.png"),
+    mod_functions.createDataCollectorSpawn("electric-engine-unit", "__base__/graphics/icons/electric-engine-unit.png"),
+    mod_functions.createDataCollectorSpawn("castra-data", "__castra__/graphics/icons/castra-data.png"),
     {
         -- combat-roboport
         type = "container",
@@ -638,27 +574,12 @@ data:extend({
 })
 
 -- Create a car enemy based on the small-spitter
-local car = table.deepcopy(data.raw["unit"]["small-spitter"])
+local car = mod_functions.create_enemy_unit(data.raw["unit"]["small-spitter"], data.raw["car"]["car"])
 car.name = "castra-enemy-car"
 car.icon = "__base__/graphics/icons/car.png"
--- Use the normal car's health and resistances
-car.max_health = data.raw["car"]["car"].max_health
-car.factoriopedia_simulation = nil
-car.resistances = data.raw["car"]["car"].resistances
+-- Additiontal parameters
 car.absorptions_to_join_attack = { data = 250 }
-car.run_animation = data.raw["car"]["car"].animation
-car.run_animation.tint = { r = 0, g = 0.5, b = 0.2, a = 1 }
-car.working_sound = data.raw["car"]["car"].working_sound
-car.rotation_speed = data.raw["car"]["car"].rotation_speed
-car.alternative_attacking_frame_sequence = nil
-car.corpse = data.raw["car"]["car"].corpse
-car.dying_explosion = data.raw["car"]["car"].dying_explosion
-car.dying_sound = nil
-car.walking_sound = nil
-car.water_reflection = nil
 car.movement_speed = 0.25
-car.collision_box = data.raw["car"]["car"].collision_box
-car.selection_box = data.raw["car"]["car"].selection_box
 car.attack_parameters = {
     type = "projectile",
     range = 12,
@@ -688,7 +609,7 @@ car.attack_parameters = {
                     },
                     {
                         type = "damage",
-                        damage = { amount = 6, type = "physical" }
+                        damage = { amount = 9, type = "physical" }
                     },
                     {
                         type = "activate-impact",
@@ -705,12 +626,9 @@ car.attack_parameters = {
 data:extend({ car })
 
 -- Create a tank enemy based on the medium-spitter
-local tank = table.deepcopy(data.raw["unit"]["medium-spitter"])
+local tank = mod_functions.create_enemy_unit(data.raw["unit"]["medium-spitter"], data.raw["car"]["tank"])
 tank.name = "castra-enemy-tank"
 tank.icon = "__base__/graphics/icons/tank.png"
--- Use the normal tank's health and resistances
-tank.max_health = data.raw["car"]["tank"].max_health
-tank.factoriopedia_simulation = nil
 tank.resistances = {
     {
         type = "physical",
@@ -742,19 +660,7 @@ tank.resistances = {
     }
 }
 tank.absorptions_to_join_attack = { data = 1000 }
-tank.run_animation = data.raw["car"]["tank"].animation
-tank.run_animation.tint = { r = 0, g = 0.5, b = 0.2, a = 1 }
-tank.working_sound = data.raw["car"]["tank"].working_sound
-tank.rotation_speed = data.raw["car"]["tank"].rotation_speed
-tank.alternative_attacking_frame_sequence = nil
-tank.corpse = data.raw["car"]["tank"].corpse
-tank.dying_explosion = data.raw["car"]["tank"].dying_explosion
-tank.dying_sound = nil
-tank.walking_sound = nil
-tank.water_reflection = nil
 tank.movement_speed = 0.08
-tank.collision_box = data.raw["car"]["tank"].collision_box
-tank.selection_box = data.raw["car"]["tank"].selection_box
 tank.attack_parameters = {
 	type = "projectile",
 	range = 20,
@@ -780,65 +686,10 @@ tank.attack_parameters = {
 
 data:extend({ tank })
 
-local function multiply_energy_amount(energy_string, multiplier)
-    -- Extract the number and unit from the energy string
-    local number, unit = energy_string:match("^(%d+%.?%d*)(%a*)$")
-    if not number or not unit then return energy_string end
-
-    -- Convert the number to a number type and multiply it
-    number = tonumber(number) * multiplier
-
-    -- Return the new energy string
-    return number .. unit
-end
-
--- Create enemy copy of an entity and reduce energy consumption to 5%
-local function create_enemy_version(entity)
-    if not entity then return nil end
-
-    local mult = 0.05
-
-    local enemy_entity = table.deepcopy(entity)
-    enemy_entity.name = "castra-enemy-" .. entity.name
-    enemy_entity.minable.result = nil
-    local source = enemy_entity.energy_source
-    if source and source.type == "electric" then
-        if source.buffer_capacity then
-            source.buffer_capacity = multiply_energy_amount(source.buffer_capacity, mult)
-        end
-        if source.input_flow_limit then
-            source.input_flow_limit = multiply_energy_amount(source.input_flow_limit, mult)
-        end
-        if source.output_flow_limit then
-            source.output_flow_limit = multiply_energy_amount(source.output_flow_limit, mult)
-        end
-        if source.drain then
-            source.drain = multiply_energy_amount(source.drain, mult)
-        end
-    end
-    if enemy_entity.energy_per_shot then
-        enemy_entity.energy_per_shot = multiply_energy_amount(enemy_entity.energy_per_shot, mult)
-    end
-    local attack_param = enemy_entity.attack_parameters
-    if attack_param then
-        if attack_param.fluid_consumption then
-            -- Reduce fluid consumption to 1% as they have a relatively small buffer
-            attack_param.fluid_consumption = attack_param.fluid_consumption * 0.01
-        end
-        if attack_param.ammo_type then
-            if attack_param.ammo_type.energy_consumption then
-                attack_param.ammo_type.energy_consumption = multiply_energy_amount(
-                attack_param.ammo_type.energy_consumption, mult)
-            end
-        end
-    end
-    return enemy_entity
-end
-
 -- Create enemy versions of laser-turret, railgun, flamethrower
 data:extend({
-    create_enemy_version(data.raw["electric-turret"]["laser-turret"]),
-    create_enemy_version(data.raw["ammo-turret"]["railgun-turret"]),
-    create_enemy_version(data.raw["fluid-turret"]["flamethrower-turret"]),
-    create_enemy_version(data.raw["electric-turret"]["tesla-turret"]),
+    mod_functions.create_enemy_version(data.raw["electric-turret"]["laser-turret"]),
+    mod_functions.create_enemy_version(data.raw["ammo-turret"]["railgun-turret"]),
+    mod_functions.create_enemy_version(data.raw["fluid-turret"]["flamethrower-turret"]),
+    mod_functions.create_enemy_version(data.raw["electric-turret"]["tesla-turret"]),
 })

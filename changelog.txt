@@ -1,4 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.5.6
+Date: 2025-05-09
+  Bugfixes:
+    - Fixed an error with the enemy tech research that would sometimes lead to a nil reference crash
+	- Added in a few missing text strings
+	- Fixed an error with the RC car wander command missing a reference call to mod-extensions.lua
+  Changes:
+    - Slightly buffed the projectile damage of the enemy cars so they aren't just fodder
+	- Nerfed the enemy tank shell (significantly) to not OHK players anymore
+	- Vulcanus music now plays on Castra
+---------------------------------------------------------------------------------------------------
 Version: 0.5.5
 Date: 2025-05-08
   Bugfixes:
