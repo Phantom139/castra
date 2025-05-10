@@ -17,7 +17,7 @@ local box7 = { { -3.5, -3.5 }, { 3.5, 3.5 } }
 local box8 = { { -4, -4 }, { 4, 4 } }
 local box11 = { { -5.5, -5.5 }, { 5.5, 5.5 } }
 
--- Create enemy projectiles
+-- Create enemy projectile variants
 local enemy_shell = table.deepcopy(data.raw["projectile"]["cannon-projectile"])
 enemy_shell.name = "castra-enemy-shell"
 enemy_shell.action = {
@@ -42,7 +42,7 @@ enemy_shell.action = {
 }
 data:extend({ enemy_shell })
 
-
+-- Create Mod Entities
 data:extend({
     {
         type = "assembling-machine",
@@ -184,7 +184,7 @@ data:extend({
         impact_category = "metal",
         -- in ticks per 1 pu
         absorptions_per_second = { data = { absolute = 20, proportional = 0.01 } },
-        max_count_of_owned_units = 10,
+        max_count_of_owned_units = 12,
         max_friends_around_to_spawn = 5,
         graphics_set = {
             animations = {
@@ -263,7 +263,7 @@ data:extend({
 			i = i + 1
 			
 			if settings.startup["castra-enemy-add-cars"].value then
-				res[i] = { "castra-enemy-car", { { 0.0, 0.0 }, { 0.25, 0.05 }, { 0.4, 0.1 }, { 0.65, 0.15 }, { 1.0, 0.2 } } };
+				res[i] = { "castra-enemy-car", { { 0.0, 0.0 }, { 0.25, 0.075 }, { 0.4, 0.125 }, { 0.65, 0.2 }, { 1.0, 0.25 } } };
 				i = i + 1		
 			end			
 			
@@ -271,7 +271,7 @@ data:extend({
 			i = i + 1
 			
 			if mods["Explosive_RC_Car"] and settings.startup["castra-edits-extend-RC"].value then
-				res[i] = { "castra-enemy-explosive-rc", { { 0.0, 0.0 }, { 0.5, 0.01 }, { 0.65, 0.05 }, { 1.0, 0.075 } } };
+				res[i] = { "castra-enemy-explosive-rc", { { 0.0, 0.0 }, { 0.5, 0.005 }, { 0.65, 0.01 }, { 1.0, 0.05 } } };
 				i = i + 1		
 			end
 			

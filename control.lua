@@ -414,7 +414,7 @@ local function update_castra_research_progress(event)
             -- Find any researches that have not been fully researched and have all prerequisites
             local valid = {}
             for _, research in pairs(enemy_force.technologies) do
-                if ((not research.name == "castra-enemy-research-disruption") and (not research.researched or research.level < research.prototype.max_level) and research.enabled) then
+                if ((not research.researched or research.level < research.prototype.max_level) and research.enabled) then
                     local allPrereqs = true
                     for _, prereq in pairs(research.prerequisites) do
                         if not prereq.researched then
@@ -441,6 +441,15 @@ local function update_castra_research_progress(event)
             if #valid == 0 then
                 return
             end
+			
+			-- Remove Castra Enemy Disruption, cause you know... don't disrupt ourselves :P
+			if settings.startup["castra-edits-add-disruption"].value then
+				for i = #valid, 1, -1 do
+					if valid[i].name == "castra-enemy-research-disruption" then
+						table.remove(valid, i)
+					end
+				end
+			end
 
             -- Remove any that are 10x more expensive than the cheapest
             local cheapest = nil
