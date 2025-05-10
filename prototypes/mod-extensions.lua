@@ -170,9 +170,9 @@ if mods["vtk-cannon-turret"] and settings.startup["castra-edits-extend-Cannons"]
 		local expl_u_cannon_mag = table.deepcopy(data.raw["ammo"]["explosive-uranium-cannon-shell-magazine"])
 		-- Change the projectiles to their modded versions
 		cannon_mag.name = "castra-enemy-cannon-shell-magazine"
-		u_cannon_mag-mag.name = "castra-enemy-uranium-cannon-shell-magazine"
-		expl_cannon_mag-mag.name = "castra-enemy-explosive-cannon-shell-magazine"
-		expl_u_cannon_mag-mag.name = "castra-enemy-explosive-uranium-cannon-shell-magazine"
+		u_cannon_mag.name = "castra-enemy-uranium-cannon-shell-magazine"
+		expl_cannon_mag.name = "castra-enemy-explosive-cannon-shell-magazine"
+		expl_u_cannon_mag.name = "castra-enemy-explosive-uranium-cannon-shell-magazine"
 		
 		cannon_mag.ammo_type.action.action_delivery.projectile = "castra-enemy-cannon-projectile"
 		u_cannon_mag.ammo_type.action.action_delivery.projectile = "castra-enemy-uranium-cannon-projectile"
@@ -193,9 +193,9 @@ if mods["vtk-cannon-turret"] and settings.startup["castra-edits-extend-Cannons"]
 		local expl_u_cannon_mag = table.deepcopy(data.raw["ammo"]["explosive-uranium-cannon-shell"])
 		-- Change the projectiles to their modded versions
 		cannon_mag.name = "castra-enemy-cannon-shell"
-		u_cannon_mag-mag.name = "castra-enemy-uranium-cannon-shell"
-		expl_cannon_mag-mag.name = "castra-enemy-explosive-cannon-shell"
-		expl_u_cannon_mag-mag.name = "castra-enemy-explosive-uranium-cannon-shell"
+		u_cannon_mag.name = "castra-enemy-uranium-cannon-shell"
+		expl_cannon_mag.name = "castra-enemy-explosive-cannon-shell"
+		expl_u_cannon_mag.name = "castra-enemy-explosive-uranium-cannon-shell"
 		
 		cannon_mag.ammo_type.action.action_delivery.projectile = "castra-enemy-cannon-projectile"
 		u_cannon_mag.ammo_type.action.action_delivery.projectile = "castra-enemy-uranium-cannon-projectile"
@@ -223,10 +223,10 @@ if mods["vtk-cannon-turret"] and settings.startup["castra-edits-extend-Cannons"]
 		expl_cannon_mag.name = "castra-enemy-explosive-cannon-shell-magazine"
 		expl_u_cannon_mag.name = "castra-enemy-explosive-uranium-cannon-shell-magazine"
 		
-		cannon_mag.results.name = "castra-enemy-cannon-shell-magazine"
-		u_cannon_mag.results.name = "castra-enemy-uranium-cannon-shell-magazine"
-		expl_cannon_mag.results.name = "castra-enemy-explosive-cannon-shell-magazine"
-		expl_u_cannon_mag.results.name = "castra-enemy-explosive-uranium-cannon-shell-magazine"
+		cannon_mag.results[1].name = "castra-enemy-cannon-shell-magazine"
+		u_cannon_mag.results[1].name = "castra-enemy-uranium-cannon-shell-magazine"
+		expl_cannon_mag.results[1].name = "castra-enemy-explosive-cannon-shell-magazine"
+		expl_u_cannon_mag.results[1].name = "castra-enemy-explosive-uranium-cannon-shell-magazine"
 		
 		cannon_mag.hidden = true
 		cannon_mag.hidden_in_factoriopedia = true
@@ -269,10 +269,10 @@ if mods["vtk-cannon-turret"] and settings.startup["castra-edits-extend-Cannons"]
 		expl_cannon_mag.name = "castra-enemy-explosive-cannon-shell"
 		expl_u_cannon_mag.name = "castra-enemy-explosive-uranium-cannon-shell"
 		
-		cannon_mag.results.name = "castra-enemy-cannon-shell"
-		u_cannon_mag.results.name = "castra-enemy-uranium-cannon-shell"
-		expl_cannon_mag.results.name = "castra-enemy-explosive-cannon-shell"
-		expl_u_cannon_mag.results.name = "castra-enemy-explosive-uranium-cannon-shell"
+		cannon_mag.results[1].name = "castra-enemy-cannon-shell"
+		u_cannon_mag.results[1].name = "castra-enemy-uranium-cannon-shell"
+		expl_cannon_mag.results[1].name = "castra-enemy-explosive-cannon-shell"
+		expl_u_cannon_mag.results[1].name = "castra-enemy-explosive-uranium-cannon-shell"
 		
 		cannon_mag.hidden = true
 		cannon_mag.hidden_in_factoriopedia = true

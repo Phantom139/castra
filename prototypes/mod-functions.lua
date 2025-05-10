@@ -111,6 +111,7 @@ local function create_enemy_version(entity)
 
     local enemy_entity = table.deepcopy(entity)
     enemy_entity.name = "castra-enemy-" .. entity.name
+	enemy_entity.subgroup = "enemies"
     enemy_entity.minable.result = nil
     local source = enemy_entity.energy_source
     if source and source.type == "electric" then
