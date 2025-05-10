@@ -212,3 +212,44 @@ if mods["Cerys-Moon-of-Fulgora"] and settings.startup["castra-edits-claim-engine
 		end
 	end
 end
+
+-- If using the Cannon Turrets, add the enemy magazine variants to the tech tree so they can use them
+if mods["vtk-cannon-turret"] and settings.startup["castra-edits-extend-Cannons"].value then
+	if settings.startup["vtk-cannon-turret-ammo-use"].value == 1 or 3 then
+		table.insert(data.raw["technology"]["tank"].effects, {
+			type = "unlock-recipe",
+			recipe = "castra-enemy-cannon-shell-magazine"
+		})	
+		table.insert(data.raw["technology"]["tank"].effects, {
+			type = "unlock-recipe",
+			recipe = "castra-enemy-explosive-cannon-shell-magazine"
+		})		
+		
+		table.insert(data.raw["technology"]["uranium-ammo"].effects, {
+			type = "unlock-recipe",
+			recipe = "castra-enemy-uranium-cannon-shell-magazine"
+		})	
+		table.insert(data.raw["technology"]["uranium-ammo"].effects, {
+			type = "unlock-recipe",
+			recipe = "castra-enemy-explosive-uranium-cannon-shell-magazine"
+		})				
+	else
+		table.insert(data.raw["technology"]["tank"].effects, {
+			type = "unlock-recipe",
+			recipe = "castra-enemy-cannon-shell"
+		})
+		table.insert(data.raw["technology"]["tank"].effects, {
+			type = "unlock-recipe",
+			recipe = "castra-enemy-explosive-cannon-shell"
+		})		
+
+		table.insert(data.raw["technology"]["uranium-ammo"].effects, {
+			type = "unlock-recipe",
+			recipe = "castra-enemy-uranium-cannon-shell"
+		})	
+		table.insert(data.raw["technology"]["uranium-ammo"].effects, {
+			type = "unlock-recipe",
+			recipe = "castra-enemy-explosive-uranium-cannon-shell"
+		})			
+	end
+end

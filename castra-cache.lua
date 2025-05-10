@@ -65,11 +65,12 @@ if settings.startup["castra-edits-extend-GrenadeLauncher"].value then
 	sorted_ammo_types["grenades"] = grenades
 end
 if settings.startup["castra-edits-extend-Cannons"].value then
+	-- To-Do Note: Right now the way research is unlocked, the enemy will only ever use explosive rounds, perhaps throw in a random statement here to go between them?
 	cannon_turret_rounds = {}
 	if settings.startup["vtk-cannon-turret-ammo-use"].value == 1 or 3 then
-		cannon_turret_rounds = {"cannon-shell-magazine", "explosive-cannon-shell-magazine", "uranium-cannon-shell-magazine", "explosive-uranium-cannon-shell-magazine"}
+		cannon_turret_rounds = {"castra-enemy-cannon-shell-magazine", "castra-enemy-explosive-cannon-shell-magazine", "castra-enemy-uranium-cannon-shell-magazine", "castra-enemy-explosive-uranium-cannon-shell-magazine"}
 	else
-		cannon_turret_rounds = {"cannon-shell", "explosive-cannon-shell", "uranium-cannon-shell", "explosive-uranium-cannon-shell"}
+		cannon_turret_rounds = {"castra-enemy-cannon-shell", "castra-enemy-explosive-cannon-shell", "castra-enemy-uranium-cannon-shell", "castra-enemy-explosive-uranium-cannon-shell"}
 	end
 	sorted_ammo_types["cannon_turret_rounds"] = cannon_turret_rounds
 end

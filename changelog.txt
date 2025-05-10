@@ -1,14 +1,25 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.5.7
+Date: 2025-05-10
+  Bugfixes:
+    - Addressed an issue where the enemy would stop all research upon first attempting (And being blocked) to research Castra Enemy Research Disruption
+  Balancing:
+    - Reduced the likelihood of enemy RC cars spawning by about 50% per tier from the original value
+	- Increased the likelihood of Combat Buggies spawning by about 25% per tier from the original value, and 50% at max evolution
+	- Increased the maximum number of enemy units spawned per Data Collector to 12 from 10
+    - Nerfed the power of enemy spawned cannon turrets
+---------------------------------------------------------------------------------------------------
 Version: 0.5.6
 Date: 2025-05-09
   Bugfixes:
     - Fixed an error with the enemy tech research that would sometimes lead to a nil reference crash
-	- Added in a few missing text strings
-	- Fixed an error with the RC car wander command missing a reference call to mod-extensions.lua
-  Changes:
+    - Added in a few missing text strings
+    - Fixed an error with the RC car wander command missing a reference call to mod-extensions.lua
+  Balancing:
     - Slightly buffed the projectile damage of the enemy cars so they aren't just fodder
-	- Nerfed the enemy tank shell (significantly) to not OHK players anymore
-	- Vulcanus music now plays on Castra
+    - Nerfed the enemy tank shell (significantly) to not OHK players anymore
+  Changes:
+    - Vulcanus music now plays on Castra
 ---------------------------------------------------------------------------------------------------
 Version: 0.5.5
 Date: 2025-05-08
