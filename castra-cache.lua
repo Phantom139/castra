@@ -244,7 +244,7 @@ local function update_castra_enemy_data()
 		enemy_storage.mammoth = has_castra_researched_item("mammoth-mk3")
 	end	
 	if settings.startup["castra-edits-extend-GrenadeLauncher"].value then
-		enemy_storage.grenade_turret = has_castra_researched_item("PLORD_gl_40mm_turret")
+		enemy_storage.PLORD_gl_40mm_turret = has_castra_researched_item("PLORD_gl_40mm_turret")
 		enemy_storage.grenade_tank = has_castra_researched_item("PLORD_gl_tank")	
 		enemy_storage.available_grenades = {}
 		-- Individual grenades are not "sorted", but instead are just added to a dictionary of availability, the enemy will use all of the different types as they see fit.
@@ -256,8 +256,8 @@ local function update_castra_enemy_data()
 		end
 	end
 	if settings.startup["castra-edits-extend-Cannons"].value then
-		enemy_storage.cannon_turret = has_castra_researched_item("vtk-cannon-turret")
-		enemy_storage.heavy_cannon_turret = has_castra_researched_item("vtk-cannon-turret-heavy")
+		enemy_storage.vtk_cannon_turret = has_castra_researched_item("vtk-cannon-turret")
+		enemy_storage.vtk_cannon_turret_heavy = has_castra_researched_item("vtk-cannon-turret-heavy")
 	
 		local cannon_shell_tier = nil
 		for _, ammo in pairs(sorted_ammo_types.cannon_turret_rounds) do

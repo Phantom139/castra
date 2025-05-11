@@ -27,15 +27,18 @@ enemy_shell.action = {
     target_effects = {
       {
         type = "damage",
-        damage = { amount = 25, type = "physical" }
+        damage = { amount = 25, type = "physical" },
+		force = "enemy"
       },
       {
         type = "damage",
-        damage = { amount = 10, type = "explosion" }
+        damage = { amount = 10, type = "explosion" },
+		force = "enemy"
       },	  
       {
         type = "create-entity",
-        entity_name = "explosion"
+        entity_name = "explosion",
+		force = "enemy"
       }
     }
   }

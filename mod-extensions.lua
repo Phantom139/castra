@@ -4,8 +4,8 @@
 function give_RC_Car_random_command(rcCar, selection)
     -- 60% to wander
     -- 10% to move to another data collector
-    -- 20% to attack a player military entity nearby
-    -- 10% to attack nearest player entity nearby
+    -- 15% to attack a player military entity nearby
+    -- 15% to attack nearest player entity nearby
 
     if not rcCar.valid then
         return
@@ -25,7 +25,7 @@ function give_RC_Car_random_command(rcCar, selection)
                 return
             end
         end
-    elseif randSelection < 0.90 then
+    elseif randSelection < 0.85 then
         -- Find a player military entity nearby
         local playerForce = game.forces["player"]
         local entities = rcCar.surface.find_entities_filtered { force = playerForce, area = { { rcCar.position.x - 100, rcCar.position.y - 100 }, { rcCar.position.x + 100, rcCar.position.y + 100 } } }
