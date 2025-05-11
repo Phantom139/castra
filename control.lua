@@ -376,12 +376,12 @@ local function update_castra_research_progress(event)
 				-- Throw a prompt if the research involves disabled items.
 				if not settings.startup["castra-enemy-allowed-nukes"].value then
 					if finished_tech == "atomic-bomb" or finished_tech == "cerys-plutonium-weaponry" or finished_tech == "maraxsis-depth-charges" then
-						game.forces["player"].print("strings.castra-disabled-tech-alert")						
+						game.forces["player"].print({"strings.castra-disabled-tech-alert"})						
 					end					
 				end
 				if not settings.startup["castra-enemy-allowed-artillery"].value then						
 					if finished_tech == "artillery" then
-						game.forces["player"].print("strings.castra-disabled-tech-alert")						
+						game.forces["player"].print({"strings.castra-disabled-tech-alert"})							
 					end		
 				end				
 				

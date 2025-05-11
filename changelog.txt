@@ -1,12 +1,24 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.5.8
+Date: 2025-05-11
+  Bugfixes:
+    - (Known) The enemy still does not spawn cannon turrets or grenade turrets, looking to fix this in 0.5.9
+    - Fixed the hilarious bug where enemy tanks would fight eachother to the death sometimes. (Known) They can still "sometimes" damage themselves.
+    - Fixed the disabled tech warning string not using the proper localized string.
+  Balancing:
+    - Increased the required data absorption for RC cars from 500 to 1500
+    - Reduced the range of the RC car's explosion from 15 to 10 (Does not affect the player's version, only the Castra enemy)
+    - Slightly increased the speed of the RC car to compensate
+    - RC Cars will now equally weigh targeting nearby military targets and the nearest player is can hunt down
+---------------------------------------------------------------------------------------------------
 Version: 0.5.7
 Date: 2025-05-10
   Bugfixes:
     - Addressed an issue where the enemy would stop all research upon first attempting (And being blocked) to research Castra Enemy Research Disruption
   Balancing:
     - Reduced the likelihood of enemy RC cars spawning by about 50% per tier from the original value
-	- Increased the likelihood of Combat Buggies spawning by about 25% per tier from the original value, and 50% at max evolution
-	- Increased the maximum number of enemy units spawned per Data Collector to 12 from 10
+    - Increased the likelihood of Combat Buggies spawning by about 25% per tier from the original value, and 50% at max evolution
+    - Increased the maximum number of enemy units spawned per Data Collector to 12 from 10
     - Nerfed the power of enemy spawned cannon turrets
 ---------------------------------------------------------------------------------------------------
 Version: 0.5.6

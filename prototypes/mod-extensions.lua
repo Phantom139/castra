@@ -3,13 +3,20 @@ local mod_functions = require("mod-functions")
 
 if mods["Explosive_RC_Car"] and settings.startup["castra-edits-extend-RC"].value then
 
+	local explosionClone = table.deepcopy(data.raw["explosion"]["rc-car-explosion"])
+	explosionClone.name = "castra-enemy-rc-car-explosion"
+	explosionClone.created_effect.action_delivery.target_effects[1].action.radius = 10
+	data:extend({ explosionClone })	
+
 	local rc_clone = mod_functions.create_enemy_unit(data.raw["unit"]["small-biter"], data.raw["car"]["explosive-rc-car"])
 	rc_clone.name = "castra-enemy-explosive-rc"
 	rc_clone.icon = "__Explosive_RC_Car__/graphics/RCcar.png"
 	-- Copy the relevant information from the explosive-rc-car mod
-	rc_clone.absorptions_to_join_attack = { data = 500 }
-	rc_clone.movement_speed = 0.3
+	rc_clone.absorptions_to_join_attack = { data = 1500 }
+	rc_clone.movement_speed = 0.33
 	rc_clone.vision_distance = 50
+	
+	rc_clone.dying_explosion = "castra-enemy-rc-car-explosion"
 	
 	rc_clone.attack_parameters = {
 		type = "projectile",
@@ -63,15 +70,18 @@ if mods["vtk-cannon-turret"] and settings.startup["castra-edits-extend-Cannons"]
 		target_effects = {
 		  {
 			type = "damage",
-			damage = { amount = 25, type = "physical" }
+			damage = { amount = 25, type = "physical" },
+			force = "enemy"
 		  },
 		  {
 			type = "damage",
-			damage = { amount = 10, type = "explosion" }
+			damage = { amount = 10, type = "explosion" },
+			force = "enemy"
 		  },	  
 		  {
 			type = "create-entity",
-			entity_name = "explosion"
+			entity_name = "explosion",
+			force = "enemy"
 		  }
 		}
 	  }
@@ -89,15 +99,18 @@ if mods["vtk-cannon-turret"] and settings.startup["castra-edits-extend-Cannons"]
 		target_effects = {
 		  {
 			type = "damage",
-			damage = { amount = 35, type = "physical" }
+			damage = { amount = 35, type = "physical" },
+			force = "enemy"
 		  },
 		  {
 			type = "damage",
-			damage = { amount = 15, type = "explosion" }
+			damage = { amount = 15, type = "explosion" },
+			force = "enemy"
 		  },	  
 		  {
 			type = "create-entity",
-			entity_name = "explosion"
+			entity_name = "explosion",
+			force = "enemy"
 		  }
 		}
 	  }
@@ -115,15 +128,18 @@ if mods["vtk-cannon-turret"] and settings.startup["castra-edits-extend-Cannons"]
 		target_effects = {
 		  {
 			type = "damage",
-			damage = { amount = 15, type = "physical" }
+			damage = { amount = 15, type = "physical" },
+			force = "enemy"
 		  },
 		  {
 			type = "damage",
-			damage = { amount = 40, type = "explosion" }
+			damage = { amount = 40, type = "explosion" },
+			force = "enemy"
 		  },	  
 		  {
 			type = "create-entity",
-			entity_name = "explosion"
+			entity_name = "explosion",
+			force = "enemy"
 		  }
 		}
 	  }
@@ -141,15 +157,18 @@ if mods["vtk-cannon-turret"] and settings.startup["castra-edits-extend-Cannons"]
 		target_effects = {
 		  {
 			type = "damage",
-			damage = { amount = 20, type = "physical" }
+			damage = { amount = 20, type = "physical" },
+			force = "enemy"
 		  },
 		  {
 			type = "damage",
-			damage = { amount = 50, type = "explosion" }
+			damage = { amount = 50, type = "explosion" },
+			force = "enemy"
 		  },	  
 		  {
 			type = "create-entity",
-			entity_name = "explosion"
+			entity_name = "explosion",
+			force = "enemy"
 		  }
 		}
 	  }
