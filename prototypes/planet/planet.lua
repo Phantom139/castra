@@ -47,8 +47,27 @@ asteroid_util.gleba_castra =
   }
 }
 
-data:extend(
+asteroid_util.castra_corrundum =
 {
+  probability_on_range_chunk =
+  {
+	{position = 0.1, probability = asteroid_util.castra_chunks, angle_when_stopped = asteroid_util.chunk_angle},
+	{position = 0.9, probability = asteroid_util.vulcanus_chunks, angle_when_stopped = asteroid_util.chunk_angle}
+  },
+  probability_on_range_medium =
+  {
+	{position = 0.1, probability = asteroid_util.castra_medium, angle_when_stopped = asteroid_util.medium_angle},
+	{position = 0.5, probability = asteroid_util.weighted_average(asteroid_util.castra_medium, asteroid_util.vulcanus_medium, 0.5) * 3, angle_when_stopped = asteroid_util.medium_angle},
+	{position = 0.9, probability = asteroid_util.vulcanus_medium, angle_when_stopped = asteroid_util.medium_angle}
+  },
+  type_ratios =
+  {
+	{position = 0.1, ratios = asteroid_util.castra_ratio},
+	{position = 0.9, ratios = asteroid_util.vulcanus_ratio},
+  }
+}
+
+local planet = {
   {
     type = "planet",
     name = "castra",
@@ -101,6 +120,123 @@ data:extend(
     },
     procession_graphic_catalogue =
     {
+	  -- CLOUDS
+	  {
+		index = procession_graphic_catalogue_types.planet_cloudscape,
+		type = "sprite",
+		sprite = {
+		  filename = "__space-age__/graphics/procession/clouds/vulcanus-cloudscape.png",
+		  width = 960,
+		  height = 960,
+		  priority = "no-atlas",
+		  flags = { "group=effect-texture", "linear-minification", "linear-magnification" },
+		}
+	  },
+	  {
+		index = procession_graphic_catalogue_types.planet_cloudscape_mask,
+		type = "sprite",
+		sprite = {
+		  filename = "__space-age__/graphics/procession/clouds/mask-cloudscape.png",
+		  width = 960,
+		  height = 960,
+		  priority = "no-atlas",
+		  flags = { "group=effect-texture", "linear-minification", "linear-magnification" },
+		}
+	  },
+
+	  {
+		index = procession_graphic_catalogue_types.planet_cloudscape_lvl0,
+		type = "sprite",
+		sprite = {
+		  filename = "__space-age__/graphics/procession/clouds/vulcanus-cloudscape-layered-0.png",
+		  width = 2000,
+		  height = 1500,
+		  priority = "no-atlas",
+		  flags = { "group=effect-texture", "linear-minification", "linear-magnification" },
+		}
+	  },
+	  {
+		index = procession_graphic_catalogue_types.planet_cloudscape_lvl0_mask,
+		type = "sprite",
+		sprite = {
+		  filename = "__space-age__/graphics/procession/clouds/mask-cloudscape-layered-0.png",
+		  width = 2000,
+		  height = 1500,
+		  priority = "no-atlas",
+		  flags = { "group=effect-texture", "linear-minification", "linear-magnification" },
+		}
+	  },
+
+	  {
+		index = procession_graphic_catalogue_types.planet_cloudscape_lvl1,
+		type = "sprite",
+		sprite = {
+		  filename = "__space-age__/graphics/procession/clouds/vulcanus-cloudscape-layered-1.png",
+		  width = 1600,
+		  height = 1200,
+		  priority = "no-atlas",
+		  flags = { "group=effect-texture", "linear-minification", "linear-magnification" },
+		}
+	  },
+	  {
+		index = procession_graphic_catalogue_types.planet_cloudscape_lvl1_mask,
+		type = "sprite",
+		sprite = {
+		  filename = "__space-age__/graphics/procession/clouds/mask-cloudscape-layered-1.png",
+		  width = 1600,
+		  height = 1200,
+		  priority = "no-atlas",
+		  flags = { "group=effect-texture", "linear-minification", "linear-magnification" },
+		}
+	  },
+
+
+	  {
+		index = procession_graphic_catalogue_types.planet_cloudscape_lvl2,
+		type = "sprite",
+		sprite = {
+		  filename = "__space-age__/graphics/procession/clouds/vulcanus-cloudscape-layered-2.png",
+		  width = 1400,
+		  height = 1050,
+		  priority = "no-atlas",
+		  flags = { "group=effect-texture", "linear-minification", "linear-magnification" },
+		}
+	  },
+	  {
+		index = procession_graphic_catalogue_types.planet_cloudscape_lvl2_mask,
+		type = "sprite",
+		sprite = {
+		  filename = "__space-age__/graphics/procession/clouds/mask-cloudscape-layered-2.png",
+		  width = 1400,
+		  height = 1050,
+		  priority = "no-atlas",
+		  flags = { "group=effect-texture", "linear-minification", "linear-magnification" },
+		}
+	  },
+
+	  {
+		index = procession_graphic_catalogue_types.planet_cloudscape_lvl3,
+		type = "sprite",
+		sprite = {
+		  filename = "__space-age__/graphics/procession/clouds/vulcanus-cloudscape-layered-3.png",
+		  width = 1200,
+		  height = 900,
+		  priority = "no-atlas",
+		  flags = { "group=effect-texture", "linear-minification", "linear-magnification" },
+		}
+	  },
+	  {
+		index = procession_graphic_catalogue_types.planet_cloudscape_lvl3_mask,
+		type = "sprite",
+		sprite = {
+		  filename = "__space-age__/graphics/procession/clouds/mask-cloudscape-layered-3.png",
+		  width = 1200,
+		  height = 900,
+		  priority = "no-atlas",
+		  flags = { "group=effect-texture", "linear-minification", "linear-magnification" },
+		}
+	  },	
+	
       {
         index = procession_graphic_catalogue_types.planet_hatch_emission_in_1,
         sprite = util.sprite_load("__base__/graphics/entity/cargo-hubs/hatches/planet-lower-hatch-pod-emission-A",
@@ -157,4 +293,24 @@ data:extend(
     length = 20000,
     asteroid_spawn_definitions = asteroid_util.spawn_definitions(asteroid_util.gleba_castra)
   }
-})
+  
+}
+
+if mods["corrundum"] then
+
+table.insert(planet, 
+	{
+	  type = "space-connection",
+	  name = "castra-corrundum",
+	  subgroup = "planet-connections",
+	  from = "castra",
+	  to = "corrundum",
+	  order = "c",
+	  length = 10000, 
+	  asteroid_spawn_definitions = asteroid_util.spawn_definitions(asteroid_util.castra_corrundum)
+	}
+)
+
+end
+
+data:extend(planet)

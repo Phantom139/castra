@@ -1,9 +1,30 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.5.9
+Date: 2025-09-06
+  Changes:
+    - Removed Lithium Batteries from Promethium Science Packs.
+    - Removed the interaction with the Maraxsis Cargo Landing Pad Research as it made no sense to be on Castra.
+    - Tweaked the Planet Procession (Landing / Leaving) to more closely match Vulcanus.
+    - Added a space connection between Castra and Corrundum.
+    - Tweaked the RNG calls in the mod scripts to be deterministic, helping to reduce any potential desync issues.
+    - Adjusted table calls to require deterministic sorting (Removing another potential desync issue)
+    - These changes appear to have resolved the issue in the previous update where the enemy would not build grenade turrets (Still checking on cannon turrets)
+  Balancing:
+    - Increased the base bullet damage of enemy cars by 2 (9 -> 11)
+    - Increased the weapon range of enemy cars to 17 (Was 12)
+    - Added damage resistances to enemy cars (Physical: 5/30%, Explosion: 5/50%, Fire and Poison: 95%)
+    - Increased the movement speed of enemy tanks to 0.13 (Was 0.08)
+    - Increased the weapon range of enemy tanks to 24 (Was 20)
+    - Increased enemy Tank fire resistance to 99% (From 90%)
+    - Removed the base damage reduction on electric damage from Tanks, increased resistance from 60% to 65%
+    - Removed the base damage reduction on laser damage from Tanks
+    - Increased both Physical and Explosion damage resistance on tanks to 65%
+---------------------------------------------------------------------------------------------------
 Version: 0.5.8
 Date: 2025-05-11
   Bugfixes:
     - (Known) The enemy still does not spawn cannon turrets or grenade turrets, looking to fix this in 0.5.9
-    - Fixed the hilarious bug where enemy tanks would fight eachother to the death sometimes. (Known) They can still "sometimes" damage themselves.
+    - Fixed the hilarious bug where enemy tanks would fight each other to the death sometimes. (Known) They can still "sometimes" damage themselves.
     - Fixed the disabled tech warning string not using the proper localized string.
   Balancing:
     - Increased the required data absorption for RC cars from 500 to 1500

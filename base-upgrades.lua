@@ -65,8 +65,10 @@ local function add_turrets(data_collector)
     if #turret_types == 0 then
         return
     end
+	
+	local rng = game.create_random_generator(game.tick % 776)
 
-    local turret_type = turret_types[math.random(1, #turret_types)]
+    local turret_type = turret_types[rng(1, #turret_types)]
     -- Check if this turret type is already present with > 3
     if #data_collector.surface.find_entities_filtered { area = get_search_area_size(data_collector, 30), type = turret_type } > 3 then
         return

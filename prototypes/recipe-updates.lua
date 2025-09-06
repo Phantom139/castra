@@ -144,8 +144,9 @@ table.insert(data.raw.lab["biolab"].inputs, "battlefield-science-pack")
 table.insert(data.raw["recipe"]["railgun"].ingredients, { type="item", name="lithium-battery", amount=5 })
 table.insert(data.raw["recipe"]["railgun-turret"].ingredients, { type="item", name="lithium-battery", amount=20 })
 
+-- Phantom139: Removed this as no other mod alters the promethium packs
 -- Add lithium battery to the promethium-science-pack recipe
-table.insert(data.raw["recipe"]["promethium-science-pack"].ingredients, { type="item", name="lithium-battery", amount=1 })
+--table.insert(data.raw["recipe"]["promethium-science-pack"].ingredients, { type="item", name="lithium-battery", amount=1 })
 
 -- Replace battery-mk3-equipment supercapacitor with lithium battery
 for _, recipe in pairs(data.raw["recipe"]) do

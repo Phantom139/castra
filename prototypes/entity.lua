@@ -580,12 +580,32 @@ data:extend({
 local car = mod_functions.create_enemy_unit(data.raw["unit"]["small-spitter"], data.raw["car"]["car"])
 car.name = "castra-enemy-car"
 car.icon = "__base__/graphics/icons/car.png"
+car.resistances = {
+    {
+        type = "physical",
+        decrease = 5,
+        percent = 30
+    },
+    {
+        type = "explosion",
+        decrease = 5,
+        percent = 50
+    },
+    {
+        type = "fire",
+        percent = 95
+    },
+    {
+        type = "poison",
+        percent = 95
+    },
+}
 -- Additiontal parameters
 car.absorptions_to_join_attack = { data = 250 }
 car.movement_speed = 0.25
 car.attack_parameters = {
     type = "projectile",
-    range = 12,
+    range = 17,
     cooldown = 10,
     cooldown_deviation = 0.1,
     ammo_category = "bullet",
@@ -612,7 +632,7 @@ car.attack_parameters = {
                     },
                     {
                         type = "damage",
-                        damage = { amount = 9, type = "physical" }
+                        damage = { amount = 11, type = "physical" }
                     },
                     {
                         type = "activate-impact",
@@ -636,16 +656,16 @@ tank.resistances = {
     {
         type = "physical",
         decrease = 10,
-        percent = 50
+        percent = 65
     },
     {
         type = "explosion",
         decrease = 10,
-        percent = 50
+        percent = 65
     },
     {
         type = "fire",
-        percent = 90
+        percent = 99
     },
     {
         type = "poison",
@@ -653,20 +673,18 @@ tank.resistances = {
     },
     {
         type = "laser",
-        decrease = 20,
         percent = 90
     },
     {
         type = "electric",
-        decrease = 10,
-        percent = 60
+        percent = 65
     }
 }
 tank.absorptions_to_join_attack = { data = 1000 }
-tank.movement_speed = 0.08
+tank.movement_speed = 0.13
 tank.attack_parameters = {
 	type = "projectile",
-	range = 20,
+	range = 24,
 	cooldown = 90,
 	cooldown_deviation = 0.15,
 	ammo_category = "cannon-shell", 
