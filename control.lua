@@ -490,7 +490,8 @@ local function update_castra_research_progress(event)
                 -- 6-20 = random
                 -- 21 = highest cost
                 --local strategy = math.random(0, 21)
-				local rng = game.create_random_generator(game.tick + enemy_force.evolution_factor * 1000)
+				local evolution = game.forces["enemy"].get_evolution_factor("castra")
+				local rng = game.create_random_generator(game.tick + evolution * 1000)
 				local strategy = rng(0, 21)				
                 if strategy >= 0 and strategy <= 5 then
                     table.sort(valid, function(a, b)

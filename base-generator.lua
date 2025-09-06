@@ -349,7 +349,8 @@ local function place_roboport(chunk_area, data_collector_pos)
     local enemy_force = game.forces["enemy"]
     local otherRoboports = surface.find_entities_filtered { name = "roboport", force = enemy_force, area = { { chunk_area.left_top.x - 45, chunk_area.left_top.y - 45 }, { chunk_area.right_bottom.x + 45, chunk_area.right_bottom.y + 45 } } }
 
-	local rng = game.create_random_generator(game.tick + enemy_force.evolution_factor * 2000)
+	local evolution = enemy_force.get_evolution_factor("castra")
+	local rng = game.create_random_generator(game.tick + evolution * 2000)
 
     -- Create a roboport if there is another roboport nearby or a 50% chance
     if #otherRoboports > 0 or rng() < 0.8 then
@@ -384,7 +385,8 @@ local function place_solar(chunk_area)
     local surface = game.surfaces["castra"]
     local enemy_force = game.forces["enemy"]
 	
-	local rng = game.create_random_generator(game.tick + enemy_force.evolution_factor * 2700)
+	local evolution = enemy_force.get_evolution_factor("castra")
+	local rng = game.create_random_generator(game.tick + evolution * 2700)
 
     -- Place a power pole and up to 5 solar panels around it if it's in the pole's range
     local power_type = storage.castra.enemy.best_power_pole
@@ -673,7 +675,8 @@ local function place_land_mines(data_collector_pos)
     local surface = game.surfaces["castra"]
     local enemy_force = game.forces["enemy"]
 
-	local rng = game.create_random_generator(game.tick + enemy_force.evolution_factor * 7777)
+	local evolution = enemy_force.get_evolution_factor("castra")
+	local rng = game.create_random_generator(game.tick + evolution * 7777)
 
     -- Place a ~20 land mines around the data collector within a range of 20
     for i = 1, rng(10, 30) do
@@ -692,7 +695,8 @@ local function create_enemy_base(chunk_area)
     local surface = game.surfaces["castra"]
     local enemy_force = game.forces["enemy"]
 
-	local rng = game.create_random_generator(game.tick + enemy_force.evolution_factor * 5765)
+	local evolution = enemy_force.get_evolution_factor("castra")
+	local rng = game.create_random_generator(game.tick + evolution * 5765)
 
     -- Find a random valid position in the chunk
     local dataPos = surface.find_non_colliding_position("data-collector",
