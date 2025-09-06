@@ -66,7 +66,7 @@ local function add_turrets(data_collector)
         return
     end
 	
-	local rng = game.create_random_generator(game.tick)
+	local rng = game.create_random_generator(game.tick % 776)
 
     local turret_type = turret_types[rng(1, #turret_types)]
     -- Check if this turret type is already present with > 3

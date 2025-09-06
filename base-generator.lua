@@ -252,7 +252,7 @@ local function select_random_quality_max(max_quality_in)
         table.insert(weights, weight)
     end
 
-	local rng = game.create_random_generator(game.tick)
+	local rng = game.create_random_generator(game.tick % 2256)
 
     -- Select a random quality based on the weights
     local random_weight = rng() * total_weight
@@ -311,7 +311,7 @@ local function build_enemy_wall(chunk_area, pos)
 
     local quality = select_random_quality()
 	
-	local rng = game.create_random_generator(game.tick)
+	local rng = game.create_random_generator(game.tick % 3287)
 
     -- Create the walls along the expanded hull
     local emptyWallSpots = 0
@@ -350,7 +350,7 @@ local function place_roboport(chunk_area, data_collector_pos)
     local otherRoboports = surface.find_entities_filtered { name = "roboport", force = enemy_force, area = { { chunk_area.left_top.x - 45, chunk_area.left_top.y - 45 }, { chunk_area.right_bottom.x + 45, chunk_area.right_bottom.y + 45 } } }
 
 	local evolution = enemy_force.get_evolution_factor("castra")
-	local rng = game.create_random_generator(game.tick + evolution * 2000)
+	local rng = game.create_random_generator((game.tick + (evolution * 2000)) % 576)
 
     -- Create a roboport if there is another roboport nearby or a 50% chance
     if #otherRoboports > 0 or rng() < 0.8 then
@@ -386,7 +386,7 @@ local function place_solar(chunk_area)
     local enemy_force = game.forces["enemy"]
 	
 	local evolution = enemy_force.get_evolution_factor("castra")
-	local rng = game.create_random_generator(game.tick + evolution * 2700)
+	local rng = game.create_random_generator((game.tick + (evolution * 2700)) % 765)
 
     -- Place a power pole and up to 5 solar panels around it if it's in the pole's range
     local power_type = storage.castra.enemy.best_power_pole
@@ -615,7 +615,7 @@ local function place_turrets(data_collector_pos, type)
 
     local powered_turrets = {}
 	
-	local rng = game.create_random_generator(game.tick)
+	local rng = game.create_random_generator(game.tick % 884)
 
     -- Select a random turret type
     local turret_type = turret_types[rng(1, #turret_types)]
@@ -676,7 +676,7 @@ local function place_land_mines(data_collector_pos)
     local enemy_force = game.forces["enemy"]
 
 	local evolution = enemy_force.get_evolution_factor("castra")
-	local rng = game.create_random_generator(game.tick + evolution * 7777)
+	local rng = game.create_random_generator((game.tick + (evolution * 7777)) % 261)
 
     -- Place a ~20 land mines around the data collector within a range of 20
     for i = 1, rng(10, 30) do
@@ -696,7 +696,7 @@ local function create_enemy_base(chunk_area)
     local enemy_force = game.forces["enemy"]
 
 	local evolution = enemy_force.get_evolution_factor("castra")
-	local rng = game.create_random_generator(game.tick + evolution * 5765)
+	local rng = game.create_random_generator((game.tick + (evolution * 5765)) % 712)
 
     -- Find a random valid position in the chunk
     local dataPos = surface.find_non_colliding_position("data-collector",

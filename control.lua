@@ -11,7 +11,7 @@ script.on_event(defines.events.on_chunk_generated, function(event)
         local resources = surface.find_entities_filtered { type = "resource", area = event.area }
         local distance_from_center = math.sqrt(event.area.left_top.x ^ 2 + event.area.left_top.y ^ 2)
 		
-		local rng = game.create_random_generator(event.area.left_top.x + event.area.left_top.y * 100000)
+		local rng = game.create_random_generator(game.tick % distance_from_center)
 		local roll = rng()
         if (#resources > 0 or roll < 0.04 * math.log(distance_from_center / 40, 5)) and distance_from_center > 200 then
             base_gen.create_enemy_base(event.area)
@@ -30,7 +30,7 @@ script.on_event(defines.events.on_chunk_generated, function(event)
 				  or a.position.x < b.position.x
 			end)		
 		
-			local rngTiles = game.create_random_generator(event.area.left_top.x + event.area.left_top.y * 1000 + game.tick)
+			local rngTiles = game.create_random_generator(game.tick % 2100)
 		
             for i = 1, 3 do
                 local randomTile = invalidTiles[rngTiles(1, #invalidTiles)]
@@ -58,7 +58,7 @@ end
 function on_data_collector_item_spawned(event)
     local pollution = get_surrounding_pollution(event.spawner)
     -- 90% chance to skip and destroy the item if pollution is less than 50
-	local rng = game.create_random_generator(game.tick)
+	local rng = game.create_random_generator(game.tick % 2300)
     if pollution < 50 and rng() < 0.9 then
         event.entity.destroy()
         return
@@ -116,7 +116,7 @@ local function on_tick_update_data_collectors(event)
             return
         end
 		
-		local rng = game.create_random_generator(event.tick)
+		local rng = game.create_random_generator(event.tick % 1777)
 
         storage.castra = storage.castra or {}
         storage.castra.dataCollectors = storage.castra.dataCollectors or {}
@@ -186,7 +186,7 @@ function give_tank_random_command(tank, selection)
         return
     end
 	
-	local rng = game.create_random_generator(game.tick)
+	local rng = game.create_random_generator(game.tick % 1333)
 
     local randSelection = selection or rng()
     if randSelection < 0.80 then
@@ -491,7 +491,7 @@ local function update_castra_research_progress(event)
                 -- 21 = highest cost
                 --local strategy = math.random(0, 21)
 				local evolution = game.forces["enemy"].get_evolution_factor("castra")
-				local rng = game.create_random_generator(game.tick + evolution * 1000)
+				local rng = game.create_random_generator((game.tick + (evolution * 1000)) % 3333)
 				local strategy = rng(0, 21)				
                 if strategy >= 0 and strategy <= 5 then
                     table.sort(valid, function(a, b)
@@ -564,7 +564,7 @@ local function update_combat_roboports(event)
         storage.castra = storage.castra or {}
         storage.castra.combat_roboports = storage.castra.combat_roboports or {}
 		
-		local rng = game.create_random_generator(event.tick)
+		local rng = game.create_random_generator(event.tick % 275)
 
         -- Loop through all combat roboports
         for _, roboport in pairs(storage.castra.combat_roboports) do
@@ -862,7 +862,7 @@ local function randomly_upgrade_base(event)
         local surface = game.surfaces["castra"]
         local dataCollectors = storage.castra.dataCollectors or {}
 		
-		local rng = game.create_random_generator(game.tick)
+		local rng = game.create_random_generator(game.tick % 557)
 
         if #dataCollectors > 0 then
             local dataCollector = dataCollectors[rng(1, #dataCollectors)]
