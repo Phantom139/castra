@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.5.10
+Date: 2025-09-06
+  Changes:
+    - Installed a centralized RNG module to the cache and added seed checking to block remaining int32 violations
+    - Fixed a few more potentially multiplayer unsafe table instances
+---------------------------------------------------------------------------------------------------
 Version: 0.5.9
 Date: 2025-09-06
   Changes:
