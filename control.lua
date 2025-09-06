@@ -665,29 +665,13 @@ local function built_event(event)
     if event.entity.surface.name == "castra" then
         if event.entity.name == "data-collector" and event.entity.force.name == "enemy" then
             storage.castra.dataCollectors = storage.castra.dataCollectors or {}
-            table.insert(storage.castra.dataCollectors, event.entity)
-			-- Phantom139: Sort the table for deterministic calls.
-			table.sort(storage.castra.dataCollectors, function(a, b)
-				if a.position.x == b.position.x then
-					return a.position.y < b.position.y
-				else
-					return a.position.x < b.position.x
-				end
-			end)			
+            table.insert(storage.castra.dataCollectors, event.entity)		
 
             -- Add any player jammer radars in range
             storage.castra = storage.castra or {}
             storage.castra.data_collectors_jammers = storage.castra.data_collectors_jammers or {}
             storage.castra.jammed_data_collectors_jammers = storage.castra.jammed_data_collectors_jammers or {}
-            storage.castra.jammers = storage.castra.jammers or {}
-			-- Phantom139: Sort the table for deterministic calls.
-			table.sort(storage.castra.jammers, function(a, b)
-				if a.position.x == b.position.x then
-					return a.position.y < b.position.y
-				else
-					return a.position.x < b.position.x
-				end
-			end)				
+            storage.castra.jammers = storage.castra.jammers or {}			
 			
             for _, jammer in pairs(storage.castra.jammers) do
                 add_jammer_to_data_collector(event.entity, jammer)
@@ -700,35 +684,9 @@ local function built_event(event)
 
             -- Add any player jammer radars in range
             storage.castra = storage.castra or {}
-            storage.castra.data_collectors_jammers = storage.castra.data_collectors_jammers or {}
-			-- Phantom139: Sort the table for deterministic calls.
-			table.sort(storage.castra.data_collectors_jammers, function(a, b)
-				if a.position.x == b.position.x then
-					return a.position.y < b.position.y
-				else
-					return a.position.x < b.position.x
-				end
-			end)				
-			
-            storage.castra.jammed_data_collectors_jammers = storage.castra.jammed_data_collectors_jammers or {}
-			-- Phantom139: Sort the table for deterministic calls.
-			table.sort(storage.castra.jammed_data_collectors_jammers, function(a, b)
-				if a.position.x == b.position.x then
-					return a.position.y < b.position.y
-				else
-					return a.position.x < b.position.x
-				end
-			end)			
-			
-            storage.castra.jammers = storage.castra.jammers or {}
-			-- Phantom139: Sort the table for deterministic calls.
-			table.sort(storage.castra.jammers, function(a, b)
-				if a.position.x == b.position.x then
-					return a.position.y < b.position.y
-				else
-					return a.position.x < b.position.x
-				end
-			end)				
+            storage.castra.data_collectors_jammers = storage.castra.data_collectors_jammers or {}						
+            storage.castra.jammed_data_collectors_jammers = storage.castra.jammed_data_collectors_jammers or {}					
+            storage.castra.jammers = storage.castra.jammers or {}			
 			
             for _, jammer in pairs(storage.castra.jammers) do
                 add_jammer_to_data_collector(event.entity, jammer)
