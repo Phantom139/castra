@@ -1,4 +1,5 @@
 -- Script extensions for mods.
+local item_cache = require("castra-cache")
 
 -- RC Car commands
 function give_RC_Car_random_command(rcCar, selection)
@@ -10,18 +11,16 @@ function give_RC_Car_random_command(rcCar, selection)
     if not rcCar.valid then
         return
     end
-	
-	local rng = game.create_random_generator(game.tick)
 
-    local randSelection = selection or rng()
+    local randSelection = selection or item_cache.castra_rng(0, 1)
     if randSelection < 0.60 then
         -- Wander
-        rcCar.commandable.set_command { type = defines.command.wander, distraction = defines.distraction.by_anything, ticks_to_wait = rng(600, 5000) }
+        rcCar.commandable.set_command { type = defines.command.wander, distraction = defines.distraction.by_anything, ticks_to_wait = item_cache.castra_rng(600, 5000) }
         return
     elseif randSelection < 0.70 then
         -- Pick a random data collector to go to from storage
         if storage.castra and storage.castra.dataCollectors and #storage.castra.dataCollectors > 0 then
-            local dataCollector = storage.castra.dataCollectors[rng(1, #storage.castra.dataCollectors)]
+            local dataCollector = storage.castra.dataCollectors[item_cache.castra_rng(1, #storage.castra.dataCollectors)]
             if dataCollector.valid then
                 rcCar.commandable.set_command { type = defines.command.go_to_location, destination = dataCollector.position, distraction = defines.distraction.by_anything }
                 return
@@ -47,7 +46,7 @@ function give_RC_Car_random_command(rcCar, selection)
     end
 
     -- Default to wander
-    rcCar.commandable.set_command { type = defines.command.wander, distraction = defines.distraction.by_anything, ticks_to_wait = rng(600, 5000) }
+    rcCar.commandable.set_command { type = defines.command.wander, distraction = defines.distraction.by_anything, ticks_to_wait = item_cache.castra_rng(600, 5000) }
 end
 
 return {

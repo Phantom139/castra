@@ -308,10 +308,16 @@ local function build_pollution_cache()
     end
 end
 
+local function castra_rng(minV, maxV)
+	local rng = game.create_random_generator(game.tick % 2147483647)
+	return rng(minV, maxV)
+end
+
 return {
     update_castra_enemy_data = update_castra_enemy_data,
     has_castra_researched_item = has_castra_researched_item,
     build_cache_if_needed = build_cache_if_needed,
     castra_exists = castra_exists,
     build_pollution_cache = build_pollution_cache,
+	castra_rng = castra_rng,
 }

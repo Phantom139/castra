@@ -11,8 +11,7 @@ script.on_event(defines.events.on_chunk_generated, function(event)
         local resources = surface.find_entities_filtered { type = "resource", area = event.area }
         local distance_from_center = math.sqrt(event.area.left_top.x ^ 2 + event.area.left_top.y ^ 2)
 		
-		local rng = game.create_random_generator(game.tick % distance_from_center)
-		local roll = rng()
+		local roll = item_cache.castra_rng(0, 1)
         if (#resources > 0 or roll < 0.04 * math.log(distance_from_center / 40, 5)) and distance_from_center > 200 then
             base_gen.create_enemy_base(event.area)
         end
@@ -30,10 +29,8 @@ script.on_event(defines.events.on_chunk_generated, function(event)
 				  or a.position.x < b.position.x
 			end)		
 		
-			local rngTiles = game.create_random_generator(game.tick % 2100)
-		
             for i = 1, 3 do
-                local randomTile = invalidTiles[rngTiles(1, #invalidTiles)]
+                local randomTile = invalidTiles[item_cache.castra_rng(1, #invalidTiles)]
                 surface.destroy_decoratives { area = { { x = randomTile.position.x - 16, y = randomTile.position.y - 16 },
                     { x = randomTile.position.x + 16, y = randomTile.position.y + 16 } } }
             end
@@ -58,8 +55,7 @@ end
 function on_data_collector_item_spawned(event)
     local pollution = get_surrounding_pollution(event.spawner)
     -- 90% chance to skip and destroy the item if pollution is less than 50
-	local rng = game.create_random_generator(game.tick % 2300)
-    if pollution < 50 and rng() < 0.9 then
+    if pollution < 50 and item_cache.castra_rng(0, 1) < 0.9 then
         event.entity.destroy()
         return
     end
@@ -115,8 +111,6 @@ local function on_tick_update_data_collectors(event)
         if not item_cache.castra_exists() then
             return
         end
-		
-		local rng = game.create_random_generator(event.tick % 1777)
 
         storage.castra = storage.castra or {}
         storage.castra.dataCollectors = storage.castra.dataCollectors or {}
@@ -129,7 +123,7 @@ local function on_tick_update_data_collectors(event)
         -- Select random valid data collector
         local collector = nil
         while not collector or not collector.valid do
-            collector = storage.castra.dataCollectors[rng(1, #storage.castra.dataCollectors)]
+            collector = storage.castra.dataCollectors[item_cache.castra_rng(1, #storage.castra.dataCollectors)]
         end
 			
 		-- Update tanks
@@ -137,9 +131,9 @@ local function on_tick_update_data_collectors(event)
         for _, tank in pairs(tanks) do
             if tank.valid and tank.commandable and tank.commandable.command and tank.commandable.command.type == defines.command.wander then
                 -- Give attack command to either a military target or any player entity, or full random
-                if rng() < 0.5 then
+                if item_cache.castra_rng(0, 1) < 0.5 then
                     give_tank_random_command(tank, 0.97)
-                elseif rng() < 0.5 then
+                elseif item_cache.castra_rng(0, 1) < 0.5 then
                     give_tank_random_command(tank, 1)
                 else
                     give_tank_random_command(tank, nil)
@@ -152,9 +146,9 @@ local function on_tick_update_data_collectors(event)
         for _, rcCar in pairs(rcCars) do
             if rcCar.valid and rcCar.commandable and rcCar.commandable.command and rcCar.commandable.command.type == defines.command.wander then
                 -- Give attack command to either a military target or any player entity, or full random
-                if rng() < 0.5 then
+                if item_cache.castra_rng(0, 1) < 0.5 then
                     mod_extensions.give_RC_Car_random_command(rcCar, 0.97)
-                elseif rng() < 0.5 then
+                elseif item_cache.castra_rng(0, 1) < 0.5 then
                     mod_extensions.give_RC_Car_random_command(rcCar, 1)
                 else
                     mod_extensions.give_RC_Car_random_command(rcCar, nil)
@@ -185,13 +179,11 @@ function give_tank_random_command(tank, selection)
     if not tank.valid then
         return
     end
-	
-	local rng = game.create_random_generator(game.tick % 1333)
 
-    local randSelection = selection or rng()
+    local randSelection = selection or item_cache.castra_rng(0, 1)
     if randSelection < 0.80 then
         -- Wander
-        tank.commandable.set_command { type = defines.command.wander, distraction = defines.distraction.by_anything, ticks_to_wait = rng(600, 5000) }
+        tank.commandable.set_command { type = defines.command.wander, distraction = defines.distraction.by_anything, ticks_to_wait = item_cache.castra_rng(600, 5000) }
         return
     elseif randSelection < 0.85 then
         -- Expansion
@@ -202,11 +194,11 @@ function give_tank_random_command(tank, selection)
             base_gen.create_enemy_base(area)
         end
         -- Wander again
-        tank.commandable.set_command { type = defines.command.wander, distraction = defines.distraction.by_anything, ticks_to_wait = rng(600, 5000) }
+        tank.commandable.set_command { type = defines.command.wander, distraction = defines.distraction.by_anything, ticks_to_wait = item_cache.castra_rng(600, 5000) }
     elseif randSelection < 0.95 then
         -- Pick a random data collector to go to from storage
         if storage.castra and storage.castra.dataCollectors and #storage.castra.dataCollectors > 0 then
-            local dataCollector = storage.castra.dataCollectors[rng(1, #storage.castra.dataCollectors)]
+            local dataCollector = storage.castra.dataCollectors[item_cache.castra_rng(1, #storage.castra.dataCollectors)]
             if dataCollector.valid then
                 tank.commandable.set_command { type = defines.command.go_to_location, destination = dataCollector.position, distraction = defines.distraction.by_anything }
                 return
@@ -232,7 +224,7 @@ function give_tank_random_command(tank, selection)
     end
 
     -- Default to wander
-    tank.commandable.set_command { type = defines.command.wander, distraction = defines.distraction.by_anything, ticks_to_wait = rng(600, 5000) }
+    tank.commandable.set_command { type = defines.command.wander, distraction = defines.distraction.by_anything, ticks_to_wait = item_cache.castra_rng(600, 5000) }
 end
 
 -- on_entity_spawned for deleting data-collector-<item> when it spawns and dropping its loot
@@ -490,16 +482,14 @@ local function update_castra_research_progress(event)
                 -- 6-20 = random
                 -- 21 = highest cost
                 --local strategy = math.random(0, 21)
-				local evolution = game.forces["enemy"].get_evolution_factor("castra")
-				local rng = game.create_random_generator((game.tick + (evolution * 1000)) % 3333)
-				local strategy = rng(0, 21)				
+				local strategy = item_cache.castra_rng(0, 21)				
                 if strategy >= 0 and strategy <= 5 then
                     table.sort(valid, function(a, b)
                         return a.research_unit_count < b.research_unit_count
                     end)
                     nextResearch = valid[1]
                 elseif strategy >= 6 and strategy <= 20 then
-                    nextResearch = valid[rng(1, #valid)]
+                    nextResearch = valid[item_cache.castra_rng(1, #valid)]
                 elseif strategy == 21 then
                     table.sort(valid, function(a, b)
                         return a.research_unit_count > b.research_unit_count
@@ -563,8 +553,6 @@ local function update_combat_roboports(event)
     if event.tick % 300 == 274 then
         storage.castra = storage.castra or {}
         storage.castra.combat_roboports = storage.castra.combat_roboports or {}
-		
-		local rng = game.create_random_generator(event.tick % 275)
 
         -- Loop through all combat roboports
         for _, roboport in pairs(storage.castra.combat_roboports) do
@@ -597,14 +585,14 @@ local function update_combat_roboports(event)
                 -- Randomize the position
                         local pos = {
                             x = roboport.position.x +
-                                rng(-2, 2),
+                                item_cache.castra_rng(-2, 2),
                             y = roboport.position.y +
-                                rng(-2, 2)
+                                item_cache.castra_rng(-2, 2)
                         }
                         local robot = roboport.surface.create_entity { name = combat_robot, position = pos, force = roboport.force, raise_built = true, quality = robot_quality }
 
                         -- Pick a random enemy to be their "owner"
-                        local enemy = enemies[rng(1, #enemies)]
+                        local enemy = enemies[item_cache.castra_rng(1, #enemies)]
                         if enemy.valid then
                             robot.combat_robot_owner = enemy
                         else
@@ -861,13 +849,11 @@ local function randomly_upgrade_base(event)
 
         local surface = game.surfaces["castra"]
         local dataCollectors = storage.castra.dataCollectors or {}
-		
-		local rng = game.create_random_generator(game.tick % 557)
 
         if #dataCollectors > 0 then
-            local dataCollector = dataCollectors[rng(1, #dataCollectors)]
+            local dataCollector = dataCollectors[item_cache.castra_rng(1, #dataCollectors)]
             if dataCollector.valid then
-                local upgrade_type = possible[rng(1, #possible)]
+                local upgrade_type = possible[item_cache.castra_rng(1, #possible)]
                 local position = dataCollector.position
                 upgrade_type(dataCollector)
                 -- data collector is no longer valid, its quality was upgraded and we need to find a new one at its position
