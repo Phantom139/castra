@@ -16,13 +16,14 @@ if data.raw["technology"]["railgun-damage-1"] and data.raw["technology"]["railgu
     end
 end
 
-if data.raw["technology"]["promethium-science-pack"] then
-    if data.raw["technology"]["promethium-science-pack"].unit and data.raw["technology"]["promethium-science-pack"].unit.ingredients then
-        table.insert(data.raw["technology"]["promethium-science-pack"].unit.ingredients,
-            { "battlefield-science-pack", 1 })
-    end
-    table.insert(data.raw["technology"]["promethium-science-pack"].prerequisites, "lithium-battery")
-end
+-- Phantom139: Removed this since it makes no sense to be on the promethium pack
+--if data.raw["technology"]["promethium-science-pack"] then
+--    if data.raw["technology"]["promethium-science-pack"].unit and data.raw["technology"]["promethium-science-pack"].unit.ingredients then
+--        table.insert(data.raw["technology"]["promethium-science-pack"].unit.ingredients,
+--            { "battlefield-science-pack", 1 })
+--    end
+--    table.insert(data.raw["technology"]["promethium-science-pack"].prerequisites, "lithium-battery")
+--end
 
 if data.raw["technology"]["research-productivity"] and data.raw["technology"]["research-productivity"].unit and data.raw["technology"]["research-productivity"].unit and data.raw["technology"]["research-productivity"].unit.ingredients then
     table.insert(data.raw["technology"]["research-productivity"].unit.ingredients, { "battlefield-science-pack", 1 })
@@ -112,49 +113,50 @@ for _, tech in pairs(data.raw["technology"]) do
     end
 end
 
+-- Phantom139: This change is pointless as well, removed.
 -- Move cargo-landing-pad-capacity to battlefield-science-pack
 -- Remove agricultural, electromagnetic, metallurgic
-if data.raw["technology"]["cargo-landing-pad-capacity"] then
-    if data.raw["technology"]["cargo-landing-pad-capacity"].unit and data.raw["technology"]["cargo-landing-pad-capacity"].unit.ingredients then
-        table.insert(data.raw["technology"]["cargo-landing-pad-capacity"].unit.ingredients,
-            { "battlefield-science-pack", 1 })
-        local removedCargoIngre = true
-        while removedCargoIngre do
-            removedCargoIngre = false
-            for i, ingredient in ipairs(data.raw["technology"]["cargo-landing-pad-capacity"].unit.ingredients) do
-                if ingredient[1] == "agricultural-science-pack" or ingredient[1] == "electromagnetic-science-pack" or ingredient[1] == "metallurgic-science-pack" then
-                    table.remove(data.raw["technology"]["cargo-landing-pad-capacity"].unit.ingredients, i)
-                    removedCargoIngre = true
-                    break
-                end
-            end
-        end
-
-        local removedCargoPrereq = true
-        while removedCargoPrereq do
-            removedCargoPrereq = false
-            for i, prereq in ipairs(data.raw["technology"]["cargo-landing-pad-capacity"].prerequisites) do
-                if prereq == "agricultural-science-pack" or prereq == "electromagnetic-science-pack" or prereq == "metallurgic-science-pack" then
-                    table.remove(data.raw["technology"]["cargo-landing-pad-capacity"].prerequisites, i)
-                    removedCargoPrereq = true
-                    break
-                end
-            end
-        end
-        data.raw["technology"]["cargo-landing-pad-capacity"].unit.count_formula = "10000*2.5^(L-1)"
-    end
-    table.insert(data.raw["technology"]["cargo-landing-pad-capacity"].prerequisites, "battlefield-science-pack")
-
-    -- Add maraxsis support for cargo-landing-pad-capacity
-    -- Landing Pad Rsearch overrides the research, just need to add back prereq and science pack
-    if mods["maraxsis"] and mods["landing-pad-research"] then
-        table.insert(data.raw["technology"]["cargo-landing-pad-capacity"].prerequisites, "maraxsis-project-seadragon")
-        if data.raw["technology"]["cargo-landing-pad-capacity"].unit and data.raw["technology"]["cargo-landing-pad-capacity"].unit.ingredients then
-            table.insert(data.raw["technology"]["cargo-landing-pad-capacity"].unit.ingredients,
-                { "hydraulic-science-pack", 1 })
-        end
-    end
-end
+--if data.raw["technology"]["cargo-landing-pad-capacity"] then
+--    if data.raw["technology"]["cargo-landing-pad-capacity"].unit and data.raw["technology"]["cargo-landing-pad-capacity"].unit.ingredients then
+--        table.insert(data.raw["technology"]["cargo-landing-pad-capacity"].unit.ingredients,
+--            { "battlefield-science-pack", 1 })
+--        local removedCargoIngre = true
+--        while removedCargoIngre do
+--            removedCargoIngre = false
+--            for i, ingredient in ipairs(data.raw["technology"]["cargo-landing-pad-capacity"].unit.ingredients) do
+--                if ingredient[1] == "agricultural-science-pack" or ingredient[1] == "electromagnetic-science-pack" or ingredient[1] == "metallurgic-science-pack" then
+--                    table.remove(data.raw["technology"]["cargo-landing-pad-capacity"].unit.ingredients, i)
+--                    removedCargoIngre = true
+--                    break
+--                end
+--            end
+--        end
+--
+--        local removedCargoPrereq = true
+--        while removedCargoPrereq do
+--            removedCargoPrereq = false
+--            for i, prereq in ipairs(data.raw["technology"]["cargo-landing-pad-capacity"].prerequisites) do
+--                if prereq == "agricultural-science-pack" or prereq == "electromagnetic-science-pack" or prereq == "metallurgic-science-pack" then
+--                    table.remove(data.raw["technology"]["cargo-landing-pad-capacity"].prerequisites, i)
+--                    removedCargoPrereq = true
+--                    break
+--                end
+--            end
+--        end
+--        data.raw["technology"]["cargo-landing-pad-capacity"].unit.count_formula = "10000*2.5^(L-1)"
+--    end
+--    table.insert(data.raw["technology"]["cargo-landing-pad-capacity"].prerequisites, "battlefield-science-pack")
+--
+--    -- Add maraxsis support for cargo-landing-pad-capacity
+--    -- Landing Pad Rsearch overrides the research, just need to add back prereq and science pack
+--    if mods["maraxsis"] and mods["landing-pad-research"] then
+--        table.insert(data.raw["technology"]["cargo-landing-pad-capacity"].prerequisites, "maraxsis-project-seadragon")
+--        if data.raw["technology"]["cargo-landing-pad-capacity"].unit and data.raw["technology"]["cargo-landing-pad-capacity"].unit.ingredients then
+--            table.insert(data.raw["technology"]["cargo-landing-pad-capacity"].unit.ingredients,
+--                { "hydraulic-science-pack", 1 })
+--        end
+--    end
+--end
 
 -- Modify battery-mk3-equipment to require lithium battery
 if data.raw["technology"]["battery-mk3-equipment"] then

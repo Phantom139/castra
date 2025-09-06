@@ -252,8 +252,10 @@ local function select_random_quality_max(max_quality_in)
         table.insert(weights, weight)
     end
 
+	local rng = game.create_random_generator(game.tick)
+
     -- Select a random quality based on the weights
-    local random_weight = math.random() * total_weight
+    local random_weight = rng() * total_weight
     local sum = 0
     for i, weight in pairs(weights) do
         sum = sum + weight
@@ -308,6 +310,8 @@ local function build_enemy_wall(chunk_area, pos)
     local expandedHull = expandConvexHull(restoredHull, 2)
 
     local quality = select_random_quality()
+	
+	local rng = game.create_random_generator(game.tick)
 
     -- Create the walls along the expanded hull
     local emptyWallSpots = 0
@@ -317,7 +321,7 @@ local function build_enemy_wall(chunk_area, pos)
         local wallPoints = plotLine(p1.x, p1.y, p2.x, p2.y)
         for _, point in pairs(wallPoints) do
             -- Randomly set some wall spots to be empty
-            if math.random() < 0.1 then
+            if rng() < 0.1 then
                 emptyWallSpots = emptyWallSpots + 3
             end
             if emptyWallSpots > 0 then
@@ -345,8 +349,10 @@ local function place_roboport(chunk_area, data_collector_pos)
     local enemy_force = game.forces["enemy"]
     local otherRoboports = surface.find_entities_filtered { name = "roboport", force = enemy_force, area = { { chunk_area.left_top.x - 45, chunk_area.left_top.y - 45 }, { chunk_area.right_bottom.x + 45, chunk_area.right_bottom.y + 45 } } }
 
+	local rng = game.create_random_generator(game.tick + enemy_force.evolution_factor * 2000)
+
     -- Create a roboport if there is another roboport nearby or a 50% chance
-    if #otherRoboports > 0 or math.random() < 0.8 then
+    if #otherRoboports > 0 or rng() < 0.8 then
         local pos = surface.find_non_colliding_position("roboport", data_collector_pos, 16, 0.5, true)
         if pos then
             local roboport = surface.create_entity { name = "roboport", position = pos, force = enemy_force, quality = select_random_quality(), raise_built = true }
@@ -377,6 +383,8 @@ local function place_solar(chunk_area)
 
     local surface = game.surfaces["castra"]
     local enemy_force = game.forces["enemy"]
+	
+	local rng = game.create_random_generator(game.tick + enemy_force.evolution_factor * 2700)
 
     -- Place a power pole and up to 5 solar panels around it if it's in the pole's range
     local power_type = storage.castra.enemy.best_power_pole
@@ -385,7 +393,7 @@ local function place_solar(chunk_area)
     end
 
     local pole_pos = surface.find_non_colliding_position(power_type,
-        { math.random(chunk_area.left_top.x, chunk_area.right_bottom.x), math.random(chunk_area.left_top.y,
+        { rng(chunk_area.left_top.x, chunk_area.right_bottom.x), rng(chunk_area.left_top.y,
             chunk_area.right_bottom.y) }, 8, 0.5, true)
 
     if pole_pos then
@@ -400,10 +408,10 @@ local function place_solar(chunk_area)
         local quality = select_random_quality()
 
         local created = false
-        for i = 1, math.random(2, 5) do
+        for i = 1, rng(2, 5) do
             local solar_panel_pos = surface.find_non_colliding_position("solar-panel",
-                { pole_pos.x + math.random(-pole_range - 2, pole_range + 2), pole_pos.y +
-                math.random(-pole_range - 2, pole_range + 2) }, 8, 0.5, true)
+                { pole_pos.x + rng(-pole_range - 2, pole_range + 2), pole_pos.y +
+                rng(-pole_range - 2, pole_range + 2) }, 8, 0.5, true)
             if solar_panel_pos then
                 local solar = surface.create_entity { name = "solar-panel", position = solar_panel_pos, force = enemy_force, quality = quality, raise_built = true }
                 if solar then
@@ -604,9 +612,11 @@ local function place_turrets(data_collector_pos, type)
     end
 
     local powered_turrets = {}
+	
+	local rng = game.create_random_generator(game.tick)
 
     -- Select a random turret type
-    local turret_type = turret_types[math.random(1, #turret_types)]
+    local turret_type = turret_types[rng(1, #turret_types)]
 
     -- Railgun has 8 orientations
     local eight_directional_orients = { defines.direction.east, defines.direction.northeast, defines.direction.north, defines.direction.northwest,
@@ -616,15 +626,15 @@ local function place_turrets(data_collector_pos, type)
     local four_directional_orients = { defines.direction.east, defines.direction.north, defines.direction.west, defines.direction.south }
 
     -- Place a random number of turrets around the data-collector
-    for i = 1, math.random(1, 10) do
+    for i = 1, rng(1, 10) do
         local turret_pos = game.surfaces["castra"].find_non_colliding_position(get_enemy_variant(turret_type),
-            { data_collector_pos.x + math.random(-8, 8), data_collector_pos.y + math.random(-8, 8) }, 8, 0.5, true)
+            { data_collector_pos.x + rng(-8, 8), data_collector_pos.y + rng(-8, 8) }, 8, 0.5, true)
         if turret_pos then
             local orientation = nil
             if turret_type == "railgun-turret" then
-                orientation = eight_directional_orients[math.random(1, #eight_directional_orients)]
-            elseif turret_type == "flamethrower-turret" or turret_type == "vtk-cannon-turret" or turret_type == "vtk-cannon-turret-heavy" then
-                orientation = four_directional_orients[math.random(1, #four_directional_orients)]
+                orientation = eight_directional_orients[rng(1, #eight_directional_orients)]
+            elseif turret_type == "flamethrower-turret" or turret_type == "vtk-cannon-turret-heavy" then
+                orientation = four_directional_orients[rng(1, #four_directional_orients)]
             end
 
             local turret = game.surfaces["castra"].create_entity { name = get_enemy_variant(turret_type), position = turret_pos, force = game.forces["enemy"], direction = orientation, quality = select_random_quality(), raise_built = true }
@@ -663,10 +673,12 @@ local function place_land_mines(data_collector_pos)
     local surface = game.surfaces["castra"]
     local enemy_force = game.forces["enemy"]
 
+	local rng = game.create_random_generator(game.tick + enemy_force.evolution_factor * 7777)
+
     -- Place a ~20 land mines around the data collector within a range of 20
-    for i = 1, math.random(10, 30) do
+    for i = 1, rng(10, 30) do
         local land_mine_pos = surface.find_non_colliding_position("land-mine",
-            { data_collector_pos.x + math.random(-20, 20), data_collector_pos.y + math.random(-20, 20) }, 8, 0.5, true)
+            { data_collector_pos.x + rng(-20, 20), data_collector_pos.y + rng(-20, 20) }, 8, 0.5, true)
         if land_mine_pos then
             surface.create_entity { name = "land-mine", position = land_mine_pos, force = enemy_force, quality = select_random_quality(), raise_built = true }
         end
@@ -680,10 +692,11 @@ local function create_enemy_base(chunk_area)
     local surface = game.surfaces["castra"]
     local enemy_force = game.forces["enemy"]
 
+	local rng = game.create_random_generator(game.tick + enemy_force.evolution_factor * 5765)
 
     -- Find a random valid position in the chunk
     local dataPos = surface.find_non_colliding_position("data-collector",
-        { math.random(chunk_area.left_top.x, chunk_area.right_bottom.x), math.random(chunk_area.left_top.y,
+        { rng(chunk_area.left_top.x, chunk_area.right_bottom.x), rng(chunk_area.left_top.y,
             chunk_area.right_bottom.y) }, 16, 0.5, true)
     if not dataPos then
         return
@@ -694,7 +707,7 @@ local function create_enemy_base(chunk_area)
     local powered_entities = {}
 
     -- Place turrets
-    if math.random() < 0.95 then
+    if rng() < 0.95 then
         local powered_turrets = place_turrets(dataPos, nil)
         if powered_turrets then
             for _, turret in pairs(powered_turrets) do
@@ -716,11 +729,11 @@ local function create_enemy_base(chunk_area)
         end
     end
 
-    if math.random() < 0.5 then
+    if rng() < 0.5 then
         build_enemy_wall(chunk_area, dataPos)
     end
 
-    if math.random() < 0.4 then
+    if rng() < 0.4 then
         place_land_mines(dataPos)
     end
 end
