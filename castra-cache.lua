@@ -308,8 +308,12 @@ local function build_pollution_cache()
     end
 end
 
-local function castra_rng(minV, maxV)
-	local rng = game.create_random_generator(game.tick % 2147483647)
+local function castra_rng(minV, maxV, seed)
+    local raw_seed = math.floor((game.tick + (seed or 0) * 7919) % 2147483647)
+    if raw_seed == 0 then 
+		raw_seed = 1 
+	end 
+	local rng = game.create_random_generator(raw_seed)
 	return rng(minV, maxV)
 end
 

@@ -23,12 +23,7 @@ script.on_event(defines.events.on_chunk_generated, function(event)
         end
 
         -- Select 3 random tiles and remove decorations around it in 16 radius
-        if #invalidTiles > 0 then
-			table.sort(invalidTiles, function(a,b)
-			  return a.position.x == b.position.x and a.position.y < b.position.y
-				  or a.position.x < b.position.x
-			end)		
-		
+        if #invalidTiles > 0 then		
             for i = 1, 3 do
                 local randomTile = invalidTiles[item_cache.castra_rng(1, #invalidTiles)]
                 surface.destroy_decoratives { area = { { x = randomTile.position.x - 16, y = randomTile.position.y - 16 },
@@ -122,39 +117,44 @@ local function on_tick_update_data_collectors(event)
         local surface = game.surfaces["castra"]
         -- Select random valid data collector
         local collector = nil
-        while not collector or not collector.valid do
-            collector = storage.castra.dataCollectors[item_cache.castra_rng(1, #storage.castra.dataCollectors)]
+		local attempts = 0
+		local total = #storage.castra.dataCollectors
+        while (not collector or not collector.valid) and attempts < total do
+            collector = storage.castra.dataCollectors[item_cache.castra_rng(1, total, attempts)]
+			attempts = attempts + 1
         end
 			
-		-- Update tanks
-        local tanks = surface.find_entities_filtered { name = {"castra-enemy-tank", "castra-enemy-car"}, area = { { collector.position.x - 100, collector.position.y - 100 }, { collector.position.x + 100, collector.position.y + 100 } } }
-        for _, tank in pairs(tanks) do
-            if tank.valid and tank.commandable and tank.commandable.command and tank.commandable.command.type == defines.command.wander then
-                -- Give attack command to either a military target or any player entity, or full random
-                if item_cache.castra_rng(0, 1) < 0.5 then
-                    give_tank_random_command(tank, 0.97)
-                elseif item_cache.castra_rng(0, 1) < 0.5 then
-                    give_tank_random_command(tank, 1)
-                else
-                    give_tank_random_command(tank, nil)
-                end
-            end
-        end
-		
-		-- Update RC Cars
-		local rcCars = surface.find_entities_filtered { name = "castra-enemy-explosive-rc", area = { { collector.position.x - 100, collector.position.y - 100 }, { collector.position.x + 100, collector.position.y + 100 } } }
-        for _, rcCar in pairs(rcCars) do
-            if rcCar.valid and rcCar.commandable and rcCar.commandable.command and rcCar.commandable.command.type == defines.command.wander then
-                -- Give attack command to either a military target or any player entity, or full random
-                if item_cache.castra_rng(0, 1) < 0.5 then
-                    mod_extensions.give_RC_Car_random_command(rcCar, 0.97)
-                elseif item_cache.castra_rng(0, 1) < 0.5 then
-                    mod_extensions.give_RC_Car_random_command(rcCar, 1)
-                else
-                    mod_extensions.give_RC_Car_random_command(rcCar, nil)
-                end
-            end
-        end		
+		if collector then
+			-- Update tanks
+			local tanks = surface.find_entities_filtered { name = {"castra-enemy-tank", "castra-enemy-car"}, area = { { collector.position.x - 100, collector.position.y - 100 }, { collector.position.x + 100, collector.position.y + 100 } } }
+			for _, tank in pairs(tanks) do
+				if tank.valid and tank.commandable and tank.commandable.command and tank.commandable.command.type == defines.command.wander then
+					-- Give attack command to either a military target or any player entity, or full random
+					if item_cache.castra_rng(0, 1) < 0.5 then
+						give_tank_random_command(tank, 0.97)
+					elseif item_cache.castra_rng(0, 1) < 0.5 then
+						give_tank_random_command(tank, 1)
+					else
+						give_tank_random_command(tank, nil)
+					end
+				end
+			end
+			
+			-- Update RC Cars
+			local rcCars = surface.find_entities_filtered { name = "castra-enemy-explosive-rc", area = { { collector.position.x - 100, collector.position.y - 100 }, { collector.position.x + 100, collector.position.y + 100 } } }
+			for _, rcCar in pairs(rcCars) do
+				if rcCar.valid and rcCar.commandable and rcCar.commandable.command and rcCar.commandable.command.type == defines.command.wander then
+					-- Give attack command to either a military target or any player entity, or full random
+					if item_cache.castra_rng(0, 1) < 0.5 then
+						mod_extensions.give_RC_Car_random_command(rcCar, 0.97)
+					elseif item_cache.castra_rng(0, 1) < 0.5 then
+						mod_extensions.give_RC_Car_random_command(rcCar, 1)
+					else
+						mod_extensions.give_RC_Car_random_command(rcCar, nil)
+					end
+				end
+			end		
+		end
 		
     end
 end
