@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.5.12
+Date: 2025-09-07
+  Bugfixes:
+    - Added a safeguard to the RNG module to prevent it from generating seeds of zero, leading to infinite loops
+    - Added a safeguard to the data collector update logic to prevent infinite loops when the collector object would become invalid
+    - Removed an unnecessary table sort command that would cause crashing when too few objects were selected
+---------------------------------------------------------------------------------------------------
 Version: 0.5.11
 Date: 2025-09-06
   Bugfixes:

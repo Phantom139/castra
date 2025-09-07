@@ -308,6 +308,8 @@ local function build_enemy_wall(chunk_area, pos)
     local expandedHull = expandConvexHull(restoredHull, 2)
 
     local quality = select_random_quality()
+	
+	local seedExtra = ((chunk_area.left_top.x * 4096) + (chunk_area.left_top.y)) % 2147483647
 
     -- Create the walls along the expanded hull
     local emptyWallSpots = 0
@@ -317,7 +319,7 @@ local function build_enemy_wall(chunk_area, pos)
         local wallPoints = plotLine(p1.x, p1.y, p2.x, p2.y)
         for _, point in pairs(wallPoints) do
             -- Randomly set some wall spots to be empty
-            if item_cache.castra_rng(0, 1) < 0.1 then
+            if item_cache.castra_rng(0, 1, seedExtra) < 0.1 then
                 emptyWallSpots = emptyWallSpots + 3
             end
             if emptyWallSpots > 0 then
@@ -345,8 +347,10 @@ local function place_roboport(chunk_area, data_collector_pos)
     local enemy_force = game.forces["enemy"]
     local otherRoboports = surface.find_entities_filtered { name = "roboport", force = enemy_force, area = { { chunk_area.left_top.x - 45, chunk_area.left_top.y - 45 }, { chunk_area.right_bottom.x + 45, chunk_area.right_bottom.y + 45 } } }
 
+	local seedExtra = ((chunk_area.left_top.x) + (chunk_area.left_top.y * 4096)) % 2147483647
+
     -- Create a roboport if there is another roboport nearby or a 50% chance
-    if #otherRoboports > 0 or item_cache.castra_rng(0, 1) < 0.8 then
+    if #otherRoboports > 0 or item_cache.castra_rng(0, 1, seedExtra) < 0.8 then
         local pos = surface.find_non_colliding_position("roboport", data_collector_pos, 16, 0.5, true)
         if pos then
             local roboport = surface.create_entity { name = "roboport", position = pos, force = enemy_force, quality = select_random_quality(), raise_built = true }
@@ -383,10 +387,12 @@ local function place_solar(chunk_area)
     if not power_type then
         return
     end
+	
+	local seedExtra = ((chunk_area.left_top.x * 4096) + (chunk_area.left_top.y * 4096)) % 2147483647
 
     local pole_pos = surface.find_non_colliding_position(power_type,
-        { item_cache.castra_rng(chunk_area.left_top.x, chunk_area.right_bottom.x), item_cache.castra_rng(chunk_area.left_top.y,
-            chunk_area.right_bottom.y) }, 8, 0.5, true)
+        { item_cache.castra_rng(chunk_area.left_top.x, chunk_area.right_bottom.x, seedExtra), item_cache.castra_rng(chunk_area.left_top.y,
+            chunk_area.right_bottom.y, seedExtra) }, 8, 0.5, true)
 
     if pole_pos then
         local power_pole = surface.create_entity { name = power_type, position = pole_pos, force = enemy_force, quality = select_random_quality(), raise_built = true }
@@ -400,10 +406,10 @@ local function place_solar(chunk_area)
         local quality = select_random_quality()
 
         local created = false
-        for i = 1, item_cache.castra_rng(2, 5) do
+        for i = 1, item_cache.castra_rng(2, 5, seedExtra) do
             local solar_panel_pos = surface.find_non_colliding_position("solar-panel",
-                { pole_pos.x + item_cache.castra_rng(-pole_range - 2, pole_range + 2), pole_pos.y +
-                item_cache.castra_rng(-pole_range - 2, pole_range + 2) }, 8, 0.5, true)
+                { pole_pos.x + item_cache.castra_rng(-pole_range - 2, pole_range + 2, seedExtra), pole_pos.y +
+                item_cache.castra_rng(-pole_range - 2, pole_range + 2, seedExtra) }, 8, 0.5, true)
             if solar_panel_pos then
                 local solar = surface.create_entity { name = "solar-panel", position = solar_panel_pos, force = enemy_force, quality = quality, raise_built = true }
                 if solar then
@@ -604,9 +610,11 @@ local function place_turrets(data_collector_pos, type)
     end
 
     local powered_turrets = {}
+	
+	local seedExtra = ((data_collector_pos.x * 4096) + (data_collector_pos.y)) % 2147483647
 
     -- Select a random turret type
-    local turret_type = turret_types[item_cache.castra_rng(1, #turret_types)]
+    local turret_type = turret_types[item_cache.castra_rng(1, #turret_types, seedExtra)]
 
     -- Railgun has 8 orientations
     local eight_directional_orients = { defines.direction.east, defines.direction.northeast, defines.direction.north, defines.direction.northwest,
@@ -616,15 +624,15 @@ local function place_turrets(data_collector_pos, type)
     local four_directional_orients = { defines.direction.east, defines.direction.north, defines.direction.west, defines.direction.south }
 
     -- Place a random number of turrets around the data-collector
-    for i = 1, item_cache.castra_rng(1, 10) do
+    for i = 1, item_cache.castra_rng(1, 10, seedExtra) do
         local turret_pos = game.surfaces["castra"].find_non_colliding_position(get_enemy_variant(turret_type),
-            { data_collector_pos.x + item_cache.castra_rng(-8, 8), data_collector_pos.y + item_cache.castra_rng(-8, 8) }, 8, 0.5, true)
+            { data_collector_pos.x + item_cache.castra_rng(-8, 8, seedExtra), data_collector_pos.y + item_cache.castra_rng(-8, 8, seedExtra) }, 8, 0.5, true)
         if turret_pos then
             local orientation = nil
             if turret_type == "railgun-turret" then
-                orientation = eight_directional_orients[item_cache.castra_rng(1, #eight_directional_orients)]
+                orientation = eight_directional_orients[item_cache.castra_rng(1, #eight_directional_orients, seedExtra)]
             elseif turret_type == "flamethrower-turret" or turret_type == "vtk-cannon-turret-heavy" then
-                orientation = four_directional_orients[item_cache.castra_rng(1, #four_directional_orients)]
+                orientation = four_directional_orients[item_cache.castra_rng(1, #four_directional_orients, seedExtra)]
             end
 
             local turret = game.surfaces["castra"].create_entity { name = get_enemy_variant(turret_type), position = turret_pos, force = game.forces["enemy"], direction = orientation, quality = select_random_quality(), raise_built = true }
@@ -662,11 +670,13 @@ local function place_land_mines(data_collector_pos)
 
     local surface = game.surfaces["castra"]
     local enemy_force = game.forces["enemy"]
+	
+	local seedExtra = ((data_collector_pos.x) + (data_collector_pos.y * 4096)) % 2147483647
 
     -- Place a ~20 land mines around the data collector within a range of 20
-    for i = 1, item_cache.castra_rng(10, 30) do
+    for i = 1, item_cache.castra_rng(10, 30, seedExtra) do
         local land_mine_pos = surface.find_non_colliding_position("land-mine",
-            { data_collector_pos.x + item_cache.castra_rng(-20, 20), data_collector_pos.y + item_cache.castra_rng(-20, 20) }, 8, 0.5, true)
+            { data_collector_pos.x + item_cache.castra_rng(-20, 20, seedExtra), data_collector_pos.y + item_cache.castra_rng(-20, 20, seedExtra) }, 8, 0.5, true)
         if land_mine_pos then
             surface.create_entity { name = "land-mine", position = land_mine_pos, force = enemy_force, quality = select_random_quality(), raise_built = true }
         end
