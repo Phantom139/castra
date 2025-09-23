@@ -146,7 +146,7 @@ data:extend({
         name = "data-collector",
         icon = "__castra__/graphics/fusion-reactor/fusion-reactor-icon.png",
         flags = { "placeable-player", "placeable-enemy", "not-repairable" },
-        max_health = 12000,
+        max_health = 7500,
         order = "f-g-b",
         subgroup = "enemies",
         resistances =
@@ -159,12 +159,12 @@ data:extend({
             {
                 type = "explosion",
                 decrease = 10,
-                percent = 95
+                percent = 40
             },
             {
                 type = "laser",
                 decrease = 20,
-                percent = 90
+                percent = 65
             },
             {
                 type = "poison",
@@ -429,7 +429,7 @@ data:extend({
             }
         },
         flags = { "placeable-neutral", "placeable-player", "player-creation", "not-repairable", "not-deconstructable" },
-        max_health = 12000,
+        max_health = 7500,
         create_ghost_on_death = false,
         show_recipe_icon = false,
         production_health_effect =
@@ -456,12 +456,12 @@ data:extend({
             {
                 type = "explosion",
                 decrease = 10,
-                percent = 95
+                percent = 40
             },
             {
                 type = "laser",
                 decrease = 20,
-                percent = 90
+                percent = 65
             },
             {
                 type = "poison",
@@ -602,7 +602,7 @@ car.resistances = {
 }
 -- Additiontal parameters
 car.absorptions_to_join_attack = { data = 250 }
-car.movement_speed = 0.25
+car.movement_speed = 0.28
 car.attack_parameters = {
     type = "projectile",
     range = 17,

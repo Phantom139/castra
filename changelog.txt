@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.5.13
+Date: 2025-09-22
+  Balancing:
+    - Reduced the damage resistance on enemy data collectors (Explosion: 40%, was 95%, Laser: 65%, was 90%)
+    - Reduced the maximum health of enemy data collectors to 7500 (Was 12000)
+    - Increased the speed of the enemy cars (0.28 was 0.25)
+---------------------------------------------------------------------------------------------------
 Version: 0.5.12
 Date: 2025-09-07
   Bugfixes:
@@ -48,7 +55,7 @@ Date: 2025-05-11
     - Increased the required data absorption for RC cars from 500 to 1500
     - Reduced the range of the RC car's explosion from 15 to 10 (Does not affect the player's version, only the Castra enemy)
     - Slightly increased the speed of the RC car to compensate
-    - RC Cars will now equally weigh targeting nearby military targets and the nearest player is can hunt down
+    - RC Cars will now equally weigh targeting nearby military targets and the nearest player it can hunt down
 ---------------------------------------------------------------------------------------------------
 Version: 0.5.7
 Date: 2025-05-10
