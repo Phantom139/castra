@@ -57,6 +57,11 @@ if mods["PLORD_Prometheus_GrenadeLauncher"] and settings.startup["castra-edits-e
 end
 
 if mods["vtk-cannon-turret"] and settings.startup["castra-edits-extend-Cannons"].value then
+	data:extend({
+		mod_functions.create_enemy_version(data.raw["ammo-turret"]["vtk-cannon-turret"]),
+		mod_functions.create_enemy_version(data.raw["ammo-turret"]["vtk-cannon-turret-heavy"]),
+	})
+
 	-- Create custom clones of the ammo types, otherwise it will one-shot anything due to how damage scales.
 	local cannon_proj = table.deepcopy(data.raw["projectile"]["cannon-projectile"])
 	cannon_proj.name = "castra-enemy-cannon-projectile"
@@ -325,8 +330,4 @@ if mods["vtk-cannon-turret"] and settings.startup["castra-edits-extend-Cannons"]
 		})		
 	end
 
-	data:extend({
-		mod_functions.create_enemy_version(data.raw["ammo-turret"]["vtk-cannon-turret"]),
-		mod_functions.create_enemy_version(data.raw["ammo-turret"]["vtk-cannon-turret-heavy"]),
-	})
 end

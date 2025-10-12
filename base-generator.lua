@@ -278,6 +278,8 @@ local function build_enemy_wall(chunk_area, pos)
 
     -- Find and enemy force entities in a 15x15 range
     local surface = game.surfaces["castra"]
+	local sSeed = surface.map_gen_settings.seed
+	
     local enemy_force = game.forces["enemy"]
     local entities = surface.find_entities_filtered { force = enemy_force, area = { { chunk_area.left_top.x - 15, chunk_area.left_top.y - 15 }, { chunk_area.right_bottom.x + 15, chunk_area.right_bottom.y + 15 } } }
     -- Remove walls from entities list
@@ -309,7 +311,8 @@ local function build_enemy_wall(chunk_area, pos)
 
     local quality = select_random_quality()
 	
-	local seedExtra = ((chunk_area.left_top.x * 4096) + (chunk_area.left_top.y)) % 2147483647
+	--local seedExtra = ((chunk_area.left_top.x * 4096) + (chunk_area.left_top.y)) % 2147483647
+	local seedExtra = item_cache.hash_coords(chunk_area.left_top.x / 32, chunk_area.left_top.y / 32, sSeed, 1024)
 
     -- Create the walls along the expanded hull
     local emptyWallSpots = 0
@@ -347,7 +350,9 @@ local function place_roboport(chunk_area, data_collector_pos)
     local enemy_force = game.forces["enemy"]
     local otherRoboports = surface.find_entities_filtered { name = "roboport", force = enemy_force, area = { { chunk_area.left_top.x - 45, chunk_area.left_top.y - 45 }, { chunk_area.right_bottom.x + 45, chunk_area.right_bottom.y + 45 } } }
 
-	local seedExtra = ((chunk_area.left_top.x) + (chunk_area.left_top.y * 4096)) % 2147483647
+	--local seedExtra = ((chunk_area.left_top.x) + (chunk_area.left_top.y * 4096)) % 2147483647
+	local sSeed = surface.map_gen_settings.seed
+	local seedExtra = item_cache.hash_coords(data_collector_pos.x / 32, data_collector_pos.y / 32, sSeed, 2047)
 
     -- Create a roboport if there is another roboport nearby or a 50% chance
     if #otherRoboports > 0 or item_cache.castra_rng(0, 1, seedExtra) < 0.8 then
@@ -388,7 +393,9 @@ local function place_solar(chunk_area)
         return
     end
 	
-	local seedExtra = ((chunk_area.left_top.x * 4096) + (chunk_area.left_top.y * 4096)) % 2147483647
+	--local seedExtra = ((chunk_area.left_top.x * 4096) + (chunk_area.left_top.y * 4096)) % 2147483647
+	local sSeed = surface.map_gen_settings.seed
+	local seedExtra = item_cache.hash_coords(chunk_area.left_top.x * 4096, chunk_area.left_top.y * 4096, sSeed, 123)
 
     local pole_pos = surface.find_non_colliding_position(power_type,
         { item_cache.castra_rng(chunk_area.left_top.x, chunk_area.right_bottom.x, seedExtra), item_cache.castra_rng(chunk_area.left_top.y,
@@ -611,7 +618,10 @@ local function place_turrets(data_collector_pos, type)
 
     local powered_turrets = {}
 	
-	local seedExtra = ((data_collector_pos.x * 4096) + (data_collector_pos.y)) % 2147483647
+	-- local seedExtra = ((data_collector_pos.x * 4096) + (data_collector_pos.y)) % 2147483647
+	local surface = game.surfaces["castra"]
+	local sSeed = surface.map_gen_settings.seed
+	local seedExtra = item_cache.hash_coords(math.floor(data_collector_pos.x), math.floor(data_collector_pos.y), sSeed, 1337)
 
     -- Select a random turret type
     local turret_type = turret_types[item_cache.castra_rng(1, #turret_types, seedExtra)]
@@ -671,7 +681,9 @@ local function place_land_mines(data_collector_pos)
     local surface = game.surfaces["castra"]
     local enemy_force = game.forces["enemy"]
 	
-	local seedExtra = ((data_collector_pos.x) + (data_collector_pos.y * 4096)) % 2147483647
+	--local seedExtra = ((data_collector_pos.x) + (data_collector_pos.y * 4096)) % 2147483647
+	local sSeed = surface.map_gen_settings.seed
+	local seedExtra = item_cache.hash_coords(math.floor(data_collector_pos.x), math.floor(data_collector_pos.y), sSeed, 4096)
 
     -- Place a ~20 land mines around the data collector within a range of 20
     for i = 1, item_cache.castra_rng(10, 30, seedExtra) do
@@ -689,6 +701,13 @@ local function create_enemy_base(chunk_area)
     -- Check if there are any enemy force roboports in 45x45 range
     local surface = game.surfaces["castra"]
     local enemy_force = game.forces["enemy"]
+	
+	-- Create a deterministic but unique RNG seed for the chunk
+    local chunk_x = math.floor(chunk_area.left_top.x / 32)
+    local chunk_y = math.floor(chunk_area.left_top.y / 32)	
+	
+	local sSeed = surface.map_gen_settings.seed
+	local seedExtra = item_cache.hash_coords(chunk_x, chunk_y, sSeed, 69)	
 
     -- Find a random valid position in the chunk
     local dataPos = surface.find_non_colliding_position("data-collector",

@@ -6,30 +6,46 @@ local mod_extensions = require("mod-extensions")
 -- Event: on_chunk_generated
 script.on_event(defines.events.on_chunk_generated, function(event)
     local surface = event.surface
-    if surface.name == "castra" then
-        -- Create an enemy base if there are any ores in the chunk
-        local resources = surface.find_entities_filtered { type = "resource", area = event.area }
-        local distance_from_center = math.sqrt(event.area.left_top.x ^ 2 + event.area.left_top.y ^ 2)
-		
-		local roll = item_cache.castra_rng(0, 1)
-        if (#resources > 0 or roll < 0.04 * math.log(distance_from_center / 40, 5)) and distance_from_center > 200 then
-            base_gen.create_enemy_base(event.area)
-        end
+    if surface.name ~= "castra" then return end
 
-        -- Remove decorations on light-oil-ocean-deep tiles and nuclear-ground
-        local invalidTiles = surface.find_tiles_filtered { area = event.area, name = "light-oil-ocean-deep" }
-        for _, tile in pairs(surface.find_tiles_filtered { area = event.area, name = "nuclear-ground" }) do
-            table.insert(invalidTiles, tile)
-        end
+    local area = event.area
+    local resources = surface.find_entities_filtered { type = "resource", area = area }
 
-        -- Select 3 random tiles and remove decorations around it in 16 radius
-        if #invalidTiles > 0 then		
-            for i = 1, 3 do
-                local randomTile = invalidTiles[item_cache.castra_rng(1, #invalidTiles)]
-                surface.destroy_decoratives { area = { { x = randomTile.position.x - 16, y = randomTile.position.y - 16 },
-                    { x = randomTile.position.x + 16, y = randomTile.position.y + 16 } } }
-            end
-        end
+    -- Use integer chunk coordinates for stability
+    local cx = math.floor(area.left_top.x / 32)
+    local cy = math.floor(area.left_top.y / 32)
+    local dist = math.sqrt(cx * cx + cy * cy) * 32  -- approximate distance in tiles
+
+    -- Clamp distance and compute safe logarithmic chance
+    local normalized = math.max(dist / 40, 1)  -- avoid log(0)
+    local log_term = 0.04 * math.log(normalized, 5)
+
+    -- Cap the probability (blocks repeating base pattern)
+    local chance = math.min(math.max(log_term, 0), 0.9)
+
+    local sSeed = surface.map_gen_settings.seed or 0
+    local roll = item_cache.castra_rng(0, 1, sSeed)
+
+    if (#resources > 0 or roll < chance) and dist > 200 then
+        base_gen.create_enemy_base(area)
+    end
+
+    -- Remove decorations on invalid tiles in a 16 tile radius
+    local invalidTiles = surface.find_tiles_filtered { area = area, name = "light-oil-ocean-deep" }
+    for _, tile in pairs(surface.find_tiles_filtered { area = area, name = "nuclear-ground" }) do
+        table.insert(invalidTiles, tile)
+    end
+
+    local num_to_clear = math.min(3, #invalidTiles)
+    for i = 1, num_to_clear do
+        local index = item_cache.castra_rng(1, #invalidTiles, cx, cy, surface, i * 777)
+        local randomTile = invalidTiles[index]
+        surface.destroy_decoratives {
+            area = {
+                { x = randomTile.position.x - 16, y = randomTile.position.y - 16 },
+                { x = randomTile.position.x + 16, y = randomTile.position.y + 16 }
+            }
+        }
     end
 end)
 
