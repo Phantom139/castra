@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.5.14
+Date: 2025-10-11
+  Changes:
+    - Improved RNG generation algorithms of the mod
+  Bugfixes:
+    - Addressed the issue where enemy bases would generate in an infinitely repeating pattern after traveling a set distance from the map center
+---------------------------------------------------------------------------------------------------
 Version: 0.5.13
 Date: 2025-09-22
   Balancing:

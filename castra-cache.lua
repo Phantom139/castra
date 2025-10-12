@@ -308,13 +308,22 @@ local function build_pollution_cache()
     end
 end
 
+local function hash_coords(x, y, sSeed, salt)
+    local n = (x * 181) + (y * 359) + ((sSeed or 0) * 6) + (salt or 0)
+
+    n = n % 2147483647 
+    if n == 0 then n = 1 end
+
+    return n
+end
+
 local function castra_rng(minV, maxV, seed)
-    local raw_seed = math.floor((game.tick + (seed or 0) * 7919) % 2147483647)
+    local raw_seed = math.floor((game.tick + (seed or 0) * 69) % 2147483647)
     if raw_seed == 0 then 
-		raw_seed = 1 
+		raw_seed = 420
 	end 
 	local rng = game.create_random_generator(raw_seed)
-	return rng(minV, maxV)
+	return rng(minV or 0, maxV or 1)
 end
 
 return {
@@ -323,5 +332,6 @@ return {
     build_cache_if_needed = build_cache_if_needed,
     castra_exists = castra_exists,
     build_pollution_cache = build_pollution_cache,
+	hash_coords = hash_coords,
 	castra_rng = castra_rng,
 }
