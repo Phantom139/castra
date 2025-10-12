@@ -641,7 +641,7 @@ local function place_turrets(data_collector_pos, type)
             local orientation = nil
             if turret_type == "railgun-turret" then
                 orientation = eight_directional_orients[item_cache.castra_rng(1, #eight_directional_orients, seedExtra)]
-            elseif turret_type == "flamethrower-turret" or turret_type == "vtk-cannon-turret-heavy" then
+            elseif turret_type == "flamethrower-turret" or turret_type == "vtk-cannon-turret" or turret_type == "vtk-cannon-turret-heavy" then
                 orientation = four_directional_orients[item_cache.castra_rng(1, #four_directional_orients, seedExtra)]
             end
 

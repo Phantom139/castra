@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.5.15
+Date: 2025-10-12
+  Bugfixes:
+    - Added a safeguard to the RNG module when not passing minimum / maximum value arguments to default to floating point 0.0 - 1.0 values per standard RNG implementation
+    - This should address some of the fringe cases where large quantities of enemy bases would generate on top of one another
+---------------------------------------------------------------------------------------------------
 Version: 0.5.14
 Date: 2025-10-11
   Changes:
