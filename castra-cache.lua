@@ -322,8 +322,16 @@ local function castra_rng(minV, maxV, seed)
     if raw_seed == 0 then 
 		raw_seed = 420
 	end 
+	
 	local rng = game.create_random_generator(raw_seed)
-	return rng(minV or 0, maxV or 1)
+    -- Burn a few numbers to decorrelate identical seeds
+    for i = 1, (raw_seed % 5) + 1 do rng() end
+
+    if minV == 0 and maxV == 1 then
+        return rng()  
+    else
+        return rng(minV, maxV)
+    end
 end
 
 return {

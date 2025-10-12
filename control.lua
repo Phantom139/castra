@@ -17,16 +17,14 @@ script.on_event(defines.events.on_chunk_generated, function(event)
     local dist = math.sqrt(cx * cx + cy * cy) * 32  -- approximate distance in tiles
 
     -- Clamp distance and compute safe logarithmic chance
-    local normalized = math.max(dist / 40, 1)  -- avoid log(0)
-    local log_term = 0.04 * math.log(normalized, 5)
+	local logTerm = math.max(0, math.log(dist / 40, 5))
+	local chance = math.min(1, 0.04 * logTerm)
 
-    -- Cap the probability (blocks repeating base pattern)
-    local chance = math.min(math.max(log_term, 0), 0.9)
-
-    local sSeed = surface.map_gen_settings.seed or 0
+    local sSeed = surface.map_gen_settings.seed or 420
     local roll = item_cache.castra_rng(0, 1, sSeed)
 
     if (#resources > 0 or roll < chance) and dist > 200 then
+		-- game.print(string.format("base_gen() Create (X: %d, Y: %d) [RNG SEED: %d] [Dist: %.3f] - num Res: %d; Roll: %.3f; Chance: %.3f", cx, cy, sSeed, dist, #resources, roll, chance))
         base_gen.create_enemy_base(area)
     end
 
