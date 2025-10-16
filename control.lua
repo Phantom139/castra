@@ -24,7 +24,6 @@ script.on_event(defines.events.on_chunk_generated, function(event)
     local roll = item_cache.castra_rng(0, 1, sSeed)
 
     if (#resources > 0 or roll < chance) and dist > 200 then
-		-- game.print(string.format("base_gen() Create (X: %d, Y: %d) [RNG SEED: %d] [Dist: %.3f] - num Res: %d; Roll: %.3f; Chance: %.3f", cx, cy, sSeed, dist, #resources, roll, chance))
         base_gen.create_enemy_base(area)
     end
 
@@ -557,9 +556,9 @@ end
 
 local function get_combat_roboport_range(quality)
     if not quality then
-        return 20
+        return 35
     end
-    return 20 + quality.level
+    return 35 + (2 * quality.level)
 end
 
 -- Every 5 seconds, for every combat roboport, check if there are any enemies nearby and spawn 5 combat robots
@@ -1053,11 +1052,11 @@ script.on_event(defines.events.on_selected_entity_changed, function(event)
 
     if entity.name == "combat-roboport" and entity.force == player.force then
         local range = get_combat_roboport_range(entity.quality)
-        local color = { r = 1, g = 0, b = 0, a = 0.1 }
+        local color = { r = 0.5, g = 0, b = 0, a = 0.05 }
         draw_rect_range(player, entity.position, entity.surface, range, color)
     elseif entity.name == "jammer-radar" and entity.force == player.force and entity.surface.name == "castra" then
         local range = get_jamming_range(entity.quality)
-        local color = { r = 0.5, g = 0, b = 0.5, a = 0.7 }
+        local color = { r = 0.5, g = 0, b = 0.5, a = 0.05 }
         draw_rect_range(player, entity.position, entity.surface, range, color)
     end
 end)

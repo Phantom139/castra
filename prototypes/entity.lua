@@ -146,7 +146,7 @@ data:extend({
         name = "data-collector",
         icon = "__castra__/graphics/fusion-reactor/fusion-reactor-icon.png",
         flags = { "placeable-player", "placeable-enemy", "not-repairable" },
-        max_health = 7500,
+        max_health = 4500,
         order = "f-g-b",
         subgroup = "enemies",
         resistances =
@@ -429,7 +429,7 @@ data:extend({
             }
         },
         flags = { "placeable-neutral", "placeable-player", "player-creation", "not-repairable", "not-deconstructable" },
-        max_health = 7500,
+        max_health = 4500,
         create_ghost_on_death = false,
         show_recipe_icon = false,
         production_health_effect =

@@ -61,10 +61,10 @@ data:extend(
       name = "hydrogen-sulfide-electrolysis",
       category = "chemistry-or-cryogenics",
       energy_required = 2,
-      ingredients = {{type="fluid", name="hydrogen-sulfide", amount=100}},
+      ingredients = {{type="fluid", name="hydrogen-sulfide", amount=10}},
       results = {
-        {type="fluid", name="water", amount=80},
-        {type="item", name="sulfur", amount=5}
+        {type="fluid", name="water", amount=20},
+        {type="item", name="sulfur", amount=2}
       },
       icons =
       {
@@ -161,7 +161,7 @@ data:extend(
       category = "chemistry",
       energy_required = 10,
       ingredients = {
-        {type="fluid", name="hydrogen-sulfide", amount=10},
+        {type="fluid", name="hydrogen-sulfide", amount=6},
         {type="item", name="sulfur", amount=1},
         {type="fluid", name="water", amount=5}
       },
@@ -303,7 +303,7 @@ data:extend(
       energy_required = 2,
       ingredients = {
         {type="item", name="carbon", amount=1},
-        {type="fluid", name="hydrogen-sulfide", amount=10},
+        {type="fluid", name="hydrogen-sulfide", amount=6},
         {type="fluid", name="petroleum-gas", amount=30}
       },
       results = {{type="item", name="plastic-bar", amount=3}},

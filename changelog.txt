@@ -1,4 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.5.16
+Date: 2025-10-16
+  Changes:
+    - Updated the UI overlay of the combat roboport and jammer radars to have a much lower opacity, more closely matching standard Factorio entities
+  Balancing:
+    - Reduced the maximum health of enemy data collectors to 4500 (Was 7500)
+    - Upped the base range of the combat roboport (20 > 35) and the quality range bonus (1 > 2)
+    - Reduced the Hydrogen Sulfide requirements in all recipes by various amounts to more closely match resource drains in other nodes on Castra
+  Bugfixes:
+    - Forgot to remove a debug print statement (oops!)
+---------------------------------------------------------------------------------------------------
 Version: 0.5.15
 Date: 2025-10-12
   Bugfixes:
