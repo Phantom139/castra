@@ -369,46 +369,47 @@ data:extend(
         time = 30
       }
     },
-    {
-      type = "technology",
-      name = "combat-roboport",
-      icon = "__castra__/graphics/technology/combat-roboport.png",
-      icon_size = 256,
-      prerequisites = { "battlefield-science-pack", "defender" },
-      effects =
-      {
-        {
-          type = "unlock-recipe",
-          recipe = "combat-roboport"
-        },
-        {
-          type = "unlock-recipe",
-          recipe = "defender-capsule-castra-data"
-        },
-        {
-          type = "unlock-recipe",
-          recipe = "distractor-capsule-castra-data"
-        },
-        {
-          type = "unlock-recipe",
-          recipe = "destroyer-capsule-castra-data"
-        }
-      },
-      unit =
-      {
-        count = 500,
-        ingredients =
-        {
-          { "automation-science-pack",  1 },
-          { "logistic-science-pack",    1 },
-          { "chemical-science-pack",    1 },
-          { "space-science-pack",       1 },
-          { "military-science-pack",    1 },
-          { "battlefield-science-pack", 1 }
-        },
-        time = 30
-      }
-    },
+    -- Phantom139: Removed
+	-- {
+    -- type = "technology",
+    --  name = "combat-roboport",
+    --  icon = "__castra__/graphics/technology/combat-roboport.png",
+    --  icon_size = 256,
+    --  prerequisites = { "battlefield-science-pack", "defender" },
+    --  effects =
+    --  {
+    --    {
+    --      type = "unlock-recipe",
+    --      recipe = "combat-roboport"
+    --    },
+    --    {
+    --      type = "unlock-recipe",
+    --      recipe = "defender-capsule-castra-data"
+    --    },
+    --    {
+    --      type = "unlock-recipe",
+    --      recipe = "distractor-capsule-castra-data"
+    --    },
+    --    {
+    --      type = "unlock-recipe",
+    --      recipe = "destroyer-capsule-castra-data"
+    --    }
+    --  },
+    --  unit =
+    --  {
+    --    count = 500,
+    --    ingredients =
+    --    {
+    --      { "automation-science-pack",  1 },
+    --      { "logistic-science-pack",    1 },
+    --      { "chemical-science-pack",    1 },
+    --      { "space-science-pack",       1 },
+    --      { "military-science-pack",    1 },
+    --      { "battlefield-science-pack", 1 }
+    --    },
+    --    time = 30
+    --  }
+    --},
     {
       type = "technology",
       name = "engine-productivity",

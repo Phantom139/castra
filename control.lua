@@ -3,6 +3,10 @@ local base_gen = require("base-generator")
 local base_upgrades = require("base-upgrades")
 local mod_extensions = require("mod-extensions")
 
+-- Phantom139: Added constants for easier tweaking
+local COMBAT_ROBOPORT_UPDATE_RATE = 300
+local COMBAT_ROBOPORT_PLAYER_SCAN_RADIUS = 64
+
 -- Event: on_chunk_generated
 script.on_event(defines.events.on_chunk_generated, function(event)
     local surface = event.surface
@@ -563,63 +567,71 @@ end
 
 -- Every 5 seconds, for every combat roboport, check if there are any enemies nearby and spawn 5 combat robots
 local function update_combat_roboports(event)
-    if event.tick % 300 == 274 then
-        storage.castra = storage.castra or {}
-        storage.castra.combat_roboports = storage.castra.combat_roboports or {}
+	-- Phantom139: This original function was highly unoptimized for lategame, I have rewritten the logic.
+	--  Instead of looping over all roboports, we now do a player scan for enemy roboports
+	--  As part of this update, I removed player combat roboports, in the future if they are brought back, the original roboport sweep logic can be used for those.
+	if event.tick % COMBAT_ROBOPORT_UPDATE_RATE ~=0 then return end
 
-        -- Loop through all combat roboports
-        for _, roboport in pairs(storage.castra.combat_roboports) do
-            if not roboport.valid then
-                goto continue
-            end
-            -- Get the opposite force
-            local enemy_force = roboport.force.name == "enemy" and game.forces["player"] or game.forces["enemy"]
+	local surface = game.surfaces["castra"]
+	if not surface then return end
+	
+	for _, player in pairs(game.connected_players) do
+		if player.surface == surface then
+			local roboports = surface.find_entities_filtered {
+				name = "combat-roboport",
+				force = game.forces["enemy"],
+				area = {
+                    {player.position.x - COMBAT_ROBOPORT_PLAYER_SCAN_RADIUS, player.position.y - COMBAT_ROBOPORT_PLAYER_SCAN_RADIUS},
+                    {player.position.x + COMBAT_ROBOPORT_PLAYER_SCAN_RADIUS, player.position.y + COMBAT_ROBOPORT_PLAYER_SCAN_RADIUS}				
+				}
+			}
+			for __, roboport in pairs(roboports) do
+				if roboport.valid then
+					local enemies = roboport.surface.find_entities_filtered { 
+						force = roboport.force, 
+						area = { 
+								{ roboport.position.x - COMBAT_ROBOPORT_PLAYER_SCAN_RADIUS, roboport.position.y - COMBAT_ROBOPORT_PLAYER_SCAN_RADIUS }, 
+								{ roboport.position.x + COMBAT_ROBOPORT_PLAYER_SCAN_RADIUS, roboport.position.y + COMBAT_ROBOPORT_PLAYER_SCAN_RADIUS } }, 
+						is_military_target = true }
+					-- Check inventory if it's a valid combat robot
+					local combat_robot = nil
+					local robot_quality = nil
+					local inventory = roboport.get_inventory(defines.inventory.chest)
+					if inventory and inventory[1] and inventory[1].valid and inventory[1].valid_for_read and inventory[1].name and
+						(inventory[1].name == "destroyer-capsule" or
+							inventory[1].name == "distractor-capsule" or
+							inventory[1].name == "defender-capsule") then
+						-- Remove the capsule part of the name
+						combat_robot = string.gsub(inventory[1].name, "-capsule", "")
+						robot_quality = inventory[1].quality
+					end	
+					if combat_robot then
+						-- Spawn 5 + quality combat robots
+						for i = 1, 5 + roboport.quality.level do
+							-- Randomize the position
+							local pos = {
+								x = roboport.position.x +
+									item_cache.castra_rng(-2, 2),
+								y = roboport.position.y +
+									item_cache.castra_rng(-2, 2)
+							}
+							local robot = roboport.surface.create_entity { name = combat_robot, position = pos, force = roboport.force, raise_built = true, quality = robot_quality }
 
-            -- Find any enemies within range
-            local range = get_combat_roboport_range(roboport.quality)
-            local enemies = roboport.surface.find_entities_filtered { force = enemy_force, area = { { roboport.position.x - range, roboport.position.y - range }, { roboport.position.x + range, roboport.position.y + range } }, is_military_target = true }
-            if #enemies > 0 then
-                -- Check inventory if it's a valid combat robot
-                local combat_robot = nil
-                local robot_quality = nil
-                local inventory = roboport.get_inventory(defines.inventory.chest)
-                if inventory and inventory[1] and inventory[1].valid and inventory[1].valid_for_read and inventory[1].name and
-                    (inventory[1].name == "destroyer-capsule" or
-                        inventory[1].name == "distractor-capsule" or
-                        inventory[1].name == "defender-capsule") then
-                    -- Remove the capsule part of the name
-                    combat_robot = string.gsub(inventory[1].name, "-capsule", "")
-                    robot_quality = inventory[1].quality
-                end
-
-                if combat_robot then
-                    -- Spawn 5 + quality combat robots
-                    for i = 1, 5 + roboport.quality.level do
-                -- Randomize the position
-                        local pos = {
-                            x = roboport.position.x +
-                                item_cache.castra_rng(-2, 2),
-                            y = roboport.position.y +
-                                item_cache.castra_rng(-2, 2)
-                        }
-                        local robot = roboport.surface.create_entity { name = combat_robot, position = pos, force = roboport.force, raise_built = true, quality = robot_quality }
-
-                        -- Pick a random enemy to be their "owner"
-                        local enemy = enemies[item_cache.castra_rng(1, #enemies)]
-                        if enemy.valid then
-                            robot.combat_robot_owner = enemy
-                        else
-                            robot.combat_robot_owner = roboport
-                        end
-                    end
-                    -- Remove 1 combat robot from the inventory
-                    inventory[1].count = inventory[1].count - 1
-                end
-            end
-
-            ::continue::
-        end
-    end
+							-- Pick a random enemy to be their "owner"
+							local enemy = enemies[item_cache.castra_rng(1, #enemies)]
+							if enemy.valid then
+								robot.combat_robot_owner = enemy
+							else
+								robot.combat_robot_owner = roboport
+							end
+						end
+						-- Remove 1 combat robot from the inventory
+						inventory[1].count = inventory[1].count - 1
+					end					
+				end				
+			end
+		end
+	end
 end
 
 local function add_jammer_to_data_collector(data_collector, jammer)
@@ -660,7 +672,7 @@ local function built_event(event)
         return
     end
     if event.entity.name == "combat-roboport" then
-        storage.castra.combat_roboports = storage.castra.combat_roboports or {}
+		local owning_force = event.entity.force.name
         table.insert(storage.castra.combat_roboports, event.entity)
     end
     if event.entity.surface.name == "castra" then

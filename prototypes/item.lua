@@ -125,7 +125,7 @@ data:extend({
         stack_size = 100,
         default_import_location = "castra",
         weight = 5 * kg,
-        spoil_ticks = 1 * minute
+        spoil_ticks = 6 * minute
     },
     {
         type = "item",

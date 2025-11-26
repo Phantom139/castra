@@ -599,20 +599,20 @@ data:extend(
       },
       results = {{type="item", name="energy-shield-mk3-equipment", amount=1}}
     },
-    {
-      type = "recipe",
-      name = "combat-roboport",
-      category = "castra-forge",
-      enabled = false,
-      energy_required = 10,
-      ingredients = {
-        {type="item", name="nickel-plate", amount=50},
-        {type="item", name="processing-unit", amount=20},
-        {type="item", name="castra-data", amount=1}
-      },
-      results = {{type="item", name="combat-roboport", amount=1}},
-      main_product = "combat-roboport"
-    },
+    --{
+    --  type = "recipe",
+    --  name = "combat-roboport",
+    --  category = "castra-forge",
+    --  enabled = false,
+    --  energy_required = 10,
+    --  ingredients = {
+    --    {type="item", name="nickel-plate", amount=50},
+    --    {type="item", name="processing-unit", amount=20},
+    --   {type="item", name="castra-data", amount=1}
+    --  },
+    --  results = {{type="item", name="combat-roboport", amount=1}},
+    --  main_product = "combat-roboport"
+    --},
     {
       -- early game gunpowder to carbon recipe
       type = "recipe",
@@ -1110,7 +1110,7 @@ data:extend(
       preserve_products_in_machine_output = true,
       enabled = false,
       order = "o[jammed-data-collector-process]",
-      energy_required = 16,
+      energy_required = 10,
       ingredients = {},
       results = {
         {type="item", name="advanced-circuit", amount=1, probability=0.17},
@@ -1128,9 +1128,9 @@ data:extend(
       energy_required = 30,
       ingredients = {
         {type="item", name="jammer-radar", amount=1},
-        {type="item", name="quantum-processor", amount=50},
-        {type="item", name="lithium-battery", amount=200},
-        {type="item", name="castra-data", amount=10}
+        {type="item", name="quantum-processor", amount=20},
+        {type="item", name="lithium-battery", amount=100},
+        {type="item", name="castra-data", amount=5}
       },
       results = {{type="item", name="jammed-data-collector", amount=1}},
       category = "cryogenics"
